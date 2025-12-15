@@ -4,8 +4,8 @@ import {
   useUseCase,
   useAdapter,
   NavigationPort,
+  useNavigationParams,
 } from "@nativefy/core";
-import { useRoute } from "@react-navigation/native";
 import { GetProductDetailUseCase } from "../usecases/GetProductDetailUseCase";
 import { Product } from "../usecases/GetProductsUseCase";
 
@@ -18,8 +18,8 @@ export function useProductDetailViewModel() {
   const [baseState, { execute }] = useBaseViewModel();
   const [product, setProduct] = useState<Product | null>(null);
 
-  const route = useRoute();
-  const params = route.params as RouteParams;
+  // Usar el helper del core en lugar de useRoute() directamente
+  const params = useNavigationParams<RouteParams>();
 
   const getProductDetailUseCase = useUseCase<GetProductDetailUseCase>(
     "products:getProductDetail"

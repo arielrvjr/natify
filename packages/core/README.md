@@ -166,8 +166,6 @@ export default function App() {
 
 ## Adapters Incluidos en el Core
 
-El paquete `@nativefy/core` incluye adapters por defecto que puedes usar sin instalar paquetes adicionales:
-
 ### ConsoleLoggerAdapter
 
 Adapter de logging que usa `console` para escribir logs. Se usa automáticamente si no proporcionas un logger en la configuración.
@@ -276,7 +274,7 @@ function LoginScreen() {
 
 | Situación | Hook a usar |
 |-----------|-------------|
-| Navegación simple | `useAdapter<NavigationPort>` o `useAppNavigation()` |
+| Navegación simple | `useAdapter<NavigationPort>` |
 | Logging | `useAdapter<LoggerPort>` |
 | Lógica de negocio | `useUseCase<MiUseCase>` |
 | Operaciones triviales (guardar setting) | `useAdapter` está bien |
@@ -342,17 +340,25 @@ function SettingsScreen() {
 ## Hooks de Navegación
 
 ```typescript
-import { useNavigationParams, useAppNavigation, useCurrentRoute } from "@nativefy/core";
+import { useNavigationParams, useCurrentRoute, useAdapter, NavigationPort } from "@nativefy/core";
 
 function ProductDetail() {
   // Obtener parámetros tipados
   const { productId } = useNavigationParams<{ productId: string }>();
 
-  // Navegación simplificada
-  const { navigate, goBack, reset } = useAppNavigation();
+  // Navegación usando el adapter directamente
+  const navigation = useAdapter<NavigationPort>("navigation");
 
   // Ruta actual
   const currentRoute = useCurrentRoute();
+
+  const handleGoBack = () => {
+    navigation.goBack();
+  };
+
+  const handleNavigate = () => {
+    navigation.navigate("products/ProductList");
+  };
 }
 ```
 
@@ -490,7 +496,7 @@ export { createModule, useModules, useDynamicModules }
 export { useBaseViewModel }
 
 // Navigation Hooks
-export { useNavigationParams, useAppNavigation, useCurrentRoute }
+export { useNavigationParams, useCurrentRoute }
 
 // ActionBus
 export { actionBus, useActionDispatch, useActionHandler }

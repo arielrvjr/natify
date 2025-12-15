@@ -3,7 +3,8 @@ import {
   useBaseViewModel,
   useUseCase,
   useActionDispatch,
-  useAppNavigation,
+  useAdapter,
+  NavigationPort,
 } from "@nativefy/core";
 import { GetProfileUseCase } from "../usecases/GetProfileUseCase";
 import { User } from "../../auth/usecases/LoginUseCase";
@@ -19,7 +20,7 @@ export function useProfileViewModel() {
   
   // Usar hooks del core en lugar de adapters directamente
   const dispatch = useActionDispatch();
-  const { navigate, reset, goBack } = useAppNavigation();
+  const navigation = useAdapter<NavigationPort>('navigation');
 
   const loadProfile = useCallback(async () => {
     const result = await execute(() => getProfileUseCase.execute());
@@ -29,8 +30,8 @@ export function useProfileViewModel() {
   }, [getProfileUseCase, execute]);
 
   const goToSettings = useCallback(() => {
-    navigate("profile/Settings");
-  }, [navigate]);
+    navigation.navigate("profile/Settings");
+  }, [navigation]);
 
   /**
    * Logout usando ActionBus - desacoplado del módulo Auth
@@ -41,13 +42,13 @@ export function useProfileViewModel() {
     
     if (result.success) {
       // Navegar a login y limpiar el stack
-      reset([{ name: "auth/Login" }]);
+      navigation.reset([{ name: "auth/Login" }]);
     }
-  }, [dispatch, reset]);
+  }, [dispatch, navigation]);
 
   const handleGoBack = useCallback(() => {
-    goBack();
-  }, [goBack]);
+    navigation.goBack();
+  }, [navigation]);
 
   useEffect(() => {
     loadProfile();
