@@ -1,0 +1,26 @@
+{
+  "name": "@nativefy-adapter/storage-keychain",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\""
+  },
+  "keywords": [],
+  "author": "Ariel Rodríguez",
+  "license": "MIT",
+  "packageManager": "pnpm@10.24.0",
+  "peerDependencies": {
+    "@nativefy/core": "workspace:*",
+    "react-native-keychain": "^10.0.0"
+  }
+}

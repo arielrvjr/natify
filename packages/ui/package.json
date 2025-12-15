@@ -1,0 +1,29 @@
+{
+  "name": "@nativefy/ui",
+  "version": "0.0.1",
+  "description": "Componentes UI para Nativefy Framework",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\""
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "react-native": ">=0.80.0"
+  },
+  "devDependencies": {
+    "react": "*",
+    "react-native": "*",
+    "typescript": "*"
+  },
+  "keywords": ["react-native", "ui", "components", "nativefy"],
+  "license": "MIT"
+}

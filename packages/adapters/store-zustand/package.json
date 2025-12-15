@@ -1,0 +1,21 @@
+{
+  "name": "@nativefy-adapter/store-zustand",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\""
+  },
+  "peerDependencies": {
+    "@nativefy/core": "workspace:*",
+    "zustand": "^5.0.9"
+  }
+}

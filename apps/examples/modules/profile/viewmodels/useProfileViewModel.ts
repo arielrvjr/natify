@@ -1,0 +1,70 @@
+import { useState, useCallback, useEffect } from "react";
+import {
+  useBaseViewModel,
+  useUseCase,
+  useActionDispatch,
+  useAppNavigation,
+} from "@nativefy/core";
+import { GetProfileUseCase } from "../usecases/GetProfileUseCase";
+import { User } from "../../auth/usecases/LoginUseCase";
+
+/**
+ * ViewModel del perfil usando ActionBus para comunicación inter-módulo
+ */
+export function useProfileViewModel() {
+  const [baseState, { execute }] = useBaseViewModel();
+  const [user, setUser] = useState<User | null>(null);
+
+  const getProfileUseCase = useUseCase<GetProfileUseCase>("profile:getProfile");
+  
+  // Usar hooks del core en lugar de adapters directamente
+  const dispatch = useActionDispatch();
+  const { navigate, reset, goBack } = useAppNavigation();
+
+  const loadProfile = useCallback(async () => {
+    const result = await execute(() => getProfileUseCase.execute());
+    if (result) {
+      setUser(result);
+    }
+  }, [getProfileUseCase, execute]);
+
+  const goToSettings = useCallback(() => {
+    navigate("profile/Settings");
+  }, [navigate]);
+
+  /**
+   * Logout usando ActionBus - desacoplado del módulo Auth
+   * El módulo Auth registra el handler para 'auth:logout'
+   */
+  const logout = useCallback(async () => {
+    const result = await dispatch({ type: "auth:logout" });
+    
+    if (result.success) {
+      // Navegar a login y limpiar el stack
+      reset([{ name: "auth/Login" }]);
+    }
+  }, [dispatch, reset]);
+
+  const handleGoBack = useCallback(() => {
+    goBack();
+  }, [goBack]);
+
+  useEffect(() => {
+    loadProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return {
+    state: {
+      ...baseState,
+      user,
+    },
+    actions: {
+      loadProfile,
+      goToSettings,
+      logout,
+      goBack: handleGoBack,
+    },
+  };
+}
+
