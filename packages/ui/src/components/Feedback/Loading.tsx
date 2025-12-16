@@ -27,13 +27,9 @@ export const Loading: React.FC<LoadingProps> = ({
 
   const content = (
     <View style={styles.content}>
-      <ActivityIndicator size={size} color={color || theme.colors.primary} />
+      <ActivityIndicator size={size} color={color || theme.colors.action.primary} />
       {message && (
-        <Text
-          variant="bodySmall"
-          color={overlay ? theme.colors.white : theme.colors.textSecondary}
-          style={styles.message}
-        >
+        <Text variant="caption" color={overlay ? 'onPrimary' : 'secondary'} style={styles.message}>
           {message}
         </Text>
       )}
@@ -46,7 +42,7 @@ export const Loading: React.FC<LoadingProps> = ({
         style={[
           styles.fullScreen,
           overlay && styles.overlay,
-          !overlay && { backgroundColor: theme.colors.background },
+          !overlay && { backgroundColor: theme.colors.surface.primary },
           style,
         ]}
       >

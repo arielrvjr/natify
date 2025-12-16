@@ -39,4 +39,3 @@ export function useCurrentRoute(): string | undefined {
   const navigation = useAdapter<NavigationPort>('navigation');
   return navigation.getCurrentRoute();
 }
-

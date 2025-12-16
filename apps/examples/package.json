@@ -17,6 +17,7 @@
     "@nativefy-adapter/biometrics-rn": "workspace:*",
     "@nativefy-adapter/permissions-rn": "workspace:*",
     "@nativefy-adapter/image-picker-rn": "workspace:*",
+    "@nativefy-adapter/validation-yup": "workspace:*",
     "@nativefy/core": "workspace:*",
     "@nativefy/ui": "workspace:*",
     "@react-navigation/native": "^7.1.6",
@@ -30,7 +31,9 @@
     "react-native-permissions": "^5.4.0",
     "react-native-nitro-modules": "^0.31.10",
     "react-native-safe-area-context": "^5.5.2",
-    "react-native-screens": "^4.10.0"
+    "react-native-screens": "^4.10.0",
+    "formik": "^2.4.5",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

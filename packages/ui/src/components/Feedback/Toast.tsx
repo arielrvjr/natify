@@ -116,14 +116,17 @@ const ToastItem: React.FC<ToastState> = ({ message, type = 'info' }) => {
   const getTypeStyles = (): { bg: string; icon: string } => {
     switch (type) {
       case 'success':
-        return { bg: theme.colors.success, icon: '✓' };
+        // Usar action.primary para success ya que no hay success en el palette
+        return { bg: theme.colors.action.primary, icon: '✓' };
       case 'error':
-        return { bg: theme.colors.error, icon: '✕' };
+        return { bg: theme.colors.status.error, icon: '✕' };
       case 'warning':
-        return { bg: theme.colors.warning, icon: '⚠' };
+        // Usar action.pressed para warning ya que no hay warning en el palette
+        return { bg: theme.colors.action.pressed, icon: '⚠' };
       case 'info':
       default:
-        return { bg: theme.colors.info, icon: 'ℹ' };
+        // Usar surface.secondary para info ya que no hay info en el palette
+        return { bg: theme.colors.surface.secondary, icon: 'ℹ' };
     }
   };
 
@@ -141,10 +144,10 @@ const ToastItem: React.FC<ToastState> = ({ message, type = 'info' }) => {
         },
       ]}
     >
-      <Text color={theme.colors.white} weight="medium" style={styles.icon}>
+      <Text color="onPrimary" style={styles.icon}>
         {typeStyles.icon}
       </Text>
-      <Text color={theme.colors.white} style={styles.message}>
+      <Text color="onPrimary" style={styles.message}>
         {message}
       </Text>
     </Animated.View>

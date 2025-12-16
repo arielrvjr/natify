@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
-import { useTheme } from '../../theme';
 import { Text } from '../Text';
 import { Button } from '../Button';
 import { Column } from '../Layout/Column';
@@ -25,23 +24,16 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   onAction,
   style,
 }) => {
-  const { theme } = useTheme();
-
   return (
-    <Column align="center" gap="md" style={[styles.container, style]}>
+    <Column alignItems="center" gap="md" style={[styles.container, style]}>
       {icon && <View style={styles.iconContainer}>{icon}</View>}
 
-      <Text variant="h4" weight="medium" align="center">
+      <Text variant="title" align="center">
         {title}
       </Text>
 
       {description && (
-        <Text
-          variant="body"
-          color={theme.colors.textSecondary}
-          align="center"
-          style={styles.description}
-        >
+        <Text variant="body" color="secondary" align="center" style={styles.description}>
           {description}
         </Text>
       )}

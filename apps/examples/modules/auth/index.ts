@@ -15,7 +15,7 @@ import { CheckAuthUseCase } from "./usecases/CheckAuthUseCase";
  */
 export const AuthModule = createModule("auth", "Authentication")
   // Capacidades requeridas - tipos inferidos automáticamente
-  .requires("http", "secureStorage", "navigation")
+  .requires("http", "secureStorage", "navigation", "validation")
 
   // Pantallas
   .screen({

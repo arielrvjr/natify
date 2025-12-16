@@ -33,18 +33,18 @@ export const Card: React.FC<CardProps> = ({
     switch (variant) {
       case 'elevated':
         return {
-          backgroundColor: theme.colors.card,
+          backgroundColor: theme.colors.surface.secondary,
           ...(theme.shadows.md as ViewStyle),
         };
       case 'outlined':
         return {
-          backgroundColor: theme.colors.card,
+          backgroundColor: theme.colors.surface.secondary,
           borderWidth: 1,
-          borderColor: theme.colors.border,
+          borderColor: theme.colors.structure.border,
         };
       case 'filled':
         return {
-          backgroundColor: theme.colors.surface,
+          backgroundColor: theme.colors.surface.secondary,
         };
     }
   };

@@ -7,8 +7,7 @@ export interface BadgeProps {
   children?: React.ReactNode;
   count?: number;
   maxCount?: number;
-  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info';
-  size?: 'sm' | 'md';
+  variant?: 'primary' | 'secondary' | 'error' | 'success' | 'warning' | 'info';
   dot?: boolean;
   style?: ViewStyle;
 }
@@ -21,35 +20,26 @@ export const Badge: React.FC<BadgeProps> = ({
   count,
   maxCount = 99,
   variant = 'primary',
-  size = 'md',
   dot = false,
   style,
 }) => {
   const { theme } = useTheme();
 
   const variantColors = {
-    primary: theme.colors.primary,
-    secondary: theme.colors.secondary,
-    success: theme.colors.success,
-    warning: theme.colors.warning,
-    error: theme.colors.error,
-    info: theme.colors.info,
+    primary: theme.colors.content.primary,
+    secondary: theme.colors.content.secondary,
+    success: theme.colors.status.success,
+    warning: theme.colors.status.warning,
+    error: theme.colors.status.error,
+    info: theme.colors.status.info,
   };
 
-  const sizes = {
-    sm: { minWidth: 16, height: 16, fontSize: 10, padding: 2 },
-    md: { minWidth: 20, height: 20, fontSize: 12, padding: 4 },
-  };
-
-  const sizeStyle = sizes[size];
   const displayCount = count && count > maxCount ? `${maxCount}+` : (count?.toString() ?? '');
 
   if (dot) {
     return <View style={[styles.dot, { backgroundColor: variantColors[variant] }, style]} />;
   }
 
-  // Siempre envolver el contenido en Text para cumplir con React Native
-  // Convertir children a string si es necesario
   const content = children
     ? typeof children === 'string' || typeof children === 'number'
       ? String(children)
@@ -61,16 +51,15 @@ export const Badge: React.FC<BadgeProps> = ({
       style={[
         styles.badge,
         {
-          minWidth: sizeStyle.minWidth,
-          height: sizeStyle.height,
-          paddingHorizontal: sizeStyle.padding,
           backgroundColor: variantColors[variant],
-          borderRadius: sizeStyle.height / 2,
+          paddingHorizontal: theme.spacing.md,
+          paddingVertical: theme.spacing.xs,
+          borderRadius: theme.borderRadius.lg,
         },
         style,
       ]}
     >
-      <Text color={theme.colors.white} weight="bold" variant="caption">
+      <Text color="onPrimary" variant="caption">
         {content}
       </Text>
     </View>
@@ -112,7 +101,7 @@ export const BadgeWrapper: React.FC<BadgeWrapperProps> = ({
       {children}
       {showBadge && (
         <View style={positionStyles}>
-          {badge || <Badge count={count} dot={dot} variant={variant} size="sm" />}
+          {badge || <Badge count={count} dot={dot} variant={variant} />}
         </View>
       )}
     </View>
@@ -123,6 +112,8 @@ const styles = StyleSheet.create({
   badge: {
     alignItems: 'center',
     justifyContent: 'center',
+    minWidth: 16,
+    minHeight: 16,
   },
   dot: {
     width: 8,

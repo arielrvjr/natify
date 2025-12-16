@@ -38,18 +38,18 @@ export const Input = forwardRef<TextInput, InputProps>(
     const [isFocused, setIsFocused] = useState(false);
 
     const getBorderColor = () => {
-      if (error) return theme.colors.error;
-      if (isFocused) return theme.colors.primary;
-      return theme.colors.border;
+      if (error) return theme.colors.status.error;
+      if (isFocused) return theme.colors.action.primary;
+      return theme.colors.structure.border;
     };
-
+    const inputTextColor = disabled ? 'tertiary' : 'primary';
     return (
       <View style={[styles.container, containerStyle]}>
         {label && (
           <View style={styles.labelContainer}>
-            <Text variant="label" weight="medium" style={styles.label}>
+            <Text variant="label" style={styles.label} color={inputTextColor}>
               {label}
-              {required && <Text color={theme.colors.error}> *</Text>}
+              {required && <Text color="error"> *</Text>}
             </Text>
           </View>
         )}
@@ -59,7 +59,9 @@ export const Input = forwardRef<TextInput, InputProps>(
             styles.inputContainer,
             {
               borderColor: getBorderColor(),
-              backgroundColor: disabled ? theme.colors.border : theme.colors.surface,
+              backgroundColor: disabled
+                ? theme.colors.action.disabled
+                : theme.colors.surface.secondary,
               borderRadius: theme.borderRadius.md,
             },
           ]}
@@ -71,14 +73,14 @@ export const Input = forwardRef<TextInput, InputProps>(
             style={[
               styles.input,
               {
-                color: theme.colors.text,
-                fontSize: theme.typography.fontSize.md,
+                color: inputTextColor,
+                ...theme.typography.body,
               },
               leftIcon ? { paddingLeft: 0 } : undefined,
               rightIcon ? { paddingRight: 0 } : undefined,
               inputStyle,
             ]}
-            placeholderTextColor={theme.colors.placeholder}
+            placeholderTextColor={theme.colors.content.secondary}
             editable={!disabled}
             onFocus={e => {
               setIsFocused(true);
@@ -95,11 +97,7 @@ export const Input = forwardRef<TextInput, InputProps>(
         </View>
 
         {(error || hint) && (
-          <Text
-            variant="caption"
-            color={error ? theme.colors.error : theme.colors.textSecondary}
-            style={styles.helperText}
-          >
+          <Text variant="caption" color={error ? 'error' : 'secondary'} style={styles.helperText}>
             {error || hint}
           </Text>
         )}

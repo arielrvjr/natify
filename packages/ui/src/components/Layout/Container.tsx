@@ -1,10 +1,12 @@
 import React from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
-import { useTheme } from '../../theme';
+import { useTheme, Spacing } from '../../theme';
 
 export interface ContainerProps {
   children: React.ReactNode;
-  padding?: boolean;
+  padding?: boolean | keyof Spacing;
+  paddingHorizontal?: keyof Spacing;
+  paddingVertical?: keyof Spacing;
   centered?: boolean;
   style?: ViewStyle;
 }
@@ -15,17 +17,27 @@ export interface ContainerProps {
 export const Container: React.FC<ContainerProps> = ({
   children,
   padding = true,
+  paddingHorizontal,
+  paddingVertical,
   centered = false,
   style,
 }) => {
   const { theme } = useTheme();
 
+  const paddingValue = typeof padding === 'boolean' ? (padding ? 'md' : 'none') : padding;
+
+  const horizontalPadding = paddingHorizontal || paddingValue;
+  const verticalPadding = paddingVertical || paddingValue;
+
   return (
     <View
       style={[
         styles.container,
-        { backgroundColor: theme.colors.background },
-        padding && { padding: theme.spacing.md },
+        { backgroundColor: theme.colors.surface.primary },
+        {
+          paddingHorizontal: theme.spacing[horizontalPadding],
+          paddingVertical: theme.spacing[verticalPadding],
+        },
         centered && styles.centered,
         style,
       ]}
@@ -37,7 +49,8 @@ export const Container: React.FC<ContainerProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    display: 'flex',
+    flexGrow: 1,
   },
   centered: {
     justifyContent: 'center',

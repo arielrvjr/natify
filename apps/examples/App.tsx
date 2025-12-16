@@ -9,7 +9,7 @@ import { createReactNavigationAdapter } from '@nativefy-adapter/navigation-react
 import { RnBiometricAdapter } from '@nativefy-adapter/biometrics-rn';
 import { RnPermissionsAdapter } from '@nativefy-adapter/permissions-rn';
 import { RnImagePickerAdapter } from '@nativefy-adapter/image-picker-rn';
-
+import { YupValidationAdapter } from '@nativefy-adapter/validation-yup';
 // Módulos
 import { AuthModule, ProductsModule, ProfileModule } from './modules';
 import { ThemeProvider } from '@nativefy/ui';
@@ -32,6 +32,7 @@ const navigationAdapter = createReactNavigationAdapter();
 const biometricAdapter = new RnBiometricAdapter();
 const permissionsAdapter = new RnPermissionsAdapter();
 const imagePickerAdapter = new RnImagePickerAdapter();
+const validationAdapter = new YupValidationAdapter();
 
 // Configuración de adapters
 const adapters = {
@@ -42,6 +43,7 @@ const adapters = {
   biometrics: biometricAdapter,
   permissions: permissionsAdapter,
   imagePicker: imagePickerAdapter,
+  validation: validationAdapter,
 };
 
 // Módulos de la app

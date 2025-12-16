@@ -1,6 +1,76 @@
 # @nativefy/ui
 
-Librería de componentes UI para React Native con soporte de temas.
+Librería de componentes UI para React Native con un **Design System** completo basado en tokens semánticos y soporte nativo para temas claro/oscuro.
+
+## 🎨 Concepto del Design System
+
+Este design system está construido sobre principios de **semántica** y **consistencia**, organizando los tokens de diseño por **propósito** en lugar de por tipo visual. Esto permite:
+
+- ✅ **Mantenibilidad**: Cambiar un color en un lugar afecta toda la app
+- ✅ **Accesibilidad**: Contraste garantizado entre superficies y contenido
+- ✅ **Escalabilidad**: Fácil agregar nuevos temas o variantes
+- ✅ **Consistencia**: Todos los componentes usan los mismos tokens
+
+### Estructura del Design System
+
+El sistema está organizado en **5 categorías semánticas**:
+
+#### 1. **Surface** (Superficies)
+Colores de fondo que crean jerarquía visual:
+- `primary`: Fondo base de la aplicación
+- `secondary`: Superficies elevadas (Cards, Inputs, Modals)
+
+#### 2. **Content** (Contenido)
+Colores de texto organizados por nivel de contraste:
+- `primary`: Texto principal (alto contraste)
+- `secondary`: Texto de apoyo (contraste medio)
+- `tertiary`: Texto deshabilitado/placeholders (bajo contraste)
+- `onPrimary`: Texto sobre elementos de acción primarios
+
+#### 3. **Action** (Acciones)
+Colores para interacciones del usuario:
+- `primary`: Color principal de la marca para botones/links
+- `pressed`: Estado de feedback táctil
+- `disabled`: Elementos de acción inactivos
+
+#### 4. **Status** (Estados)
+Colores para comunicar estados del sistema:
+- `error`: Errores y validaciones
+- `success`: Confirmaciones exitosas
+- `warning`: Alertas y precauciones
+- `info`: Notificaciones informativas
+
+#### 5. **Structure** (Estructura)
+Elementos de soporte visual:
+- `divider`: Líneas divisorias en listas
+- `border`: Bordes de inputs y contenedores
+
+### Sistema de Tipografía
+
+Variantes tipográficas semánticas (no por tamaño):
+
+| Variante | Uso | Ejemplo |
+|----------|-----|---------|
+| `title` | Títulos principales | Pantallas, Headers |
+| `subtitle` | Subtítulos | Secciones, Cards |
+| `body` | Texto principal | Párrafos, Contenido |
+| `caption` | Texto secundario | Ayudas, Notas |
+| `label` | Etiquetas | Formularios, Badges |
+
+### Sistema de Espaciado
+
+Espaciado consistente basado en múltiplos de 4:
+
+```typescript
+spacing: {
+  xs: 4,      // Espaciado mínimo
+  sm: 8,      // Espaciado pequeño
+  md: 16,     // Espaciado medio (default)
+  lg: 24,     // Espaciado grande
+  xl: 32,     // Espaciado extra grande
+  touchTarget: 48, // Tamaño mínimo táctil (accesibilidad)
+}
+```
 
 ## Instalación
 
@@ -77,23 +147,44 @@ export default function App() {
 
 ### Text
 
+El componente `Text` usa las variantes tipográficas del design system:
+
 ```tsx
 import { Text } from "@nativefy/ui";
 
-<Text variant="h1" weight="bold">Título</Text>
-<Text variant="body" color="#666">Descripción</Text>
-<Text variant="caption">Nota al pie</Text>
+<Text variant="title">Título Principal</Text>
+<Text variant="subtitle">Subtítulo</Text>
+<Text variant="body">Texto del cuerpo</Text>
+<Text variant="caption" color={theme.colors.content.secondary}>
+  Nota al pie
+</Text>
+<Text variant="label">Etiqueta</Text>
+
+// Con color personalizado
+<Text variant="body" color={theme.colors.status.error}>
+  Mensaje de error
+</Text>
 ```
 
 ### Button
 
+Botones con variantes que usan los tokens de `action`:
+
 ```tsx
 import { Button } from "@nativefy/ui";
 
+// Variante primaria (usa action.primary)
 <Button title="Primario" variant="primary" onPress={() => {}} />
-<Button title="Outline" variant="outline" onPress={() => {}} />
+
+// Variante secundaria (fondo surface.secondary)
+<Button title="Secundario" variant="secondary" onPress={() => {}} />
+
+// Variante ghost (transparente)
+<Button title="Ghost" variant="ghost" onPress={() => {}} />
+
+// Estados
 <Button title="Cargando" loading onPress={() => {}} />
-<Button title="Eliminar" variant="danger" onPress={() => {}} />
+<Button title="Deshabilitado" disabled onPress={() => {}} />
 ```
 
 ### Input
@@ -111,12 +202,16 @@ import { Input } from "@nativefy/ui";
 
 ### Card
 
+Las Cards usan `surface.secondary` para crear jerarquía visual:
+
 ```tsx
 import { Card, Text } from "@nativefy/ui";
 
-<Card variant="elevated" padding="lg" onPress={() => {}}>
-  <Text variant="h4">Título</Text>
-  <Text>Contenido de la tarjeta</Text>
+<Card padding="lg" onPress={() => {}}>
+  <Text variant="subtitle">Título de la tarjeta</Text>
+  <Text variant="body" color={theme.colors.content.secondary}>
+    Contenido de la tarjeta
+  </Text>
 </Card>
 ```
 
@@ -185,7 +280,7 @@ const [visible, setVisible] = useState(false);
   onConfirm={handleDelete}
   title="¿Eliminar?"
   message="Esta acción no se puede deshacer"
-  confirmVariant="danger"
+  confirmVariant="primary"
   confirmText="Eliminar"
 />
 ```
@@ -239,6 +334,8 @@ import { Avatar, Badge, BadgeWrapper } from "@nativefy/ui";
 
 ### Tema personalizado
 
+Puedes extender los temas por defecto o crear uno completamente personalizado:
+
 ```tsx
 import { ThemeProvider, lightTheme, Theme } from "@nativefy/ui";
 
@@ -246,8 +343,16 @@ const customTheme: Theme = {
   ...lightTheme,
   colors: {
     ...lightTheme.colors,
-    primary: "#FF6B6B",
-    secondary: "#4ECDC4",
+    // Personalizar solo lo necesario
+    action: {
+      ...lightTheme.colors.action,
+      primary: "#FF6B6B", // Tu color de marca
+      pressed: "#E55555",
+    },
+    status: {
+      ...lightTheme.colors.status,
+      success: "#4ECDC4",
+    },
   },
 };
 
@@ -256,7 +361,30 @@ const customTheme: Theme = {
 </ThemeProvider>
 ```
 
+### Uso correcto de los tokens
+
+**✅ Correcto**: Usar tokens semánticos
+```tsx
+// Texto principal
+<Text color={theme.colors.content.primary} />
+
+// Botón primario
+<Button style={{ backgroundColor: theme.colors.action.primary }} />
+
+// Borde de input
+<View style={{ borderColor: theme.colors.structure.border }} />
+```
+
+**❌ Incorrecto**: Usar colores hardcodeados
+```tsx
+// ❌ No hacer esto
+<Text color="#101828" />
+<Button style={{ backgroundColor: "#007AFF" }} />
+```
+
 ### Hook useTheme
+
+Accede al tema completo y sus utilidades:
 
 ```tsx
 import { useTheme } from "@nativefy/ui";
@@ -265,8 +393,15 @@ function MyComponent() {
   const { theme, isDark, toggleTheme } = useTheme();
   
   return (
-    <View style={{ backgroundColor: theme.colors.background }}>
-      <Button title="Toggle Theme" onPress={toggleTheme} />
+    <View style={{ 
+      backgroundColor: theme.colors.surface.primary,
+      padding: theme.spacing.md,
+      borderRadius: theme.borderRadius.md,
+    }}>
+      <Text variant="body" color={theme.colors.content.primary}>
+        Tema actual: {isDark ? "Oscuro" : "Claro"}
+      </Text>
+      <Button title="Cambiar tema" onPress={toggleTheme} />
     </View>
   );
 }
@@ -274,15 +409,157 @@ function MyComponent() {
 
 ### Hook useThemedStyles
 
+Crea estilos tipados que se actualizan automáticamente con el tema:
+
 ```tsx
 import { useThemedStyles } from "@nativefy/ui";
 
-const styles = useThemedStyles((theme) => ({
-  container: {
-    backgroundColor: theme.colors.surface,
-    padding: theme.spacing.md,
-    borderRadius: theme.borderRadius.lg,
-  },
-}));
+function MyComponent() {
+  const styles = useThemedStyles((theme) => ({
+    container: {
+      backgroundColor: theme.colors.surface.secondary,
+      padding: theme.spacing.lg,
+      borderRadius: theme.borderRadius.lg,
+      ...theme.shadows.md,
+    },
+    title: {
+      ...theme.typography.title,
+      color: theme.colors.content.primary,
+      marginBottom: theme.spacing.md,
+    },
+  }));
+  
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Mi Componente</Text>
+    </View>
+  );
+}
+```
+
+## 🎯 Mejores Prácticas
+
+### 1. Usa tokens semánticos siempre
+
+Los tokens están organizados por propósito, no por apariencia:
+
+```tsx
+// ✅ Correcto
+theme.colors.content.primary    // Para texto principal
+theme.colors.action.primary     // Para acciones principales
+theme.colors.surface.secondary  // Para fondos elevados
+
+// ❌ Evitar
+theme.colors.blue               // No existe
+theme.colors.darkGray           // No existe
+```
+
+### 2. Respeta la jerarquía de contenido
+
+Usa los niveles de contraste apropiados:
+
+```tsx
+// Títulos y texto importante
+<Text variant="title" color={theme.colors.content.primary} />
+
+// Texto de apoyo
+<Text variant="body" color={theme.colors.content.secondary} />
+
+// Placeholders y deshabilitados
+<Text variant="caption" color={theme.colors.content.tertiary} />
+```
+
+### 3. Usa el sistema de espaciado
+
+Nunca hardcodees valores de padding/margin:
+
+```tsx
+// ✅ Correcto
+padding: theme.spacing.md
+marginTop: theme.spacing.lg
+gap: theme.spacing.sm
+
+// ❌ Evitar
+padding: 16
+marginTop: 24
+gap: 8
+```
+
+### 4. Aprovecha las variantes tipográficas
+
+No mezcles tamaños de fuente manualmente:
+
+```tsx
+// ✅ Correcto
+<Text variant="title">Título</Text>
+<Text variant="subtitle">Subtítulo</Text>
+<Text variant="body">Cuerpo</Text>
+
+// ❌ Evitar
+<Text style={{ fontSize: 24, fontWeight: 'bold' }}>Título</Text>
+```
+
+## 📚 Referencia Completa del Tema
+
+```typescript
+interface Theme {
+  colors: {
+    surface: {
+      primary: string;    // Fondo base
+      secondary: string;  // Fondos elevados
+    };
+    content: {
+      primary: string;    // Texto principal
+      secondary: string;  // Texto secundario
+      tertiary: string;   // Texto terciario/deshabilitado
+      onPrimary: string;  // Texto sobre action.primary
+    };
+    action: {
+      primary: string;     // Acción principal
+      pressed: string;    // Estado presionado
+      disabled: string;   // Estado deshabilitado
+    };
+    status: {
+      error: string;      // Errores
+      success: string;    // Éxitos
+      warning: string;    // Advertencias
+      info: string;       // Información
+    };
+    structure: {
+      divider: string;    // Divisores
+      border: string;     // Bordes
+    };
+  };
+  spacing: {
+    xs: number;          // 4
+    sm: number;          // 8
+    md: number;          // 16
+    lg: number;          // 24
+    xl: number;         // 32
+    touchTarget: number; // 48
+  };
+  typography: {
+    title: TypographyStyle;
+    subtitle: TypographyStyle;
+    body: TypographyStyle;
+    caption: TypographyStyle;
+    label: TypographyStyle;
+  };
+  borderRadius: {
+    none: number;
+    sm: number;
+    md: number;
+    lg: number;
+    xl: number;
+    full: number;
+  };
+  shadows: {
+    none: object;
+    sm: object;
+    md: object;
+    lg: object;
+  };
+  isDark: boolean;
+}
 ```
 

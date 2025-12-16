@@ -53,37 +53,26 @@ export function ProductDetailScreen() {
         />
 
         <Container padding>
-          <Column gap="md">
-            <Text variant="caption" color="textSecondary">
+          <Column gap="sm">
+            <Text variant="caption" color="secondary">
               {product.category}
             </Text>
-            <Text variant="h2" weight="bold">
-              {product.title}
-            </Text>
+            <Text variant="title">{product.title}</Text>
 
             <Row align="center" gap="sm">
-              <Badge variant="warning" size="md">
-                {`⭐ ${product.rating.rate}`}
-              </Badge>
-              <Text variant="body" color="textSecondary">
+              <Badge variant="warning">{`⭐ ${product.rating.rate}`}</Badge>
+              <Text variant="body" color="secondary">
                 ({product.rating.count} reviews)
               </Text>
             </Row>
 
-            <Text variant="h1" weight="bold" color="primary">
+            <Text variant="title" color="primary">
               ${product.price.toFixed(2)}
             </Text>
+            <Spacer size="sm" />
 
-            <Spacer size="lg" />
-
-            <Text variant="h4" weight="medium">
-              Descripción
-            </Text>
-            <Text
-              variant="body"
-              color="textSecondary"
-              style={{ lineHeight: 24 }}
-            >
+            <Text variant="subtitle">Descripción</Text>
+            <Text variant="body" color="secondary">
               {product.description}
             </Text>
 
@@ -93,7 +82,6 @@ export function ProductDetailScreen() {
               title="Agregar al Carrito"
               onPress={() => {}}
               variant="primary"
-              size="lg"
               fullWidth
             />
           </Column>

@@ -51,37 +51,31 @@ export const Checkbox: React.FC<CheckboxProps> = ({
               height: boxSize,
               borderRadius: theme.borderRadius.sm,
               borderColor: error
-                ? theme.colors.error
+                ? theme.colors.status.error
                 : checked
-                  ? theme.colors.primary
-                  : theme.colors.border,
-              backgroundColor: checked ? theme.colors.primary : 'transparent',
+                  ? theme.colors.action.primary
+                  : theme.colors.structure.border,
+              backgroundColor: checked ? theme.colors.action.primary : 'transparent',
               opacity: disabled ? 0.5 : 1,
             },
           ]}
         >
           {checked && (
-            <Text
-              color={theme.colors.white}
-              style={{ fontSize: boxSize * 0.6, lineHeight: boxSize }}
-            >
+            <Text color="onPrimary" style={{ fontSize: boxSize * 0.6, lineHeight: boxSize }}>
               ✓
             </Text>
           )}
         </View>
 
         {label && (
-          <Text
-            color={disabled ? theme.colors.textDisabled : theme.colors.text}
-            style={styles.label}
-          >
+          <Text color={disabled ? 'tertiary' : 'primary'} style={styles.label}>
             {label}
           </Text>
         )}
       </TouchableOpacity>
 
       {error && (
-        <Text variant="caption" color={theme.colors.error} style={styles.error}>
+        <Text variant="caption" color="error" style={styles.error}>
           {error}
         </Text>
       )}

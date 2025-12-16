@@ -1,103 +1,98 @@
-import React from "react";
-import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  Container,
-  Text,
-  Input,
-  Button,
-  Column,
-  Spacer,
-} from "@nativefy/ui";
-import { useRegisterViewModel } from "../viewmodels/useRegisterViewModel";
+import React from 'react';
+import { KeyboardAvoidingView, Platform } from 'react-native';
+import { Container, Text, Input, Button, Column, Spacer } from '@nativefy/ui';
+import { useRegisterViewModel } from '../viewmodels/useRegisterViewModel';
 
+/**
+ * Pantalla de registro
+ *
+ * Esta pantalla demuestra cómo usar un ViewModel que internamente
+ * usa Formik directamente y ValidationPort para esquemas. La pantalla
+ * solo se encarga de renderizar y delegar al ViewModel.
+ */
 export function RegisterScreen() {
   const { state, actions } = useRegisterViewModel();
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={["top", "bottom"]}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-        <Container padding>
-        <ScrollView
-          contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
-          keyboardShouldPersistTaps="handled"
-        >
-          <Column gap="lg">
-            <Text variant="h1" weight="bold">
-              Crear Cuenta
-            </Text>
-            <Text variant="body" color="textSecondary">
-              Completa tus datos para registrarte
-            </Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <Container padding={'md'}>
+        <Column gap="md" justifyContent="center">
+          <Text variant="title">Crear Cuenta</Text>
+          <Text variant="body" color="secondary">
+            Completa tus datos para registrarte
+          </Text>
 
-            <Spacer size="xl" />
+          <Spacer size="xl" />
 
-            <Column gap="md">
-              <Input
-                label="Nombre completo"
-                value={state.name}
-                onChangeText={actions.setName}
-                placeholder="Ingresa tu nombre"
-                autoCorrect={false}
-                editable={!state.isLoading}
-                error={state.error?.message}
-              />
+          <Column gap="sm">
+            <Input
+              label="Nombre completo"
+              value={state.name}
+              onChangeText={actions.setName}
+              placeholder="Ingresa tu nombre"
+              autoCorrect={false}
+              editable={!state.isLoading}
+              error={state.fieldErrors?.name}
+              onBlur={actions.handleBlur}
+            />
 
-              <Input
-                label="Email"
-                value={state.email}
-                onChangeText={actions.setEmail}
-                placeholder="correo@ejemplo.com"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                editable={!state.isLoading}
-              />
+            <Input
+              label="Email"
+              value={state.email}
+              onChangeText={actions.setEmail}
+              placeholder="correo@ejemplo.com"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              editable={!state.isLoading}
+              error={state.fieldErrors?.email}
+              onBlur={actions.handleBlur}
+            />
 
-              <Input
-                label="Contraseña"
-                value={state.password}
-                onChangeText={actions.setPassword}
-                placeholder="Ingresa tu contraseña"
-                secureTextEntry
-                editable={!state.isLoading}
-              />
+            <Input
+              label="Contraseña"
+              value={state.password}
+              onChangeText={actions.setPassword}
+              placeholder="Ingresa tu contraseña"
+              secureTextEntry
+              editable={!state.isLoading}
+              error={state.fieldErrors?.password}
+              onBlur={actions.handleBlur}
+            />
 
-              <Input
-                label="Confirmar contraseña"
-                value={state.confirmPassword}
-                onChangeText={actions.setConfirmPassword}
-                placeholder="Confirma tu contraseña"
-                secureTextEntry
-                editable={!state.isLoading}
-              />
-
-              <Button
-                title="Registrarme"
-                onPress={actions.register}
-                variant="primary"
-                size="lg"
-                loading={state.isLoading}
-                disabled={state.isLoading}
-                fullWidth
-              />
-
-              <Button
-                title="¿Ya tienes cuenta? Inicia sesión"
-                onPress={actions.goBack}
-                variant="ghost"
-                disabled={state.isLoading}
-                fullWidth
-              />
-            </Column>
+            <Input
+              label="Confirmar contraseña"
+              value={state.confirmPassword}
+              onChangeText={actions.setConfirmPassword}
+              placeholder="Confirma tu contraseña"
+              secureTextEntry
+              editable={!state.isLoading}
+              error={state.fieldErrors?.confirmPassword}
+              onBlur={actions.handleBlur}
+            />
           </Column>
-        </ScrollView>
+
+          <Button
+            title="Registrarme"
+            onPress={actions.register}
+            variant="primary"
+            loading={state.isLoading}
+            disabled={state.isLoading || !state.isFormValid}
+            fullWidth
+          />
+
+          <Button
+            title="¿Ya tienes cuenta? Inicia sesión"
+            onPress={actions.goBack}
+            variant="ghost"
+            disabled={state.isLoading}
+            fullWidth
+          />
+        </Column>
       </Container>
     </KeyboardAvoidingView>
-    </SafeAreaView>
   );
 }
-

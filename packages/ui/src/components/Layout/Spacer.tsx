@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { useTheme } from '../../theme';
 
 export interface SpacerProps {
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | number;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;
   horizontal?: boolean;
   flex?: number;
 }

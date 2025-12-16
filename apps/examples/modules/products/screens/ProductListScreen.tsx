@@ -25,25 +25,24 @@ export function ProductListScreen() {
       onPress={() => actions.goToDetail(item)}
       style={{ marginBottom: 16 }}
     >
-      <Row gap="md" align="center">
+      <Row gap="sm" align="center">
         <Image
           source={{ uri: item.image }}
-          style={{ width: 100, height: 100, resizeMode: 'contain' }}
+          style={{ width: 80, height: 80, resizeMode: 'contain' }}
         />
         <Column gap="xs" style={{ flex: 1 }}>
-          <Text variant="body" weight="medium" numberOfLines={2}>
+          <Text variant="body" numberOfLines={2}>
             {item.title}
           </Text>
           <Text
             variant="caption"
-            color="textSecondary"
+            color="secondary"
             style={{ textTransform: 'capitalize' }}
           >
             {item.category}
           </Text>
-          <Spacer size="sm" />
           <Row justify="between" align="center">
-            <Text variant="h4" weight="bold" color="primary">
+            <Text variant="title" color="primary">
               ${item.price.toFixed(2)}
             </Text>
             <Badge variant="warning">{item.rating.rate.toString()}</Badge>
@@ -80,27 +79,16 @@ export function ProductListScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
-      <Container padding={false}>
-        <Row
-          justify="between"
-          align="center"
-          style={{
-            paddingHorizontal: 16,
-            paddingVertical: 12,
-            backgroundColor: 'transparent',
-          }}
-        >
-          <Text variant="h3" weight="bold">
-            Productos
-          </Text>
-          <Avatar name="Usuario" size="sm" onPress={actions.goToProfile} />
+      <Container padding={'md'}>
+        <Row justify="between" align="center">
+          <Text variant="title">Productos</Text>
+          <Avatar name="Usuario" size="md" onPress={actions.goToProfile} />
         </Row>
-
+        <Spacer size="sm" />
         <FlatList
           data={state.products}
           renderItem={renderProduct}
           keyExtractor={item => item.id.toString()}
-          contentContainerStyle={{ padding: 16 }}
           refreshControl={
             <RefreshControl
               refreshing={state.isLoading}

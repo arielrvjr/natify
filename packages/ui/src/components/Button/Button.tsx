@@ -9,14 +9,12 @@ import {
 import { useTheme } from '../../theme';
 import { Text } from '../Text';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
-export type ButtonSize = 'sm' | 'md' | 'lg';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost';
 
 export interface ButtonProps {
   title: string;
   onPress: () => void;
   variant?: ButtonVariant;
-  size?: ButtonSize;
   loading?: boolean;
   disabled?: boolean;
   fullWidth?: boolean;
@@ -33,7 +31,6 @@ export const Button: React.FC<ButtonProps> = ({
   title,
   onPress,
   variant = 'primary',
-  size = 'md',
   loading = false,
   disabled = false,
   fullWidth = false,
@@ -44,56 +41,34 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   const { theme } = useTheme();
 
-  const sizeStyles = {
-    sm: { paddingVertical: 8, paddingHorizontal: 16 },
-    md: { paddingVertical: 12, paddingHorizontal: 20 },
-    lg: { paddingVertical: 16, paddingHorizontal: 24 },
-  };
-
-  const textSizes = {
-    sm: theme.typography.fontSize.sm,
-    md: theme.typography.fontSize.md,
-    lg: theme.typography.fontSize.lg,
-  };
-
   const getVariantStyles = (): { container: ViewStyle; text: TextStyle } => {
     const isDisabled = disabled || loading;
-
+    if (isDisabled)
+      return {
+        container: {
+          backgroundColor: theme.colors.action.disabled,
+        },
+        text: {
+          color: theme.colors.content.tertiary,
+        },
+      };
     switch (variant) {
-      case 'primary':
-        return {
-          container: {
-            backgroundColor: isDisabled ? theme.colors.textDisabled : theme.colors.primary,
-          },
-          text: { color: theme.colors.white },
-        };
       case 'secondary':
         return {
           container: {
-            backgroundColor: isDisabled ? theme.colors.textDisabled : theme.colors.secondary,
+            backgroundColor: theme.colors.surface.secondary,
           },
-          text: { color: theme.colors.white },
-        };
-      case 'outline':
-        return {
-          container: {
-            backgroundColor: 'transparent',
-            borderWidth: 1.5,
-            borderColor: isDisabled ? theme.colors.textDisabled : theme.colors.primary,
-          },
-          text: { color: isDisabled ? theme.colors.textDisabled : theme.colors.primary },
+          text: { color: theme.colors.action.primary },
         };
       case 'ghost':
         return {
           container: { backgroundColor: 'transparent' },
-          text: { color: isDisabled ? theme.colors.textDisabled : theme.colors.primary },
+          text: { color: theme.colors.action.primary },
         };
-      case 'danger':
+      default: //primary
         return {
-          container: {
-            backgroundColor: isDisabled ? theme.colors.textDisabled : theme.colors.error,
-          },
-          text: { color: theme.colors.white },
+          container: { backgroundColor: theme.colors.action.primary },
+          text: { color: theme.colors.content.onPrimary },
         };
     }
   };
@@ -107,8 +82,7 @@ export const Button: React.FC<ButtonProps> = ({
       activeOpacity={0.7}
       style={[
         styles.container,
-        sizeStyles[size],
-        { borderRadius: theme.borderRadius.md },
+        { borderRadius: theme.borderRadius.md, height: theme.spacing.touchTarget },
         variantStyles.container,
         fullWidth && styles.fullWidth,
         style,
@@ -120,9 +94,8 @@ export const Button: React.FC<ButtonProps> = ({
         <>
           {leftIcon}
           <Text
-            weight="medium"
             style={[
-              { fontSize: textSizes[size] },
+              theme.typography.label,
               variantStyles.text,
               leftIcon ? { marginLeft: 8 } : undefined,
               rightIcon ? { marginRight: 8 } : undefined,

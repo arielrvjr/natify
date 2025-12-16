@@ -1,94 +1,146 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
+import { useFormik } from "formik";
 import {
   useBaseViewModel,
   useAdapter,
   NavigationPort,
-  NativefyError,
-  NativefyErrorCode,
+  ValidationPort,
 } from "@nativefy/core";
 
+interface RegisterFormValues {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+/**
+ * ViewModel de registro usando Formik directamente y ValidationPort
+ *
+ * Usa Formik directamente (sin adapter) para simplicidad, pero mantiene
+ * ValidationPort para crear esquemas de forma consistente y poder
+ * intercambiar entre Yup y Zod fácilmente.
+ */
 export function useRegisterViewModel() {
-  const [baseState, { execute, clearError, setError }] = useBaseViewModel();
-
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-
+  const [baseState, { execute, clearError }] = useBaseViewModel();
   const navigation = useAdapter<NavigationPort>("navigation");
+  const validator = useAdapter<ValidationPort>("validation");
+
+  // Crear esquema de validación usando ValidationPort
+  const validationSchema = validator.createSchema({
+    name: validator.string().min(2, "El nombre debe tener al menos 2 caracteres").required("El nombre es requerido").build(),
+    email: validator.string().email("Email inválido").required("El email es requerido").build(),
+    password: validator.string().min(6, "La contraseña debe tener al menos 6 caracteres").required("La contraseña es requerida").build(),
+    confirmPassword: validator.string().required("Confirma tu contraseña").build(),
+  });
+
+  // Usar Formik directamente (sin adapter)
+  const formik = useFormik<RegisterFormValues>({
+    initialValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validationSchema,
+    validate: (values) => {
+      const errors: Partial<Record<keyof RegisterFormValues, string>> = {};
+      
+      // Validación personalizada: contraseñas deben coincidir
+      if (values.password !== values.confirmPassword) {
+        errors.confirmPassword = "Las contraseñas no coinciden";
+      }
+
+      return errors;
+    },
+    onSubmit: async (_values) => {
+      await execute(async () => {
+        // Simular registro
+        await new Promise<void>((resolve) => setTimeout(() => resolve(), 1000));
+        // En una app real, llamaría al API
+      });
+
+      // Volver a login después de registro exitoso
+      navigation.goBack();
+    },
+    validateOnChange: false, // No validar todos los campos al cambiar uno
+    validateOnBlur: true, // Validar solo el campo cuando se hace blur
+  });
 
   const register = useCallback(async () => {
-    // Validaciones
-    if (!name || name.length < 2) {
-      setError(
-        new NativefyError(
-          NativefyErrorCode.VALIDATION_ERROR,
-          "El nombre debe tener al menos 2 caracteres"
-        )
-      );
+    // Validar antes de enviar
+    const errors = await formik.validateForm();
+    if (Object.keys(errors).length > 0) {
       return;
     }
 
-    if (!email.includes("@")) {
-      setError(
-        new NativefyError(
-          NativefyErrorCode.VALIDATION_ERROR,
-          "Email inválido"
-        )
-      );
-      return;
-    }
-
-    if (password.length < 6) {
-      setError(
-        new NativefyError(
-          NativefyErrorCode.VALIDATION_ERROR,
-          "La contraseña debe tener al menos 6 caracteres"
-        )
-      );
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError(
-        new NativefyError(
-          NativefyErrorCode.VALIDATION_ERROR,
-          "Las contraseñas no coinciden"
-        )
-      );
-      return;
-    }
-
-    await execute(async () => {
-      // Simular registro
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      // En una app real, llamaría al API
-    });
-
-    // Volver a login después de registro exitoso
-    navigation.goBack();
-  }, [name, email, password, confirmPassword, execute, setError, navigation]);
+    // Enviar formulario
+    await formik.submitForm();
+  }, [formik]);
 
   const goBack = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
 
+  // Limpiar error del campo cuando cambia (solo si ya fue tocado)
+  const handleSetName = useCallback((value: string) => {
+    formik.setFieldValue("name", value, false);
+    if (formik.touched.name) {
+      formik.validateField("name");
+    }
+  }, [formik]);
+
+  const handleSetEmail = useCallback((value: string) => {
+    formik.setFieldValue("email", value, false);
+    if (formik.touched.email) {
+      formik.validateField("email");
+    }
+  }, [formik]);
+
+  const handleSetPassword = useCallback((value: string) => {
+    formik.setFieldValue("password", value, false);
+    if (formik.touched.password) {
+      formik.validateField("password");
+    }
+    // También validar confirmPassword si fue tocado
+    if (formik.touched.confirmPassword) {
+      formik.validateField("confirmPassword");
+    }
+  }, [formik]);
+
+  const handleSetConfirmPassword = useCallback((value: string) => {
+    formik.setFieldValue("confirmPassword", value, false);
+    if (formik.touched.confirmPassword) {
+      formik.validateField("confirmPassword");
+    }
+  }, [formik]);
+
   return {
     state: {
       ...baseState,
-      name,
-      email,
-      password,
-      confirmPassword,
+      name: formik.values.name,
+      email: formik.values.email,
+      password: formik.values.password,
+      confirmPassword: formik.values.confirmPassword,
+      fieldErrors: {
+        name: formik.errors.name,
+        email: formik.errors.email,
+        password: formik.errors.password,
+        confirmPassword: formik.errors.confirmPassword,
+      },
+      isFormValid: Object.keys(formik.errors).length === 0,
+      isFormDirty: formik.dirty,
     },
     actions: {
-      setName,
-      setEmail,
-      setPassword,
-      setConfirmPassword,
+      setName: handleSetName,
+      setEmail: handleSetEmail,
+      setPassword: handleSetPassword,
+      setConfirmPassword: handleSetConfirmPassword,
       register,
       goBack,
       clearError,
+      handleBlur: formik.handleBlur,
+      handleChange: formik.handleChange,
     },
   };
 }

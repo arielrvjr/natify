@@ -61,7 +61,7 @@ export const Modal: React.FC<ModalProps> = ({
                 style={[
                   styles.content,
                   {
-                    backgroundColor: theme.colors.card,
+                    backgroundColor: theme.colors.surface.secondary,
                     borderRadius: theme.borderRadius.lg,
                     ...(theme.shadows.lg as ViewStyle),
                   },
@@ -72,14 +72,14 @@ export const Modal: React.FC<ModalProps> = ({
                 {(title || showCloseButton) && (
                   <View style={styles.header}>
                     {title && (
-                      <Text variant="h4" weight="bold" style={styles.title}>
+                      <Text variant="title" style={styles.title}>
                         {title}
                       </Text>
                     )}
                     {showCloseButton && (
                       <TouchableWithoutFeedback onPress={onClose}>
                         <View style={styles.closeButton}>
-                          <Text variant="h4" color={theme.colors.textSecondary}>
+                          <Text variant="subtitle" color="secondary">
                             ✕
                           </Text>
                         </View>
@@ -111,7 +111,7 @@ export interface ConfirmModalProps {
   message: string;
   confirmText?: string;
   cancelText?: string;
-  confirmVariant?: 'primary' | 'danger';
+  confirmVariant?: 'primary' | 'ghost';
   loading?: boolean;
 }
 
@@ -126,8 +126,6 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   confirmVariant = 'primary',
   loading = false,
 }) => {
-  const { theme } = useTheme();
-
   return (
     <Modal
       visible={visible}
@@ -147,7 +145,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         </Row>
       }
     >
-      <Text color={theme.colors.textSecondary}>{message}</Text>
+      <Text color="secondary">{message}</Text>
     </Modal>
   );
 };

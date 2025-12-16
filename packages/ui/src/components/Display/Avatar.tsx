@@ -1,13 +1,14 @@
 import React from 'react';
-import { View, Image, ViewStyle, TouchableOpacity, Platform, Text as RNText } from 'react-native';
-import { useTheme } from '../../theme';
+import { View, Image, ViewStyle, TouchableOpacity, Platform } from 'react-native';
+import { ColorPalette, useTheme } from '../../theme';
+import { Text } from '../Text';
 
 export interface AvatarProps {
   source?: { uri: string };
   name?: string;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;
   backgroundColor?: string;
-  textColor?: string;
+  textColor?: keyof ColorPalette['content'];
   style?: ViewStyle;
   onPress?: () => void;
 }
@@ -59,9 +60,6 @@ export const Avatar: React.FC<AvatarProps> = ({
   };
 
   const sizeValue = typeof size === 'number' ? size : sizes[size];
-  const fontSize = sizeValue * 0.36; // Reducido ligeramente para evitar cortes
-  const lineHeight = fontSize * 1.0; // LineHeight igual al fontSize para evitar cortes
-  const borderWidth = sizeValue >= 56 ? 4 : sizeValue >= 40 ? 3 : 2;
 
   const getInitials = (userName: string): string => {
     if (!userName || userName.trim().length === 0) return '?';
@@ -78,8 +76,9 @@ export const Avatar: React.FC<AvatarProps> = ({
     return userName.substring(0, 1).toUpperCase();
   };
 
-  const bgColor = backgroundColor || (name ? generateColorFromName(name) : theme.colors.primary);
-  const txtColor = textColor || theme.colors.white;
+  const bgColor =
+    backgroundColor || (name ? generateColorFromName(name) : theme.colors.action.primary);
+  const txtColor = textColor || 'onPrimary';
 
   const containerStyle: ViewStyle = {
     width: sizeValue,
@@ -89,7 +88,6 @@ export const Avatar: React.FC<AvatarProps> = ({
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
-    borderWidth: borderWidth,
     borderColor: 'rgba(255, 255, 255, 0.4)',
     ...Platform.select({
       ios: {
@@ -120,27 +118,9 @@ export const Avatar: React.FC<AvatarProps> = ({
         },
       ]}
     >
-      <RNText
-        style={{
-          fontSize,
-          lineHeight,
-          color: txtColor,
-          fontWeight: '700',
-          letterSpacing: sizeValue >= 56 ? 1 : 0.5,
-          textShadowColor: 'rgba(0, 0, 0, 0.1)',
-          textShadowOffset: { width: 0, height: 1 },
-          textShadowRadius: 2,
-          textAlign: 'center',
-          includeFontPadding: false, // Eliminar padding extra en ambos sistemas
-          ...Platform.select({
-            android: {
-              textAlignVertical: 'center',
-            },
-          }),
-        }}
-      >
+      <Text variant="label" color={txtColor}>
         {name ? getInitials(name) : '?'}
-      </RNText>
+      </Text>
     </View>
   );
 

@@ -1,12 +1,14 @@
 import React from 'react';
-import { View, StyleSheet, ViewStyle, StyleProp } from 'react-native';
-import { useTheme } from '../../theme';
+import { View, StyleSheet, ViewStyle, StyleProp, FlexAlignType, FlexStyle } from 'react-native';
+import { Spacing, useTheme } from '../../theme';
 
 export interface ColumnProps {
   children: React.ReactNode;
-  align?: 'start' | 'center' | 'end' | 'stretch';
-  justify?: 'start' | 'center' | 'end' | 'between' | 'around' | 'evenly';
-  gap?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;
+  alignItems?: FlexAlignType;
+  paddingHorizontal?: keyof Spacing;
+  paddingVertical?: keyof Spacing;
+  justifyContent?: FlexStyle['justifyContent'];
+  gap?: keyof Spacing | number;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -15,28 +17,14 @@ export interface ColumnProps {
  */
 export const Column: React.FC<ColumnProps> = ({
   children,
-  align = 'stretch',
-  justify = 'start',
+  alignItems = 'stretch',
+  justifyContent = 'flex-start',
+  paddingHorizontal = 'none',
+  paddingVertical = 'none',
   gap = 0,
   style,
 }) => {
   const { theme } = useTheme();
-
-  const alignItems = {
-    start: 'flex-start' as const,
-    center: 'center' as const,
-    end: 'flex-end' as const,
-    stretch: 'stretch' as const,
-  };
-
-  const justifyContent = {
-    start: 'flex-start' as const,
-    center: 'center' as const,
-    end: 'flex-end' as const,
-    between: 'space-between' as const,
-    around: 'space-around' as const,
-    evenly: 'space-evenly' as const,
-  };
 
   const gapValue = typeof gap === 'number' ? gap : theme.spacing[gap];
 
@@ -45,9 +33,11 @@ export const Column: React.FC<ColumnProps> = ({
       style={[
         styles.column,
         {
-          alignItems: alignItems[align],
-          justifyContent: justifyContent[justify],
+          alignItems,
+          justifyContent,
           gap: gapValue,
+          paddingHorizontal: theme.spacing[paddingHorizontal],
+          paddingVertical: theme.spacing[paddingVertical],
         },
         style,
       ]}
@@ -59,7 +49,8 @@ export const Column: React.FC<ColumnProps> = ({
 
 const styles = StyleSheet.create({
   column: {
-    flex: 1,
+    width: '100%',
+    display: 'flex',
     flexDirection: 'column',
   },
 });

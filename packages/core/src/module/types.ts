@@ -8,6 +8,7 @@ import { NavigationPort } from '../ports/NavigationPort';
 import { AnalyticsPort } from '../ports/AnalyticsPort';
 import { LoggerPort } from '../ports/LoggerPort';
 import { ImagePickerPort } from '../ports/ImagePickerPort';
+import { ValidationPort } from '../ports/ValidationPort';
 
 /**
  * Mapa de capacidades a sus tipos de Port correspondientes
@@ -22,6 +23,7 @@ export interface CapabilityPortMap {
   analytics: AnalyticsPort;
   logger: LoggerPort;
   imagePicker: ImagePickerPort;
+  validation: ValidationPort;
   [key: string]: Port;
 }
 

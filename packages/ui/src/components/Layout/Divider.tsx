@@ -30,7 +30,7 @@ export const Divider: React.FC<DividerProps> = ({
         style={[
           {
             width: thickness,
-            backgroundColor: color || theme.colors.divider,
+            backgroundColor: color || theme.colors.structure.divider,
             marginHorizontal: spacingValue,
             alignSelf: 'stretch',
           },
@@ -45,7 +45,7 @@ export const Divider: React.FC<DividerProps> = ({
       style={[
         {
           height: thickness,
-          backgroundColor: color || theme.colors.divider,
+          backgroundColor: color || theme.colors.structure.divider,
           marginVertical: spacingValue,
         },
         style,

@@ -38,7 +38,7 @@ export function RadioGroup<T = string>({
   return (
     <View style={style}>
       {label && (
-        <Text variant="label" weight="medium" style={styles.groupLabel}>
+        <Text variant="label" style={styles.groupLabel}>
           {label}
         </Text>
       )}
@@ -65,23 +65,22 @@ export function RadioGroup<T = string>({
                   styles.radio,
                   {
                     borderColor: error
-                      ? theme.colors.error
+                      ? theme.colors.status.error
                       : isSelected
-                        ? theme.colors.primary
-                        : theme.colors.border,
+                        ? theme.colors.action.primary
+                        : theme.colors.structure.border,
                     opacity: isDisabled ? 0.5 : 1,
                   },
                 ]}
               >
                 {isSelected && (
-                  <View style={[styles.radioInner, { backgroundColor: theme.colors.primary }]} />
+                  <View
+                    style={[styles.radioInner, { backgroundColor: theme.colors.action.primary }]}
+                  />
                 )}
               </View>
 
-              <Text
-                color={isDisabled ? theme.colors.textDisabled : theme.colors.text}
-                style={styles.label}
-              >
+              <Text color={isDisabled ? 'tertiary' : 'primary'} style={styles.label}>
                 {option.label}
               </Text>
             </TouchableOpacity>
@@ -90,7 +89,7 @@ export function RadioGroup<T = string>({
       </View>
 
       {error && (
-        <Text variant="caption" color={theme.colors.error} style={styles.error}>
+        <Text variant="caption" color="error" style={styles.error}>
           {error}
         </Text>
       )}
