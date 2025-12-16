@@ -29,7 +29,27 @@ const httpAdapter = new AxiosHttpAdapter(
 
 const storageAdapter = new MMKVStorageAdapter();
 const secureStorageAdapter = new KeychainStorageAdapter();
-const navigationAdapter = createReactNavigationAdapter();
+
+// Configurar adapter de navegación con deeplinks
+const navigationAdapter = createReactNavigationAdapter({
+  prefixes: [
+    'nativefy://', // Custom scheme
+    'https://nativefy.app', // HTTPS (requiere configuración nativa)
+  ],
+  // Configuración personalizada opcional
+  // Si no se proporciona, se genera automáticamente desde los módulos
+  config: {
+    screens: {
+      'auth/Login': 'login',
+      'auth/Register': 'register',
+      'products/ProductList': 'products',
+      'products/ProductDetail': 'product/:productId',
+      'profile/Profile': 'profile',
+      'profile/Settings': 'settings',
+    },
+  },
+});
+
 const biometricAdapter = new RnBiometricAdapter();
 const permissionsAdapter = new RnPermissionsAdapter();
 const imagePickerAdapter = new RnImagePickerAdapter();

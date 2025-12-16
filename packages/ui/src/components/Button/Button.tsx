@@ -97,8 +97,8 @@ export const Button: React.FC<ButtonProps> = ({
             style={[
               theme.typography.label,
               variantStyles.text,
-              leftIcon ? { marginLeft: 8 } : undefined,
-              rightIcon ? { marginRight: 8 } : undefined,
+              leftIcon ? { marginLeft: theme.spacing.xs } : undefined,
+              rightIcon ? { marginRight: theme.spacing.xs } : undefined,
               textStyle,
             ]}
           >

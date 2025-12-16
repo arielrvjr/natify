@@ -63,12 +63,26 @@ interface NavigationAdapterWithComponents {
   NavigationContainer: ComponentType<{
     children: ReactNode;
     theme?: 'light' | 'dark' | object;
+    deeplinkConfig?: {
+      prefixes: string[];
+      config?: unknown;
+      filter?: (url: string) => boolean;
+      getInitialURL?: () => Promise<string | null | undefined>;
+      subscribe?: (listener: (url: string) => void) => () => void;
+    };
   }>;
   AppNavigator: ComponentType<{
     modules: ModuleDefinition[];
     initialModule?: string;
     screenOptions?: object;
   }>;
+  deeplinkConfig?: {
+    prefixes: string[];
+    config?: unknown;
+    filter?: (url: string) => boolean;
+    getInitialURL?: () => Promise<string | null | undefined>;
+    subscribe?: (listener: (url: string) => void) => () => void;
+  };
 }
 
 /**
@@ -166,7 +180,10 @@ export const NativefyApp: React.FC<NativefyAppProps> = ({
           onModulesLoaded={handleModulesLoaded}
           onError={handleError}
         >
-          <NavigationContainer theme={navigationTheme}>
+          <NavigationContainer 
+            theme={navigationTheme}
+            deeplinkConfig={navigationAdapter.deeplinkConfig}
+          >
             {!isReady ? (
               splashScreen || <DefaultSplash />
             ) : (

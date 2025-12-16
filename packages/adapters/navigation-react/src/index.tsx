@@ -9,6 +9,7 @@ import {
   DefaultTheme,
   DarkTheme,
   Theme,
+  LinkingOptions,
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
@@ -33,11 +34,44 @@ interface AppNavigatorProps {
 }
 
 /**
+ * Configuración de deeplinks
+ */
+export interface DeeplinkConfig {
+  /**
+   * Prefijos de URL que activan deeplinks
+   * Ejemplo: ['myapp://', 'https://myapp.com', 'https://*.myapp.com']
+   */
+  prefixes: string[];
+  
+  /**
+   * Configuración personalizada de linking (opcional)
+   * Si no se proporciona, se genera automáticamente desde los módulos
+   */
+  config?: LinkingOptions<ParamListBase>['config'];
+  
+  /**
+   * Función para filtrar o transformar URLs antes de procesarlas
+   */
+  filter?: (url: string) => boolean;
+  
+  /**
+   * Función para obtener el estado inicial desde una URL
+   */
+  getInitialURL?: () => Promise<string | null | undefined>;
+  
+  /**
+   * Función para suscribirse a cambios de URL
+   */
+  subscribe?: (listener: (url: string) => void) => () => void;
+}
+
+/**
  * Props del NavigationContainer wrapper
  */
 interface NavigationContainerWrapperProps {
   children: ReactNode;
   theme?: 'light' | 'dark' | object;
+  deeplinkConfig?: DeeplinkConfig;
 }
 
 /**
@@ -47,6 +81,10 @@ export interface ReactNavigationAdapterType extends NavigationPort {
   navigationRef: NavigationContainerRef<ParamListBase>;
   NavigationContainer: ComponentType<NavigationContainerWrapperProps>;
   AppNavigator: ComponentType<AppNavigatorProps>;
+  /**
+   * Configuración de deeplinks
+   */
+  deeplinkConfig?: DeeplinkConfig;
 }
 
 /**
@@ -96,12 +134,83 @@ function createAppNavigator(
 }
 
 /**
+ * Genera la configuración de linking automáticamente desde los módulos
+ * Usa la configuración de deeplink de cada pantalla si existe,
+ * o genera automáticamente si no está definida
+ */
+function generateLinkingConfig(
+  modules: ModuleDefinition[],
+  customConfig?: LinkingOptions<ParamListBase>['config'],
+): LinkingOptions<ParamListBase>['config'] {
+  // Si hay configuración personalizada global, usarla (override completo)
+  if (customConfig) {
+    return customConfig;
+  }
+
+  // Generar configuración desde las definiciones de pantallas
+  const screens: Record<string, any> = {};
+
+  modules.forEach(module => {
+    module.screens.forEach(screen => {
+      const routeName = `${module.id}/${screen.name}`;
+      
+      // Si la pantalla tiene configuración de deeplink personalizada
+      if (screen.deeplink) {
+        const deeplinkConfig: any = {};
+        
+        // Path personalizado o generado automáticamente
+        if (screen.deeplink.path) {
+          deeplinkConfig.path = screen.deeplink.path;
+        } else {
+          // Generar path automáticamente desde el nombre
+          // Ejemplo: "ProductDetail" -> "productdetail" o "product-detail"
+          const autoPath = screen.name
+            .replace(/([A-Z])/g, '-$1')
+            .toLowerCase()
+            .replace(/^-/, '');
+          deeplinkConfig.path = `${module.id}/${autoPath}`;
+        }
+        
+        // Parse personalizado
+        if (screen.deeplink.parse) {
+          deeplinkConfig.parse = screen.deeplink.parse;
+        }
+        
+        // Stringify personalizado
+        if (screen.deeplink.stringify) {
+          deeplinkConfig.stringify = screen.deeplink.stringify;
+        }
+        
+        screens[routeName] = deeplinkConfig;
+      } else {
+        // Generación automática: convertir nombre a path
+        // Ejemplo: "auth/Login" -> "auth/login"
+        // Ejemplo: "products/ProductDetail" -> "products/productdetail"
+        const autoPath = `${module.id}/${screen.name.toLowerCase()}`;
+        screens[routeName] = autoPath;
+      }
+    });
+  });
+
+  return {
+    screens,
+    initialRouteName: undefined, // Se determina automáticamente
+  };
+}
+
+/**
  * Crea un wrapper del NavigationContainer
  */
 function createNavigationContainerWrapper(
   navigationRef: NavigationContainerRef<ParamListBase>,
 ): ComponentType<NavigationContainerWrapperProps> {
-  return function NavigationContainerWrapper({ children, theme }: NavigationContainerWrapperProps) {
+  return function NavigationContainerWrapper({ 
+    children, 
+    theme,
+    deeplinkConfig,
+  }: NavigationContainerWrapperProps) {
+    const { modules } = useModules();
+    
     const resolvedTheme = useMemo((): Theme | undefined => {
       if (theme === 'dark') return DarkTheme;
       if (theme === 'light') return DefaultTheme;
@@ -109,8 +218,26 @@ function createNavigationContainerWrapper(
       return DefaultTheme;
     }, [theme]);
 
+    const linking = useMemo((): LinkingOptions<ParamListBase> | undefined => {
+      if (!deeplinkConfig) {
+        return undefined;
+      }
+
+      return {
+        prefixes: deeplinkConfig.prefixes,
+        config: generateLinkingConfig(modules, deeplinkConfig.config),
+        filter: deeplinkConfig.filter,
+        getInitialURL: deeplinkConfig.getInitialURL,
+        subscribe: deeplinkConfig.subscribe,
+      };
+    }, [deeplinkConfig, modules]);
+
     return (
-      <NavigationContainer ref={navigationRef as any} theme={resolvedTheme}>
+      <NavigationContainer 
+        ref={navigationRef as any} 
+        theme={resolvedTheme}
+        linking={linking}
+      >
         {children}
       </NavigationContainer>
     );
@@ -120,9 +247,17 @@ function createNavigationContainerWrapper(
 /**
  * Factory para crear el adapter de navegación
  *
+ * @param deeplinkConfig Configuración opcional de deeplinks
+ *
  * @example
  * ```typescript
+ * // Sin deeplinks
  * const navigationAdapter = createReactNavigationAdapter();
+ *
+ * // Con deeplinks
+ * const navigationAdapter = createReactNavigationAdapter({
+ *   prefixes: ['myapp://', 'https://myapp.com'],
+ * });
  *
  * // En NativefyApp
  * <NativefyApp
@@ -131,7 +266,9 @@ function createNavigationContainerWrapper(
  * />
  * ```
  */
-export function createReactNavigationAdapter(): ReactNavigationAdapterType {
+export function createReactNavigationAdapter(
+  deeplinkConfig?: DeeplinkConfig,
+): ReactNavigationAdapterType {
   // Crear la ref de navegación
   const navigationRef = createNavigationContainerRef<ParamListBase>();
 
@@ -143,6 +280,7 @@ export function createReactNavigationAdapter(): ReactNavigationAdapterType {
   const adapter: ReactNavigationAdapterType = {
     capability: 'navigation',
     navigationRef,
+    deeplinkConfig,
 
     // Componentes
     NavigationContainer: NavigationContainerComponent,

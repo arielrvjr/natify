@@ -45,6 +45,30 @@ export type TypedAdapterMap<T extends RequiredCapability[]> = {
 export type AdapterMap = Record<string, Port>;
 
 /**
+ * Configuración de deeplink para una pantalla
+ */
+export interface ScreenDeeplinkConfig {
+  /**
+   * Path de la URL para esta pantalla
+   * Ejemplo: "login", "product/:productId", "user/:userId"
+   * Si no se proporciona, se genera automáticamente desde el nombre
+   */
+  path?: string;
+
+  /**
+   * Función para parsear parámetros de la URL
+   * Ejemplo: { productId: Number, userId: (id: string) => id.toUpperCase() }
+   */
+  parse?: Record<string, ((value: string) => unknown) | unknown>;
+
+  /**
+   * Función para convertir parámetros a string para la URL
+   * Ejemplo: { productId: (id: number) => String(id) }
+   */
+  stringify?: Record<string, (value: unknown) => string>;
+}
+
+/**
  * Definición de una pantalla dentro del módulo
  */
 export interface ScreenDefinition {
@@ -69,6 +93,12 @@ export interface ScreenDefinition {
     animation?: 'default' | 'fade' | 'slide_from_right' | 'slide_from_bottom' | 'none';
     [key: string]: unknown;
   };
+
+  /**
+   * Configuración de deeplink para esta pantalla (opcional)
+   * Si no se proporciona, se genera automáticamente desde el nombre
+   */
+  deeplink?: ScreenDeeplinkConfig;
 }
 
 /**

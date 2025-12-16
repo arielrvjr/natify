@@ -22,11 +22,15 @@ export const AuthModule = createModule("auth", "Authentication")
     name: "Login",
     component: LoginScreen,
     options: { headerShown: false },
+    // Deeplink automático: "auth/login"
+    // O personalizado:
+    // deeplink: { path: "login" }
   })
   .screen({
     name: "Register",
     component: RegisterScreen,
     options: { title: "Crear Cuenta" },
+    // Deeplink automático: "auth/register"
   })
 
   // UseCases - adapters.http es HttpClientPort, adapters.secureStorage es StoragePort

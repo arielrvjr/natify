@@ -218,26 +218,62 @@ function useAuthNavigation() {
 
 ### Deep Linking
 
+El adapter soporta deeplinks de forma automática. Configura los prefijos al crear el adapter:
+
 ```typescript
 // App.tsx
-const linking = {
-  prefixes: ["myapp://", "https://myapp.com"],
-  config: {
-    screens: {
-      Home: "home",
-      Profile: "user/:userId",
-      ProductDetail: "product/:productId",
-    },
-  },
-};
+import { createReactNavigationAdapter } from '@nativefy-adapter/navigation-react';
 
-<NavigationContainer
-  ref={navigationAdapter.navigationRef}
-  linking={linking}
->
-  ...
-</NavigationContainer>
+// Crear adapter con deeplinks (solo prefijos)
+const navigationAdapter = createReactNavigationAdapter({
+  prefixes: ['myapp://', 'https://myapp.com'],
+});
+
+// En NativefyApp (se pasa automáticamente)
+<NativefyApp
+  adapters={{ navigation: navigationAdapter }}
+  modules={[AuthModule, ProductsModule]}
+/>
 ```
+
+**Configuración por pantalla (Recomendado):**
+
+Define la configuración de deeplink en cada pantalla al crear el módulo:
+
+```typescript
+import { createModule } from "@nativefy/core";
+
+export const ProductsModule = createModule("products", "Products")
+  .screen({
+    name: "ProductList",
+    component: ProductListScreen,
+    // Sin deeplink → se genera automáticamente: "products/productlist"
+  })
+  .screen({
+    name: "ProductDetail",
+    component: ProductDetailScreen,
+    deeplink: {
+      path: "product/:productId",
+      parse: {
+        productId: Number, // Convierte a número
+      },
+    },
+  })
+  .build();
+
+// URLs resultantes:
+// myapp://products/productlist (automático)
+// myapp://product/123 (personalizado) → ProductDetail con { productId: 123 }
+```
+
+**URLs generadas automáticamente (sin configuración):**
+- `myapp://auth/login` → `auth/Login`
+- `myapp://products/productlist` → `products/ProductList`
+
+**Con configuración personalizada por pantalla:**
+- `myapp://product/123` → `products/ProductDetail` con `{ productId: 123 }`
+
+Ver `DEEPLINKS.md` para documentación completa sobre deeplinks.
 
 ### Navegación Condicional
 
