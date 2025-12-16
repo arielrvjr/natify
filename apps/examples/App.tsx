@@ -1,4 +1,5 @@
 import React from 'react';
+import { StatusBar, Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { NativefyApp } from '@nativefy/core';
@@ -12,7 +13,7 @@ import { RnImagePickerAdapter } from '@nativefy-adapter/image-picker-rn';
 import { YupValidationAdapter } from '@nativefy-adapter/validation-yup';
 // Módulos
 import { AuthModule, ProductsModule, ProfileModule } from './modules';
-import { ThemeProvider } from '@nativefy/ui';
+import { ThemeProvider, useTheme } from '@nativefy/ui';
 
 // Crear adapters
 const httpAdapter = new AxiosHttpAdapter(
@@ -49,29 +50,56 @@ const adapters = {
 // Módulos de la app
 const modules = [AuthModule, ProductsModule, ProfileModule];
 
+/**
+ * Componente interno que usa el tema para configurar StatusBar y navegación
+ */
+function ThemedApp() {
+  const { theme, isDark } = useTheme();
+
+  return (
+    <>
+      <StatusBar
+        barStyle={isDark ? 'light-content' : 'dark-content'}
+        backgroundColor={Platform.OS === 'android' ? theme.colors.surface.primary : undefined}
+        translucent={Platform.OS === 'android'}
+      />
+      <NativefyApp
+        adapters={adapters}
+        modules={modules}
+        initialModule="auth"
+        onReady={loadedModules => {
+          console.log(
+            '[App] Modules loaded:',
+            loadedModules.map(m => m.id),
+          );
+        }}
+        onError={error => {
+          console.error('[App] Error loading modules:', error);
+        }}
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: theme.colors.surface.secondary,
+          },
+          headerTintColor: theme.colors.content.primary,
+          headerTitleStyle: {
+            fontWeight: '600',
+            color: theme.colors.content.primary,
+          },
+          headerShadowVisible: false,
+          contentStyle: {
+            backgroundColor: theme.colors.surface.primary,
+          },
+        }}
+      />
+    </>
+  );
+}
+
 function App() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <NativefyApp
-          adapters={adapters}
-          modules={modules}
-          initialModule="auth"
-          onReady={loadedModules => {
-            console.log(
-              '[App] Modules loaded:',
-              loadedModules.map(m => m.id),
-            );
-          }}
-          onError={error => {
-            console.error('[App] Error loading modules:', error);
-          }}
-          screenOptions={{
-            headerStyle: { backgroundColor: '#007AFF' },
-            headerTintColor: '#FFFFFF',
-            headerTitleStyle: { fontWeight: '600' },
-          }}
-        />
+        <ThemedApp />
       </ThemeProvider>
     </SafeAreaProvider>
   );

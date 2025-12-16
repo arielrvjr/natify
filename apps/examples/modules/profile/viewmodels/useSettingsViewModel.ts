@@ -10,6 +10,7 @@ import {
   PermissionStatus,
   ImagePickerPort,
 } from "@nativefy/core";
+import { useTheme } from "@nativefy/ui";
 
 interface AppSettings {
   biometricsEnabled: boolean;
@@ -20,6 +21,8 @@ interface AppSettings {
 
 export function useSettingsViewModel() {
   const [baseState, { execute }] = useBaseViewModel();
+  const { isDark, setDarkMode } = useTheme();
+  
   const [settings, setSettings] = useState<AppSettings>({
     notifications: true,
     darkMode: false,
@@ -51,9 +54,15 @@ export function useSettingsViewModel() {
     updateSetting("notifications", !settings.notifications);
   }, [settings.notifications, updateSetting]);
 
-  const toggleDarkMode = useCallback(() => {
-    updateSetting("darkMode", !settings.darkMode);
-  }, [settings.darkMode, updateSetting]);
+  const toggleDarkMode = useCallback(async () => {
+    const newDarkMode = !isDark; // Usar isDark del ThemeProvider como fuente de verdad
+    
+    // Actualizar el tema globalmente usando ThemeProvider
+    setDarkMode(newDarkMode);
+    
+    // Guardar la preferencia en storage
+    await updateSetting("darkMode", newDarkMode);
+  }, [isDark, setDarkMode, updateSetting]);
 
   const toggleBiometrics = useCallback(async () => {
     if (!settings.biometricsEnabled) {
@@ -146,16 +155,43 @@ export function useSettingsViewModel() {
     navigation.goBack();
   }, [navigation]);
 
-  // Verificar disponibilidad de biometría al cargar
+  // Cargar configuración guardada al iniciar
   useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const savedSettings = await storage.getItem<AppSettings>("app_settings");
+        if (savedSettings) {
+          setSettings(savedSettings);
+          
+          // Sincronizar el tema con el ThemeProvider si hay una preferencia guardada
+          if (savedSettings.darkMode !== isDark) {
+            setDarkMode(savedSettings.darkMode);
+          }
+        }
+      } catch (error) {
+        console.error("Error loading settings:", error);
+      }
+    };
+    
+    loadSettings();
     checkBiometryAvailability();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Sincronizar settings.darkMode con isDark cuando cambia el tema
+  useEffect(() => {
+    if (settings.darkMode !== isDark) {
+      setSettings(prev => ({ ...prev, darkMode: isDark }));
+    }
+  }, [isDark, settings.darkMode]);
+
   return {
     state: {
       ...baseState,
-      settings,
+      settings: {
+        ...settings,
+        darkMode: isDark, // Sincronizar con el tema actual
+      },
       biometryAvailable,
       biometryType,
       cameraPermissionStatus,

@@ -115,6 +115,13 @@ export default function App() {
 | `Spacer` | Espaciado flexible |
 | `Divider` | Línea divisoria |
 
+### 🧭 Navigation
+
+| Componente | Descripción |
+|------------|-------------|
+| `TopAppBar` | Barra superior con título, acciones y navegación |
+| `BottomBar` | Barra de navegación inferior con tabs |
+
 ### 💬 Feedback
 
 | Componente | Descripción |
@@ -140,6 +147,13 @@ export default function App() {
 | `Badge` | Etiqueta/contador |
 | `BadgeWrapper` | Wrapper para agregar badge |
 | `EmptyState` | Estado vacío |
+
+### 🧭 Navigation
+
+| Componente | Descripción |
+|------------|-------------|
+| `TopAppBar` | Barra superior con título, acciones y navegación |
+| `BottomBar` | Barra de navegación inferior con tabs |
 
 ---
 
@@ -272,6 +286,91 @@ const [visible, setVisible] = useState(false);
 >
   <Text>Contenido del modal</Text>
 </Modal>
+```
+
+### TopAppBar
+
+Barra superior con título, subtítulo, botón de retroceso y acciones:
+
+```tsx
+import { TopAppBar } from "@nativefy/ui";
+
+function MyScreen() {
+  return (
+    <>
+      <TopAppBar
+        title="Mi Pantalla"
+        subtitle="Subtítulo opcional"
+        showBack
+        onBackPress={() => navigation.goBack()}
+        actions={[
+          {
+            icon: <Icon name="search" />,
+            onPress: () => console.log('Buscar'),
+          },
+          {
+            icon: <Icon name="more" />,
+            label: "Más",
+            onPress: () => console.log('Más opciones'),
+          },
+        ]}
+        elevated
+      />
+      {/* Contenido de la pantalla */}
+    </>
+  );
+}
+```
+
+### BottomBar
+
+Barra de navegación inferior con tabs, iconos y badges:
+
+```tsx
+import { BottomBar } from "@nativefy/ui";
+import { useState } from "react";
+
+function AppWithTabs() {
+  const [activeTab, setActiveTab] = useState('home');
+
+  const tabs = [
+    {
+      id: 'home',
+      label: 'Inicio',
+      icon: <Icon name="home" />,
+    },
+    {
+      id: 'search',
+      label: 'Buscar',
+      icon: <Icon name="search" />,
+      badge: 3, // Badge opcional (número o string)
+    },
+    {
+      id: 'notifications',
+      label: 'Notificaciones',
+      icon: <Icon name="bell" />,
+      badge: '99+', // Badge como string
+    },
+    {
+      id: 'profile',
+      label: 'Perfil',
+      icon: <Icon name="user" />,
+    },
+  ];
+
+  return (
+    <View style={{ flex: 1 }}>
+      {/* Contenido de la pantalla */}
+      <BottomBar
+        tabs={tabs}
+        activeTabId={activeTab}
+        onTabPress={setActiveTab}
+        elevated
+      />
+    </View>
+  );
+}
+```
 
 // Modal de confirmación
 <ConfirmModal

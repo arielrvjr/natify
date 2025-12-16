@@ -57,32 +57,25 @@ export function ProfileScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
-      <Container padding={false}>
+      <Container>
         <ScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{ paddingBottom: 20 }}
           showsVerticalScrollIndicator={false}
         >
           <Container padding>
-            <Button
-              title="← Volver"
-              onPress={actions.goBack}
-              variant="ghost"
-              size="sm"
-            />
+            <Button title="← Volver" onPress={actions.goBack} variant="ghost" />
           </Container>
 
-          <Column align="center" gap="md" style={{ paddingVertical: 24 }}>
+          <Column alignItems="center" gap="md" paddingVertical="md">
             <Avatar name={state.user?.name || 'Usuario'} size="xl" />
-            <Text variant="h3" weight="bold">
-              {state.user?.name || 'Usuario'}
-            </Text>
-            <Text variant="body" color="textSecondary">
+            <Text variant="subtitle">{state.user?.name || 'Usuario'}</Text>
+            <Text variant="body" color="secondary">
               {state.user?.email || ''}
             </Text>
           </Column>
 
-          <Container padding>
+          <Container>
             <Card variant="elevated" padding="none">
               {menuItems.map((item, index) => (
                 <React.Fragment key={item.title}>
@@ -96,19 +89,17 @@ export function ProfileScreen() {
                       <Row align="center" gap="md" style={{ flex: 1 }}>
                         <Text style={{ fontSize: 24 }}>{item.icon}</Text>
                         <Column gap="xs" style={{ flex: 1, marginRight: 8 }}>
-                          <Text variant="body" weight="medium">
-                            {item.title}
-                          </Text>
+                          <Text variant="body">{item.title}</Text>
                           <Text
                             variant="caption"
-                            color="textSecondary"
+                            color="secondary"
                             numberOfLines={2}
                           >
                             {item.subtitle}
                           </Text>
                         </Column>
                       </Row>
-                      <Text variant="h4" color="textDisabled">
+                      <Text variant="subtitle" color="secondary">
                         ›
                       </Text>
                     </Row>
@@ -120,13 +111,7 @@ export function ProfileScreen() {
 
             <Spacer size="lg" />
 
-            <Button
-              title="Cerrar Sesión"
-              onPress={actions.logout}
-              variant="danger"
-              size="lg"
-              fullWidth
-            />
+            <Button title="Cerrar Sesión" onPress={actions.logout} fullWidth />
           </Container>
         </ScrollView>
       </Container>

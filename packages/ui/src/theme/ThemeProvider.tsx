@@ -8,6 +8,7 @@ interface ThemeContextValue {
   isDark: boolean;
   toggleTheme: () => void;
   setTheme: (theme: Theme) => void;
+  setDarkMode: (isDark: boolean) => void;
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
@@ -38,9 +39,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 
   const toggleTheme = () => setIsDarkMode(prev => !prev);
   const setTheme = (newTheme: Theme) => setIsDarkMode(newTheme.isDark);
+  const setDarkMode = (isDark: boolean) => setIsDarkMode(isDark);
 
   const value = useMemo(
-    () => ({ theme, isDark: isDarkMode, toggleTheme, setTheme }),
+    () => ({ theme, isDark: isDarkMode, toggleTheme, setTheme, setDarkMode }),
     [theme, isDarkMode],
   );
 

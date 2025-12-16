@@ -29,7 +29,7 @@ export function SettingsScreen() {
               <Column gap="sm" style={{ marginTop: 0 }}>
                 <Text
                   variant="caption"
-                  color="textSecondary"
+                  color="secondary"
                   style={{ textTransform: 'uppercase', marginBottom: 8 }}
                 >
                   Preferencias
@@ -37,12 +37,10 @@ export function SettingsScreen() {
                 <Card variant="elevated" padding="none">
                   <Row align="center" justify="between" style={{ padding: 16 }}>
                     <Column gap="xs" style={{ flex: 1, marginRight: 12 }}>
-                      <Text variant="body" weight="medium">
-                        Notificaciones
-                      </Text>
+                      <Text variant="body">Notificaciones</Text>
                       <Text
                         variant="caption"
-                        color="textSecondary"
+                        color="secondary"
                         numberOfLines={2}
                       >
                         Recibir alertas de ofertas y pedidos
@@ -56,12 +54,10 @@ export function SettingsScreen() {
                   <Divider />
                   <Row align="center" justify="between" style={{ padding: 16 }}>
                     <Column gap="xs" style={{ flex: 1, marginRight: 12 }}>
-                      <Text variant="body" weight="medium">
-                        Modo Oscuro
-                      </Text>
+                      <Text variant="body">Modo Oscuro</Text>
                       <Text
                         variant="caption"
-                        color="textSecondary"
+                        color="secondary"
                         numberOfLines={2}
                       >
                         Cambiar apariencia de la app
@@ -75,12 +71,10 @@ export function SettingsScreen() {
                   <Divider />
                   <Row align="center" justify="between" style={{ padding: 16 }}>
                     <Column gap="xs" style={{ flex: 1, marginRight: 12 }}>
-                      <Text variant="body" weight="medium">
-                        Autenticación Biométrica
-                      </Text>
+                      <Text variant="body">Autenticación Biométrica</Text>
                       <Text
                         variant="caption"
-                        color="textSecondary"
+                        color="secondary"
                         numberOfLines={2}
                       >
                         {state.biometryAvailable
@@ -100,7 +94,7 @@ export function SettingsScreen() {
               <Column gap="sm" style={{ marginTop: 24 }}>
                 <Text
                   variant="caption"
-                  color="textSecondary"
+                  color="secondary"
                   style={{ textTransform: 'uppercase', marginBottom: 8 }}
                 >
                   Permisos
@@ -108,12 +102,10 @@ export function SettingsScreen() {
                 <Card variant="elevated" padding="none">
                   <Row align="center" justify="between" style={{ padding: 16 }}>
                     <Column gap="xs" style={{ flex: 1, marginRight: 12 }}>
-                      <Text variant="body" weight="medium">
-                        Cámara
-                      </Text>
+                      <Text variant="body">Cámara</Text>
                       <Text
                         variant="caption"
-                        color="textSecondary"
+                        color="secondary"
                         numberOfLines={2}
                       >
                         {state.cameraPermissionStatus === 'granted'
@@ -124,19 +116,16 @@ export function SettingsScreen() {
                     <Button
                       title="Solicitar"
                       onPress={actions.requestCameraPermission}
-                      variant="outline"
-                      size="sm"
+                      variant="secondary"
                     />
                   </Row>
                   <Divider />
                   <Row align="center" justify="between" style={{ padding: 16 }}>
                     <Column gap="xs" style={{ flex: 1, marginRight: 12 }}>
-                      <Text variant="body" weight="medium">
-                        Galería de Fotos
-                      </Text>
+                      <Text variant="body">Galería de Fotos</Text>
                       <Text
                         variant="caption"
-                        color="textSecondary"
+                        color="secondary"
                         numberOfLines={2}
                       >
                         Solicitar permiso para acceder a fotos
@@ -145,19 +134,16 @@ export function SettingsScreen() {
                     <Button
                       title="Solicitar"
                       onPress={actions.requestPhotoLibraryPermission}
-                      variant="outline"
-                      size="sm"
+                      variant="secondary"
                     />
                   </Row>
                   <Divider />
                   <Row align="center" justify="between" style={{ padding: 16 }}>
                     <Column gap="xs" style={{ flex: 1, marginRight: 12 }}>
-                      <Text variant="body" weight="medium">
-                        Seleccionar Imagen
-                      </Text>
+                      <Text variant="body">Seleccionar Imagen</Text>
                       <Text
                         variant="caption"
-                        color="textSecondary"
+                        color="secondary"
                         numberOfLines={2}
                       >
                         Probar selector de imágenes
@@ -166,8 +152,7 @@ export function SettingsScreen() {
                     <Button
                       title="Abrir"
                       onPress={actions.pickImage}
-                      variant="outline"
-                      size="sm"
+                      variant="secondary"
                     />
                   </Row>
                 </Card>
@@ -176,7 +161,7 @@ export function SettingsScreen() {
               <Column gap="sm" style={{ marginTop: 24 }}>
                 <Text
                   variant="caption"
-                  color="textSecondary"
+                  color="secondary"
                   style={{ textTransform: 'uppercase', marginBottom: 8 }}
                 >
                   Idioma
@@ -184,14 +169,12 @@ export function SettingsScreen() {
                 <Card variant="elevated" padding="md">
                   <Row align="center" justify="between">
                     <Column gap="xs">
-                      <Text variant="body" weight="medium">
-                        Español
-                      </Text>
-                      <Text variant="caption" color="textSecondary">
+                      <Text variant="body">Español</Text>
+                      <Text variant="caption" color="secondary">
                         Idioma actual
                       </Text>
                     </Column>
-                    <Text variant="h4" color="textDisabled">
+                    <Text variant="body" color="tertiary">
                       ›
                     </Text>
                   </Row>
@@ -201,17 +184,15 @@ export function SettingsScreen() {
               <Column gap="sm" style={{ marginTop: 24 }}>
                 <Text
                   variant="caption"
-                  color="textSecondary"
+                  color="secondary"
                   style={{ textTransform: 'uppercase', marginBottom: 8 }}
                 >
                   Información
                 </Text>
                 <Card variant="elevated" padding="md">
                   <Column gap="xs">
-                    <Text variant="body" weight="medium">
-                      Versión
-                    </Text>
-                    <Text variant="caption" color="textSecondary">
+                    <Text variant="body">Versión</Text>
+                    <Text variant="caption" color="secondary">
                       1.0.0
                     </Text>
                   </Column>
