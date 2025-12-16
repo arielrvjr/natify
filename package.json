@@ -14,7 +14,12 @@
     "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' + && rm -f pnpm-lock.yaml",
     "clean:install": "pnpm clean && pnpm install",
     "android": "turbo run android --filter=examples",
-    "ios": "pnpm --filter examples ios"
+    "ios": "pnpm --filter examples ios",
+    "registry:start": "docker-compose -f verdaccio/docker-compose.yml up -d",
+    "registry:stop": "docker-compose -f verdaccio/docker-compose.yml down",
+    "registry:logs": "docker-compose -f verdaccio/docker-compose.yml logs -f",
+    "registry:publish": "pnpm build && pnpm -r --filter '@nativefy/*' publish --registry http://localhost:4873 --no-git-checks",
+    "registry:publish:all": "pnpm build && pnpm -r --filter '@nativefy/*' publish --registry http://localhost:4873 --no-git-checks --force"
   },
   "keywords": [],
   "author": "",

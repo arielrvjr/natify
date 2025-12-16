@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  ViewStyle,
-} from 'react-native';
+import { View, TouchableOpacity, StyleSheet, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../theme';
 import { Text } from '../Text';
@@ -22,42 +17,42 @@ export interface TopAppBarProps {
    * Título de la barra
    */
   title?: string;
-  
+
   /**
    * Subtítulo opcional
    */
   subtitle?: string;
-  
+
   /**
    * Mostrar botón de retroceso
    */
   showBack?: boolean;
-  
+
   /**
    * Callback cuando se presiona el botón de retroceso
    */
   onBackPress?: () => void;
-  
+
   /**
    * Acciones a la derecha (máximo 3 recomendado)
    */
   actions?: TopAppBarAction[];
-  
+
   /**
    * Contenido personalizado en lugar de título
    */
   children?: React.ReactNode;
-  
+
   /**
    * Elevación de la barra (sombra)
    */
   elevated?: boolean;
-  
+
   /**
    * Color de fondo personalizado
    */
   backgroundColor?: string;
-  
+
   /**
    * Estilos personalizados
    */
@@ -66,7 +61,7 @@ export interface TopAppBarProps {
 
 /**
  * Barra superior de la aplicación (AppBar/Header)
- * 
+ *
  * Soporta título, subtítulo, botón de retroceso y acciones.
  * Se adapta automáticamente al tema claro/oscuro.
  */
@@ -100,9 +95,9 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
         ]}
       >
         <View style={styles.content}>
-          <Row align="center" justify="space-between" style={styles.row}>
+          <Row alignItems="center" justifyContent="space-between" style={styles.row}>
             {/* Lado izquierdo: Back button o título */}
-            <Row align="center" style={styles.leftSection}>
+            <Row alignItems="center" style={styles.leftSection}>
               {showBack && (
                 <TouchableOpacity
                   onPress={onBackPress}
@@ -114,7 +109,7 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
                   </Text>
                 </TouchableOpacity>
               )}
-              
+
               {children || (
                 <View style={styles.titleContainer}>
                   {title && (
@@ -133,21 +128,16 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
 
             {/* Lado derecho: Acciones */}
             {actions.length > 0 && (
-              <Row align="center" gap="sm">
+              <Row alignItems="center" gap="sm">
                 {actions.map((action, index) => (
                   <TouchableOpacity
                     key={index}
                     onPress={action.onPress}
                     disabled={action.disabled}
-                    style={[
-                      styles.actionButton,
-                      action.disabled && styles.actionButtonDisabled,
-                    ]}
+                    style={[styles.actionButton, action.disabled && styles.actionButtonDisabled]}
                     hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                   >
-                    {action.icon && (
-                      <View style={styles.actionIcon}>{action.icon}</View>
-                    )}
+                    {action.icon && <View style={styles.actionIcon}>{action.icon}</View>}
                     {action.label && (
                       <Text
                         variant="label"
@@ -215,4 +205,3 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
 });
-

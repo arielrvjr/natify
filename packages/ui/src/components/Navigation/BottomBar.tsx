@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  ViewStyle,
-} from 'react-native';
+import { View, TouchableOpacity, StyleSheet, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../theme';
 import { Text } from '../Text';
@@ -15,22 +10,22 @@ export interface BottomBarTab {
    * Identificador único del tab
    */
   id: string;
-  
+
   /**
    * Etiqueta del tab
    */
   label: string;
-  
+
   /**
    * Icono del tab (componente React)
    */
   icon?: React.ReactNode;
-  
+
   /**
    * Badge opcional (número o texto)
    */
   badge?: string | number;
-  
+
   /**
    * Deshabilitar el tab
    */
@@ -42,27 +37,27 @@ export interface BottomBarProps {
    * Tabs a mostrar
    */
   tabs: BottomBarTab[];
-  
+
   /**
    * ID del tab activo
    */
   activeTabId: string;
-  
+
   /**
    * Callback cuando se selecciona un tab
    */
   onTabPress: (tabId: string) => void;
-  
+
   /**
    * Elevación de la barra (sombra)
    */
   elevated?: boolean;
-  
+
   /**
    * Color de fondo personalizado
    */
   backgroundColor?: string;
-  
+
   /**
    * Estilos personalizados
    */
@@ -71,7 +66,7 @@ export interface BottomBarProps {
 
 /**
  * Barra de navegación inferior (Bottom Navigation/TabBar)
- * 
+ *
  * Soporta iconos, etiquetas y badges. Se adapta automáticamente
  * al tema claro/oscuro.
  */
@@ -103,7 +98,7 @@ export const BottomBar: React.FC<BottomBarProps> = ({
       ]}
     >
       <View style={styles.content}>
-        {tabs.map((tab) => {
+        {tabs.map(tab => {
           const isActive = tab.id === activeTabId;
           const isDisabled = tab.disabled;
 
@@ -112,14 +107,10 @@ export const BottomBar: React.FC<BottomBarProps> = ({
               key={tab.id}
               onPress={() => !isDisabled && onTabPress(tab.id)}
               disabled={isDisabled}
-              style={[
-                styles.tab,
-                isActive && styles.tabActive,
-                isDisabled && styles.tabDisabled,
-              ]}
+              style={[styles.tab, isActive && styles.tabActive, isDisabled && styles.tabDisabled]}
               activeOpacity={0.7}
             >
-              <Column align="center" gap="xs">
+              <Column alignItems="center" gap="xs">
                 {/* Icono con badge */}
                 <View style={styles.iconContainer}>
                   {tab.icon && (
@@ -142,11 +133,7 @@ export const BottomBar: React.FC<BottomBarProps> = ({
                         },
                       ]}
                     >
-                      <Text
-                        variant="caption"
-                        color="onPrimary"
-                        style={styles.badgeText}
-                      >
+                      <Text variant="caption" color="onPrimary" style={styles.badgeText}>
                         {typeof tab.badge === 'number' && tab.badge > 99
                           ? '99+'
                           : String(tab.badge)}
@@ -159,10 +146,7 @@ export const BottomBar: React.FC<BottomBarProps> = ({
                 <Text
                   variant="caption"
                   color={isActive ? 'primary' : isDisabled ? 'tertiary' : 'secondary'}
-                  style={[
-                    styles.label,
-                    isActive && styles.labelActive,
-                  ]}
+                  style={[styles.label, isActive && styles.labelActive]}
                 >
                   {tab.label}
                 </Text>
@@ -244,4 +228,3 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
-

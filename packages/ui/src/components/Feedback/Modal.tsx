@@ -134,7 +134,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
       showCloseButton={false}
       size="sm"
       footer={
-        <Row gap="sm" justify="end">
+        <Row gap="sm" justifyContent="flex-end">
           <Button title={cancelText} variant="ghost" onPress={onClose} disabled={loading} />
           <Button
             title={confirmText}

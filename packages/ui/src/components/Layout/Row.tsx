@@ -1,12 +1,14 @@
 import React from 'react';
-import { View, StyleSheet, ViewStyle, StyleProp } from 'react-native';
-import { useTheme } from '../../theme';
+import { View, StyleSheet, ViewStyle, StyleProp, FlexAlignType, FlexStyle } from 'react-native';
+import { Spacing, useTheme } from '../../theme';
 
 export interface RowProps {
   children: React.ReactNode;
-  align?: 'start' | 'center' | 'end' | 'stretch' | 'baseline';
-  justify?: 'start' | 'center' | 'end' | 'between' | 'around' | 'evenly';
-  gap?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;
+  alignItems?: FlexAlignType;
+  justifyContent?: FlexStyle['justifyContent'];
+  paddingHorizontal?: keyof Spacing;
+  paddingVertical?: keyof Spacing;
+  gap?: keyof Spacing | number;
   wrap?: boolean;
   style?: StyleProp<ViewStyle>;
 }
@@ -16,30 +18,15 @@ export interface RowProps {
  */
 export const Row: React.FC<RowProps> = ({
   children,
-  align = 'center',
-  justify = 'start',
+  alignItems = 'center',
+  justifyContent = 'flex-start',
+  paddingHorizontal = 'none',
+  paddingVertical = 'none',
   gap = 0,
   wrap = false,
   style,
 }) => {
   const { theme } = useTheme();
-
-  const alignItems = {
-    start: 'flex-start' as const,
-    center: 'center' as const,
-    end: 'flex-end' as const,
-    stretch: 'stretch' as const,
-    baseline: 'baseline' as const,
-  };
-
-  const justifyContent = {
-    start: 'flex-start' as const,
-    center: 'center' as const,
-    end: 'flex-end' as const,
-    between: 'space-between' as const,
-    around: 'space-around' as const,
-    evenly: 'space-evenly' as const,
-  };
 
   const gapValue = typeof gap === 'number' ? gap : theme.spacing[gap];
 
@@ -48,9 +35,11 @@ export const Row: React.FC<RowProps> = ({
       style={[
         styles.row,
         {
-          alignItems: alignItems[align],
-          justifyContent: justifyContent[justify],
+          alignItems,
+          justifyContent,
           gap: gapValue,
+          paddingHorizontal: theme.spacing[paddingHorizontal],
+          paddingVertical: theme.spacing[paddingVertical],
           flexWrap: (wrap ? 'wrap' : 'nowrap') as 'wrap' | 'nowrap',
         },
         style,

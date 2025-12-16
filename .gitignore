@@ -132,3 +132,10 @@ local.properties
 *.pem
 *.key
 *.cert
+
+# Verdaccio
+verdaccio/storage/
+verdaccio/plugins/
+verdaccio/htpasswd
+verdaccio/*.log
+.npmrc

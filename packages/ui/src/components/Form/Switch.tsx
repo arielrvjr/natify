@@ -36,7 +36,7 @@ export const Switch: React.FC<SwitchProps> = ({
   );
 
   return (
-    <Row align="center" style={style}>
+    <Row alignItems="center" style={style}>
       {labelPosition === 'left' && labelElement}
 
       <RNSwitch

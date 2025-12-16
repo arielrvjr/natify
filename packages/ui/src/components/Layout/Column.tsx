@@ -5,9 +5,10 @@ import { Spacing, useTheme } from '../../theme';
 export interface ColumnProps {
   children: React.ReactNode;
   alignItems?: FlexAlignType;
+  justifyContent?: FlexStyle['justifyContent'];
   paddingHorizontal?: keyof Spacing;
   paddingVertical?: keyof Spacing;
-  justifyContent?: FlexStyle['justifyContent'];
+
   gap?: keyof Spacing | number;
   style?: StyleProp<ViewStyle>;
 }
