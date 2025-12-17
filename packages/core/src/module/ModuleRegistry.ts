@@ -58,11 +58,11 @@ export class ModuleRegistry {
       );
     }
 
-    // Validar que el módulo tenga al menos una pantalla
-    if (module.screens.length === 0) {
+    // Validar que el módulo tenga al menos una pantalla o un UseCase (módulos compartidos)
+    if (module.screens.length === 0 && module.useCases.length === 0) {
       throw new NativefyError(
         NativefyErrorCode.VALIDATION_ERROR,
-        `Module "${module.id}" must have at least one screen`,
+        `Module "${module.id}" must have at least one screen or one UseCase`,
         undefined,
         { moduleId: module.id },
       );

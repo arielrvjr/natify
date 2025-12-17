@@ -31,8 +31,10 @@ export interface NativefyAppProps {
 
   /**
    * Callback cuando la app está lista
+   * @param modules - Módulos cargados
+   * @param adapters - Adapters disponibles (para usar en UseCases)
    */
-  onReady?: (modules: RegisteredModule[]) => void;
+  onReady?: (modules: RegisteredModule[], adapters: AdapterMap) => void;
 
   /**
    * Callback en caso de error
@@ -169,7 +171,7 @@ export const NativefyApp: React.FC<NativefyAppProps> = ({
 
   const handleModulesLoaded = (loadedModules: RegisteredModule[]) => {
     setIsReady(true);
-    onReady?.(loadedModules);
+    onReady?.(loadedModules, adapters);
   };
 
   const handleError = (err: Error) => {

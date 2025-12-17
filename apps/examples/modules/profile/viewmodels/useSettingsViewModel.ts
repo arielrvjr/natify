@@ -3,27 +3,24 @@ import { Alert } from "react-native";
 import {
   useBaseViewModel,
   useAdapter,
+  useUseCase,
   NavigationPort,
-  StoragePort,
   BiometricPort,
   PermissionPort,
   PermissionStatus,
   ImagePickerPort,
 } from "@nativefy/core";
 import { useTheme } from "@nativefy/ui";
-
-interface AppSettings {
-  biometricsEnabled: boolean;
-  notifications: boolean;
-  darkMode: boolean;
-  language: string;
-}
+import { GetAppPreferencesUseCase } from "../../shared/usecases/GetAppPreferencesUseCase";
+import { UpdateAppPreferencesUseCase } from "../../shared/usecases/UpdateAppPreferencesUseCase";
+import { UpdateDarkModeUseCase } from "../../shared/usecases/UpdateDarkModeUseCase";
+import { AppPreferences } from "../../shared/types/AppPreferences";
 
 export function useSettingsViewModel() {
   const [baseState, { execute }] = useBaseViewModel();
   const { isDark, setDarkMode } = useTheme();
   
-  const [settings, setSettings] = useState<AppSettings>({
+  const [settings, setSettings] = useState<AppPreferences>({
     notifications: true,
     darkMode: false,
     language: "es",
@@ -34,20 +31,23 @@ export function useSettingsViewModel() {
   const [cameraPermissionStatus, setCameraPermissionStatus] = useState<PermissionStatus | null>(null);
 
   const navigation = useAdapter<NavigationPort>("navigation");
-  const storage = useAdapter<StoragePort>("storage");
   const biometrics = useAdapter<BiometricPort>("biometrics");
   const permissions = useAdapter<PermissionPort>("permissions");
   const imagePicker = useAdapter<ImagePickerPort>("imagePicker");
 
-  const updateSetting = useCallback(
-    async <K extends keyof AppSettings>(key: K, value: AppSettings[K]) => {
-      const newSettings = { ...settings, [key]: value };
-      setSettings(newSettings);
+  // UseCases del módulo shared
+  const getPreferences = useUseCase<GetAppPreferencesUseCase>("shared:getAppPreferences");
+  const updatePreferences = useUseCase<UpdateAppPreferencesUseCase>("shared:updateAppPreferences");
+  const updateDarkMode = useUseCase<UpdateDarkModeUseCase>("shared:updateDarkMode");
 
-      // Persistir configuración
-      await execute(() => storage.setItem("app_settings", newSettings));
+  const updateSetting = useCallback(
+    async <K extends keyof AppPreferences>(key: K, value: AppPreferences[K]) => {
+      await execute(async () => {
+        const updated = await updatePreferences.execute({ [key]: value });
+        setSettings(updated);
+      });
     },
-    [settings, storage, execute]
+    [updatePreferences, execute]
   );
 
   const toggleNotifications = useCallback(() => {
@@ -57,12 +57,15 @@ export function useSettingsViewModel() {
   const toggleDarkMode = useCallback(async () => {
     const newDarkMode = !isDark; // Usar isDark del ThemeProvider como fuente de verdad
     
-    // Actualizar el tema globalmente usando ThemeProvider
-    setDarkMode(newDarkMode);
-    
-    // Guardar la preferencia en storage
-    await updateSetting("darkMode", newDarkMode);
-  }, [isDark, setDarkMode, updateSetting]);
+    await execute(async () => {
+      // Actualizar preferencias usando UseCase
+      const updated = await updateDarkMode.execute(newDarkMode);
+      setSettings(updated);
+      
+      // Actualizar el tema globalmente usando ThemeProvider
+      setDarkMode(newDarkMode);
+    });
+  }, [isDark, setDarkMode, updateDarkMode, execute]);
 
   const toggleBiometrics = useCallback(async () => {
     if (!settings.biometricsEnabled) {
@@ -159,14 +162,12 @@ export function useSettingsViewModel() {
   useEffect(() => {
     const loadSettings = async () => {
       try {
-        const savedSettings = await storage.getItem<AppSettings>("app_settings");
-        if (savedSettings) {
-          setSettings(savedSettings);
-          
-          // Sincronizar el tema con el ThemeProvider si hay una preferencia guardada
-          if (savedSettings.darkMode !== isDark) {
-            setDarkMode(savedSettings.darkMode);
-          }
+        const savedSettings = await getPreferences.execute();
+        setSettings(savedSettings);
+        
+        // Sincronizar el tema con el ThemeProvider si hay una preferencia guardada
+        if (savedSettings.darkMode !== isDark) {
+          setDarkMode(savedSettings.darkMode);
         }
       } catch (error) {
         console.error("Error loading settings:", error);

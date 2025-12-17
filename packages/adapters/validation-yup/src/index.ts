@@ -143,7 +143,6 @@ export class YupValidationAdapter implements ValidationPort {
   }
 
   array(): ArrayValidator {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let schema: any = yup.array(); // Yup's array types are complex and don't match our interface exactly
     const builder: ArrayValidator = {
       required: (message?: string) => {

@@ -6,6 +6,7 @@ import { useLoginViewModel } from '../viewmodels/useLoginViewModel';
 
 export function LoginScreen() {
   const { state, actions } = useLoginViewModel();
+
   return (
     <SafeAreaView
       style={{ flex: 1, flexDirection: 'column', flexGrow: 1 }}

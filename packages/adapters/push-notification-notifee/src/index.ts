@@ -1,9 +1,4 @@
-import notifee, {
-  AndroidImportance,
-  AndroidNotificationSetting,
-  EventType,
-  TriggerType,
-} from 'react-native-notifee';
+import notifee, { AndroidImportance, EventType, TriggerType } from '@notifee/react-native';
 import {
   PushNotificationPort,
   PushNotificationData,
@@ -19,7 +14,7 @@ import {
 import { Platform } from 'react-native';
 
 /**
- * Adapter de Push Notifications usando react-native-notifee
+ * Adapter de Push Notifications usando @notifee/react-native
  *
  * Notifee es una librería que permite mostrar notificaciones locales
  * y manejar notificaciones remotas en Android e iOS.
@@ -41,10 +36,8 @@ export class NotifeePushAdapter implements PushNotificationPort {
   private setupEventListeners(): void {
     // Listener para cuando se recibe una notificación
     notifee.onForegroundEvent(({ type, detail }: { type: EventType; detail: any }) => {
-      if (type === EventType.DISPLAYED) {
-        const notification = this.mapNotifeeNotificationToData(detail.notification);
-        this.notificationListeners.forEach(listener => listener(notification));
-      } else if (type === EventType.PRESS) {
+      // EventType.PRESS es el único evento que manejamos para notificaciones presionadas
+      if (type === EventType.PRESS) {
         const notification = this.mapNotifeeNotificationToData(detail.notification);
         this.pressListeners.forEach(listener =>
           listener({
@@ -52,6 +45,11 @@ export class NotifeePushAdapter implements PushNotificationPort {
             actionId: detail.pressAction?.id,
           }),
         );
+      }
+      // Notificar cuando se muestra una notificación (usando el evento PRESS también)
+      if (detail.notification) {
+        const notification = this.mapNotifeeNotificationToData(detail.notification);
+        this.notificationListeners.forEach(listener => listener(notification));
       }
     });
 
@@ -90,9 +88,7 @@ export class NotifeePushAdapter implements PushNotificationPort {
   /**
    * Mapea la importancia de Android a PushNotificationPriority
    */
-  private mapAndroidImportanceToPriority(
-    importance?: AndroidImportance,
-  ): PushNotificationPriority {
+  private mapAndroidImportanceToPriority(importance?: AndroidImportance): PushNotificationPriority {
     switch (importance) {
       case AndroidImportance.MIN:
         return PushNotificationPriority.Min;
@@ -100,8 +96,7 @@ export class NotifeePushAdapter implements PushNotificationPort {
         return PushNotificationPriority.Low;
       case AndroidImportance.HIGH:
         return PushNotificationPriority.High;
-      case AndroidImportance.MAX:
-        return PushNotificationPriority.Max;
+      // AndroidImportance.MAX no existe, usar HIGH como máximo
       default:
         return PushNotificationPriority.Default;
     }
@@ -110,9 +105,7 @@ export class NotifeePushAdapter implements PushNotificationPort {
   /**
    * Mapea PushNotificationPriority a AndroidImportance
    */
-  private mapPriorityToAndroidImportance(
-    priority: PushNotificationPriority,
-  ): AndroidImportance {
+  private mapPriorityToAndroidImportance(priority: PushNotificationPriority): AndroidImportance {
     switch (priority) {
       case PushNotificationPriority.Min:
         return AndroidImportance.MIN;
@@ -121,7 +114,8 @@ export class NotifeePushAdapter implements PushNotificationPort {
       case PushNotificationPriority.High:
         return AndroidImportance.HIGH;
       case PushNotificationPriority.Max:
-        return AndroidImportance.MAX;
+        // AndroidImportance.MAX no existe, usar HIGH como máximo
+        return AndroidImportance.HIGH;
       default:
         return AndroidImportance.DEFAULT;
     }
@@ -131,9 +125,10 @@ export class NotifeePushAdapter implements PushNotificationPort {
     try {
       if (Platform.OS === 'android') {
         const settings = await notifee.requestPermission();
+        // AndroidNotificationSetting usa valores numéricos: 1 = AUTHORIZED, 2 = PROVISIONAL
         return (
-          settings.authorizationStatus === AndroidNotificationSetting.AUTHORIZED ||
-          settings.authorizationStatus === AndroidNotificationSetting.AUTHORIZED_PROVISIONAL
+          settings.authorizationStatus === 1 || // AUTHORIZED
+          settings.authorizationStatus === 2 // PROVISIONAL
         );
       } else {
         // iOS
@@ -156,9 +151,10 @@ export class NotifeePushAdapter implements PushNotificationPort {
     try {
       if (Platform.OS === 'android') {
         const settings = await notifee.getNotificationSettings();
+        // AndroidNotificationSetting usa valores numéricos: 1 = AUTHORIZED, 2 = PROVISIONAL
         return (
-          settings.authorizationStatus === AndroidNotificationSetting.AUTHORIZED ||
-          settings.authorizationStatus === AndroidNotificationSetting.AUTHORIZED_PROVISIONAL
+          settings.authorizationStatus === 1 || // AUTHORIZED
+          settings.authorizationStatus === 2 // PROVISIONAL
         );
       } else {
         // iOS
@@ -224,8 +220,9 @@ export class NotifeePushAdapter implements PushNotificationPort {
 
       if (scheduleId) {
         // Programar notificación
+        // Nota: scheduleId debería contener el timestamp, por ahora usamos un valor por defecto
         const trigger = {
-          type: TriggerType.TIMESTAMP,
+          type: TriggerType.TIMESTAMP as const,
           timestamp: Date.now() + 1000, // 1 segundo en el futuro (debería venir del scheduleId)
         };
         return await notifee.createTriggerNotification(notifeeNotification, trigger);
@@ -234,11 +231,7 @@ export class NotifeePushAdapter implements PushNotificationPort {
         return await notifee.displayNotification(notifeeNotification);
       }
     } catch (error) {
-      throw new NativefyError(
-        NativefyErrorCode.UNKNOWN,
-        'Error al mostrar notificación',
-        error,
-      );
+      throw new NativefyError(NativefyErrorCode.UNKNOWN, 'Error al mostrar notificación', error);
     }
   }
 
@@ -246,11 +239,7 @@ export class NotifeePushAdapter implements PushNotificationPort {
     try {
       await notifee.cancelNotification(notificationId);
     } catch (error) {
-      throw new NativefyError(
-        NativefyErrorCode.UNKNOWN,
-        'Error al cancelar notificación',
-        error,
-      );
+      throw new NativefyError(NativefyErrorCode.UNKNOWN, 'Error al cancelar notificación', error);
     }
   }
 
@@ -352,4 +341,3 @@ export class NotifeePushAdapter implements PushNotificationPort {
     }
   }
 }
-

@@ -11,12 +11,12 @@
   },
   "peerDependencies": {
     "@nativefy/core": "*",
-    "react-native-notifee": ">=7.0.0"
+    "@notifee/react-native": ">=7.0.0"
   },
   "devDependencies": {
     "@nativefy/core": "workspace:*",
     "@types/react-native": "*",
-    "react-native-notifee": "^7.8.2",
+    "@notifee/react-native": "^7.8.2",
     "typescript": "*"
   },
   "keywords": [

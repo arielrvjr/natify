@@ -1,9 +1,5 @@
 import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
-import notifee, {
-  AndroidImportance,
-  AndroidNotificationSetting,
-  EventType,
-} from 'react-native-notifee';
+import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
 import { Platform } from 'react-native';
 import {
   PushNotificationPort,
@@ -41,21 +37,25 @@ export class FirebasePushAdapter implements PushNotificationPort {
    */
   private setupEventListeners(): void {
     // Listener para cuando se recibe una notificación en foreground (Firebase)
-    const unsubscribeForeground = messaging().onMessage(async (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
-      // Mostrar la notificación usando Notifee
-      await this.displayNotificationFromFirebase(remoteMessage);
+    const unsubscribeForeground = messaging().onMessage(
+      async (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
+        // Mostrar la notificación usando Notifee
+        await this.displayNotificationFromFirebase(remoteMessage);
 
-      // Notificar a los listeners
-      const notification = this.mapFirebaseMessageToData(remoteMessage);
-      this.notificationListeners.forEach(listener => listener(notification));
-    });
+        // Notificar a los listeners
+        const notification = this.mapFirebaseMessageToData(remoteMessage);
+        this.notificationListeners.forEach(listener => listener(notification));
+      },
+    );
     this.unsubscribeMessaging.push(unsubscribeForeground);
 
     // Listener para cuando se presiona una notificación en background (Firebase)
-    const unsubscribeBackground = messaging().onNotificationOpenedApp((remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
-      const notification = this.mapFirebaseMessageToData(remoteMessage);
-      this.pressListeners.forEach(listener => listener(notification));
-    });
+    const unsubscribeBackground = messaging().onNotificationOpenedApp(
+      (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
+        const notification = this.mapFirebaseMessageToData(remoteMessage);
+        this.pressListeners.forEach(listener => listener(notification));
+      },
+    );
     this.unsubscribeMessaging.push(unsubscribeBackground);
 
     // Listener para cuando se presiona una notificación que abrió la app (Firebase)
@@ -79,17 +79,19 @@ export class FirebasePushAdapter implements PushNotificationPort {
     this.unsubscribeMessaging.push(unsubscribeToken);
 
     // Listener para cuando se presiona una notificación (Notifee)
-    const unsubscribeNotifeePress = notifee.onForegroundEvent(({ type, detail }: { type: EventType; detail: any }) => {
-      if (type === EventType.PRESS) {
-        const notification = this.mapNotifeeNotificationToData(detail.notification);
-        this.pressListeners.forEach(listener =>
-          listener({
-            ...notification,
-            actionId: detail.pressAction?.id,
-          }),
-        );
-      }
-    });
+    const unsubscribeNotifeePress = notifee.onForegroundEvent(
+      ({ type, detail }: { type: EventType; detail: any }) => {
+        if (type === EventType.PRESS) {
+          const notification = this.mapNotifeeNotificationToData(detail.notification);
+          this.pressListeners.forEach(listener =>
+            listener({
+              ...notification,
+              actionId: detail.pressAction?.id,
+            }),
+          );
+        }
+      },
+    );
     this.unsubscribeNotifee.push(unsubscribeNotifeePress);
 
     // Listener para cuando se presiona una notificación en background (Notifee)
@@ -117,8 +119,11 @@ export class FirebasePushAdapter implements PushNotificationPort {
       body: remoteMessage.notification?.body || '',
       data: remoteMessage.data || {},
       largeImageUrl: remoteMessage.notification?.android?.imageUrl,
-      sound: remoteMessage.notification?.sound,
-      priority: this.mapFirebasePriorityToPriority(remoteMessage.notification?.android?.priority),
+      sound:
+        Platform.OS === 'ios'
+          ? remoteMessage.notification?.ios?.sound?.toString()
+          : remoteMessage.notification?.android?.sound,
+      //priority: this.mapFirebasePriorityToPriority(remoteMessage.notification?.android?.priority),
     };
   }
 
@@ -163,9 +168,7 @@ export class FirebasePushAdapter implements PushNotificationPort {
   /**
    * Mapea la importancia de Android a PushNotificationPriority
    */
-  private mapAndroidImportanceToPriority(
-    importance?: AndroidImportance,
-  ): PushNotificationPriority {
+  private mapAndroidImportanceToPriority(importance?: AndroidImportance): PushNotificationPriority {
     switch (importance) {
       case AndroidImportance.MIN:
         return PushNotificationPriority.Min;
@@ -173,8 +176,6 @@ export class FirebasePushAdapter implements PushNotificationPort {
         return PushNotificationPriority.Low;
       case AndroidImportance.HIGH:
         return PushNotificationPriority.High;
-      case AndroidImportance.MAX:
-        return PushNotificationPriority.Max;
       default:
         return PushNotificationPriority.Default;
     }
@@ -183,9 +184,7 @@ export class FirebasePushAdapter implements PushNotificationPort {
   /**
    * Mapea PushNotificationPriority a AndroidImportance
    */
-  private mapPriorityToAndroidImportance(
-    priority: PushNotificationPriority,
-  ): AndroidImportance {
+  private mapPriorityToAndroidImportance(priority: PushNotificationPriority): AndroidImportance {
     switch (priority) {
       case PushNotificationPriority.Min:
         return AndroidImportance.MIN;
@@ -193,8 +192,6 @@ export class FirebasePushAdapter implements PushNotificationPort {
         return AndroidImportance.LOW;
       case PushNotificationPriority.High:
         return AndroidImportance.HIGH;
-      case PushNotificationPriority.Max:
-        return AndroidImportance.MAX;
       default:
         return AndroidImportance.DEFAULT;
     }
@@ -224,7 +221,7 @@ export class FirebasePushAdapter implements PushNotificationPort {
           },
         },
         ios: {
-          sound: notification.sound || 'default',
+          sound: notification.ios?.sound?.toString() || 'default',
         },
       });
     } catch (error) {
@@ -243,11 +240,11 @@ export class FirebasePushAdapter implements PushNotificationPort {
       if (Platform.OS === 'android') {
         // También solicitar permisos de Notifee en Android
         const notifeeSettings = await notifee.requestPermission();
+        // AndroidNotificationSetting usa valores numéricos: 1 = AUTHORIZED, 2 = PROVISIONAL
         return (
           enabled &&
-          (notifeeSettings.authorizationStatus === AndroidNotificationSetting.AUTHORIZED ||
-            notifeeSettings.authorizationStatus ===
-              AndroidNotificationSetting.AUTHORIZED_PROVISIONAL)
+          (notifeeSettings.authorizationStatus === 1 || // AUTHORIZED
+            notifeeSettings.authorizationStatus === 2) // PROVISIONAL
         );
       }
 
@@ -270,11 +267,11 @@ export class FirebasePushAdapter implements PushNotificationPort {
 
       if (Platform.OS === 'android') {
         const notifeeSettings = await notifee.getNotificationSettings();
+        // AndroidNotificationSetting usa valores numéricos: 1 = AUTHORIZED, 2 = PROVISIONAL
         return (
           enabled &&
-          (notifeeSettings.authorizationStatus === AndroidNotificationSetting.AUTHORIZED ||
-            notifeeSettings.authorizationStatus ===
-              AndroidNotificationSetting.AUTHORIZED_PROVISIONAL)
+          (notifeeSettings.authorizationStatus === 1 || // AUTHORIZED
+            notifeeSettings.authorizationStatus === 2) // PROVISIONAL
         );
       }
 
@@ -320,7 +317,7 @@ export class FirebasePushAdapter implements PushNotificationPort {
 
   async displayNotification(
     notification: PushNotificationData,
-    scheduleId?: string,
+    _scheduleId?: string,
   ): Promise<string> {
     try {
       // Usar Notifee para mostrar notificaciones locales
@@ -357,11 +354,7 @@ export class FirebasePushAdapter implements PushNotificationPort {
 
       return await notifee.displayNotification(notifeeNotification);
     } catch (error) {
-      throw new NativefyError(
-        NativefyErrorCode.UNKNOWN,
-        'Error al mostrar notificación',
-        error,
-      );
+      throw new NativefyError(NativefyErrorCode.UNKNOWN, 'Error al mostrar notificación', error);
     }
   }
 
@@ -369,11 +362,7 @@ export class FirebasePushAdapter implements PushNotificationPort {
     try {
       await notifee.cancelNotification(notificationId);
     } catch (error) {
-      throw new NativefyError(
-        NativefyErrorCode.UNKNOWN,
-        'Error al cancelar notificación',
-        error,
-      );
+      throw new NativefyError(NativefyErrorCode.UNKNOWN, 'Error al cancelar notificación', error);
     }
   }
 
@@ -475,4 +464,3 @@ export class FirebasePushAdapter implements PushNotificationPort {
     }
   }
 }
-

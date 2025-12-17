@@ -97,20 +97,23 @@ function createAppNavigator(
     const { modules, isLoading } = useModules();
 
     // Determinar la ruta inicial
+    // Filtrar módulos sin pantallas (módulos compartidos)
+    const modulesWithScreens = useMemo(() => modules.filter(m => m.screens.length > 0), [modules]);
+
     const initialRouteName = useMemo(() => {
       if (initialModule) {
-        const module = modules.find(m => m.id === initialModule);
-        if (module) {
+        const module = modulesWithScreens.find(m => m.id === initialModule);
+        if (module && module.initialRoute) {
           return `${module.id}/${module.initialRoute}`;
         }
       }
-      // Por defecto, la primera pantalla del primer módulo
-      const firstModule = modules[0];
-      if (firstModule) {
+      // Por defecto, la primera pantalla del primer módulo con pantallas
+      const firstModule = modulesWithScreens[0];
+      if (firstModule && firstModule.initialRoute) {
         return `${firstModule.id}/${firstModule.initialRoute}`;
       }
       return undefined;
-    }, [modules, initialModule]);
+    }, [modulesWithScreens, initialModule]);
 
     if (isLoading || !initialRouteName || modules.length === 0) {
       return null;
@@ -118,7 +121,7 @@ function createAppNavigator(
 
     return (
       <Stack.Navigator initialRouteName={initialRouteName} screenOptions={screenOptions as any}>
-        {modules.map(module =>
+        {modulesWithScreens.map(module =>
           module.screens.map(screen => (
             <Stack.Screen
               key={`${module.id}/${screen.name}`}

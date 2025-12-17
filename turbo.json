@@ -7,6 +7,13 @@
       "inputs": ["src/**/*.ts", "src/**/*.tsx", "tsconfig.json", "package.json"]
     },
     "lint": {
+      "dependsOn": ["^lint"],
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "tsconfig.json", "package.json"],
+      "outputs": []
+    },
+    "lint:fix": {
+      "dependsOn": ["^lint:fix"],
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "tsconfig.json", "package.json"],
       "outputs": []
     },
     "format": {

@@ -18,7 +18,7 @@ export class ZustandStoreAdapter implements StateManagerPort {
     // Esto desacopla a los componentes de saber que es "zustand"
     return {
       // El hook selector: permite useStore(state => state.user)
-      // eslint-disable-next-line react-hooks/rules-of-hooks
+
       useStore: <U>(selector?: (state: T) => U) => {
         // Siempre llamamos el hook, pero con diferentes selectores
         // El linter no puede detectar que siempre llamamos el hook

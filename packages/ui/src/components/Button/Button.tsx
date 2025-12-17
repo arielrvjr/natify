@@ -43,32 +43,36 @@ export const Button: React.FC<ButtonProps> = ({
 
   const getVariantStyles = (): { container: ViewStyle; text: TextStyle } => {
     const isDisabled = disabled || loading;
-    if (isDisabled)
-      return {
-        container: {
-          backgroundColor: theme.colors.action.disabled,
-        },
-        text: {
-          color: theme.colors.content.tertiary,
-        },
-      };
+
     switch (variant) {
       case 'secondary':
         return {
           container: {
-            backgroundColor: theme.colors.surface.secondary,
+            backgroundColor: isDisabled
+              ? theme.colors.action.disabled
+              : theme.colors.surface.secondary,
           },
-          text: { color: theme.colors.action.primary },
+          text: {
+            color: isDisabled ? theme.colors.content.tertiary : theme.colors.action.primary,
+          },
         };
       case 'ghost':
         return {
           container: { backgroundColor: 'transparent' },
-          text: { color: theme.colors.action.primary },
+          text: {
+            color: isDisabled ? theme.colors.content.tertiary : theme.colors.action.primary,
+          },
         };
       default: //primary
         return {
-          container: { backgroundColor: theme.colors.action.primary },
-          text: { color: theme.colors.content.onPrimary },
+          container: {
+            backgroundColor: isDisabled
+              ? theme.colors.action.disabled
+              : theme.colors.action.primary,
+          },
+          text: {
+            color: isDisabled ? theme.colors.content.tertiary : theme.colors.content.onPrimary,
+          },
         };
     }
   };

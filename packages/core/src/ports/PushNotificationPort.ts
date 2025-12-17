@@ -183,10 +183,7 @@ export interface PushNotificationPort extends Port {
    * @param scheduleId ID opcional para programar la notificación
    * @returns ID de la notificación creada
    */
-  displayNotification(
-    notification: PushNotificationData,
-    scheduleId?: string,
-  ): Promise<string>;
+  displayNotification(notification: PushNotificationData, scheduleId?: string): Promise<string>;
 
   /**
    * Cancela una notificación programada
@@ -210,18 +207,14 @@ export interface PushNotificationPort extends Port {
    * @param listener Función callback
    * @returns Función para remover el listener
    */
-  onNotificationReceived(
-    listener: PushNotificationListener,
-  ): () => void;
+  onNotificationReceived(listener: PushNotificationListener): () => void;
 
   /**
    * Registra un listener para cuando se presiona una notificación
    * @param listener Función callback
    * @returns Función para remover el listener
    */
-  onNotificationPressed(
-    listener: PushNotificationPressListener,
-  ): () => void;
+  onNotificationPressed(listener: PushNotificationPressListener): () => void;
 
   /**
    * Registra un listener para cuando se actualiza el token
@@ -252,4 +245,3 @@ export interface PushNotificationPort extends Port {
    */
   deleteChannel?(channelId: string): Promise<void>;
 }
-

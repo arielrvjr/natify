@@ -1,8 +1,13 @@
 import { createModule } from "@nativefy/core";
+import { createTopAppBarHeader } from "@nativefy/ui";
+import React from "react";
 
 // Screens
 import { ProductListScreen } from "./screens/ProductListScreen";
 import { ProductDetailScreen } from "./screens/ProductDetailScreen";
+
+// Components
+import { ProductListHeaderActions } from "./components/ProductListHeaderActions";
 
 // UseCases
 import { GetProductsUseCase } from "./usecases/GetProductsUseCase";
@@ -19,7 +24,17 @@ export const ProductsModule = createModule("products", "Products")
   .screen({
     name: "ProductList",
     component: ProductListScreen,
-    options: { headerShown: false },
+    options: createTopAppBarHeader({
+      title: "Productos",
+      actions: [
+        {
+          icon: React.createElement(ProductListHeaderActions),
+          onPress: () => {
+            // El onPress se maneja dentro del Avatar del componente
+          },
+        },
+      ],
+    }),
   })
   .screen({
     name: "ProductDetail",

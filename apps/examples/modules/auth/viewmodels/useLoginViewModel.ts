@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useFormik } from "formik";
 import {
   useBaseViewModel,
@@ -7,7 +7,9 @@ import {
   NavigationPort,
   ValidationPort,
 } from "@nativefy/core";
+import { useTheme } from "@nativefy/ui";
 import { LoginUseCase } from "../usecases/LoginUseCase";
+import { GetAppPreferencesUseCase } from "../../shared/usecases/GetAppPreferencesUseCase";
 
 interface LoginFormValues {
   email: string;
@@ -26,6 +28,25 @@ export function useLoginViewModel() {
   const loginUseCase = useUseCase<LoginUseCase>("auth:login");
   const navigation = useAdapter<NavigationPort>("navigation");
   const validator = useAdapter<ValidationPort>("validation");
+  const { setDarkMode } = useTheme();
+  const getPreferences = useUseCase<GetAppPreferencesUseCase>(
+    "shared:getAppPreferences",
+  );
+
+  // Cargar preferencias al montar (primera pantalla del módulo inicial)
+  useEffect(() => {
+    const loadPreferences = async () => {
+      try {
+        const preferences = await getPreferences.execute();
+        // Sincronizar dark mode con ThemeProvider
+        setDarkMode(preferences.darkMode);
+      } catch (error) {
+        console.error("[useLoginViewModel] Error loading preferences:", error);
+      }
+    };
+
+    loadPreferences();
+  }, [getPreferences, setDarkMode]);
 
   // Crear esquema de validación usando ValidationPort
   const validationSchema = validator.createSchema({
@@ -69,17 +90,19 @@ export function useLoginViewModel() {
     navigation.navigate("auth/Register");
   }, [navigation]);
 
-  // Limpiar error del campo cuando cambia (solo si ya fue tocado)
+  // Validar campo cuando cambia si ya fue tocado o tiene un error
   const handleSetEmail = useCallback((value: string) => {
     formik.setFieldValue("email", value, false);
-    if (formik.touched.email) {
+    // Validar si el campo ya fue tocado o tiene un error (para quitar el error cuando se corrige)
+    if (formik.touched.email || formik.errors.email) {
       formik.validateField("email");
     }
   }, [formik]);
 
   const handleSetPassword = useCallback((value: string) => {
     formik.setFieldValue("password", value, false);
-    if (formik.touched.password) {
+    // Validar si el campo ya fue tocado o tiene un error (para quitar el error cuando se corrige)
+    if (formik.touched.password || formik.errors.password) {
       formik.validateField("password");
     }
   }, [formik]);

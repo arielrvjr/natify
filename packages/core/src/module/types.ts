@@ -147,8 +147,9 @@ export interface ModuleDefinition<C extends RequiredCapability[] = RequiredCapab
 
   /**
    * Ruta inicial del módulo
+   * Opcional para módulos compartidos sin pantallas
    */
-  initialRoute: string;
+  initialRoute?: string;
 
   /**
    * UseCases del módulo

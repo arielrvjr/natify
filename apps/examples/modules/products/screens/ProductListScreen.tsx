@@ -11,7 +11,6 @@ import {
   Spacer,
   Loading,
   EmptyState,
-  Avatar,
 } from '@nativefy/ui';
 import { useProductListViewModel } from '../viewmodels/useProductListViewModel';
 import { Product } from '../usecases/GetProductsUseCase';
@@ -78,13 +77,8 @@ export function ProductListScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
+    <SafeAreaView style={{ flex: 1 }} edges={['bottom']}>
       <Container padding={'md'}>
-        <Row justifyContent="space-between" alignItems="center">
-          <Text variant="title">Productos</Text>
-          <Avatar name="Usuario" size="md" onPress={actions.goToProfile} />
-        </Row>
-        <Spacer size="sm" />
         <FlatList
           data={state.products}
           renderItem={renderProduct}

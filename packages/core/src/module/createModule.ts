@@ -78,7 +78,7 @@ export function createModule<C extends RequiredCapability[] = []>(
     requires: [] as unknown as C,
     screens: [],
     useCases: [],
-    initialRoute: '',
+    initialRoute: undefined,
   };
 
   const builder: ModuleBuilder<C> = {
@@ -122,10 +122,16 @@ export function createModule<C extends RequiredCapability[] = []>(
         throw new Error('Module must have an id');
       }
 
+      // Módulos sin pantallas (compartidos) deben tener al menos un UseCase
       if (definition.screens.length === 0) {
-        throw new Error(`Module "${definition.id}" must have at least one screen`);
+        if (definition.useCases.length === 0) {
+          throw new Error(`Module "${definition.id}" must have at least one screen or one UseCase`);
+        }
+        // Módulos compartidos no necesitan initialRoute
+        return definition;
       }
 
+      // Módulos con pantallas deben tener initialRoute
       if (!definition.initialRoute) {
         definition.initialRoute = definition.screens[0].name;
       }

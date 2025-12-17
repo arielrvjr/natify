@@ -12,7 +12,12 @@ import { RnPermissionsAdapter } from '@nativefy-adapter/permissions-rn';
 import { RnImagePickerAdapter } from '@nativefy-adapter/image-picker-rn';
 import { YupValidationAdapter } from '@nativefy-adapter/validation-yup';
 // Módulos
-import { AuthModule, ProductsModule, ProfileModule } from './modules';
+import {
+  AuthModule,
+  ProductsModule,
+  ProfileModule,
+  SharedModule,
+} from './modules';
 import { ThemeProvider, useTheme } from '@nativefy/ui';
 
 // Crear adapters
@@ -68,7 +73,7 @@ const adapters = {
 };
 
 // Módulos de la app
-const modules = [AuthModule, ProductsModule, ProfileModule];
+const modules = [SharedModule, AuthModule, ProductsModule, ProfileModule];
 
 /**
  * Componente interno que usa el tema para configurar StatusBar y navegación
