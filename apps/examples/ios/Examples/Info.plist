@@ -34,11 +34,15 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Esta app necesita acceso a la cámara para tomar fotos</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>Necesitamos acceso a la cámara para tomar fotos</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Esta app necesita acceso a la galería para seleccionar imágenes</string>
+	<string>Necesitamos acceso a tus fotos</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Necesitamos tu ubicación para mostrarte lugares cercanos</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Necesitamos acceso al micrófono para grabar audio</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Necesitamos acceso a Face ID para autenticación segura</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

@@ -9,7 +9,6 @@ import React, {
 } from 'react';
 import { ModuleRegistry } from './ModuleRegistry';
 import { ModuleDefinition, RegisteredModule } from './types';
-import { useNativefy } from '../context';
 import { useDIContainer } from '../di';
 
 interface ModuleContextValue {
@@ -52,7 +51,6 @@ export const ModuleProvider: React.FC<ModuleProviderProps> = ({
   onError,
   children,
 }) => {
-  const nativefy = useNativefy();
   const container = useDIContainer();
   const [registry] = useState(() => new ModuleRegistry(container));
   const [modules, setModules] = useState<RegisteredModule[]>([]);
@@ -65,8 +63,8 @@ export const ModuleProvider: React.FC<ModuleProviderProps> = ({
       setError(null);
 
       try {
-        // Configurar adapters disponibles
-        registry.setAdapters(nativefy);
+        // Los adapters ya están registrados en DI por AdapterRegistry
+        // El ModuleRegistry los obtiene automáticamente del contenedor DI
 
         // Registrar todos los módulos iniciales
         const loadedModules: RegisteredModule[] = [];

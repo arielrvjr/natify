@@ -1,9 +1,6 @@
 // Ports
 export * from './ports';
 
-// Context
-export * from './context';
-
 // Errors
 export * from './errors';
 

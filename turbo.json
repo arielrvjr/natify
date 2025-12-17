@@ -3,7 +3,8 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build", "lint"],
-      "outputs": ["dist/**", "lib/**"]
+      "outputs": ["dist/**", "lib/**"],
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "tsconfig.json", "package.json"]
     },
     "lint": {
       "outputs": []
@@ -18,5 +19,9 @@
       "cache": false,
       "persistent": true
     }
-  }
+  },
+  "globalDependencies": [
+    "tsconfig.base.json",
+    "tsconfig.json"
+  ]
 }

@@ -1,0 +1,30 @@
+{
+  "name": "@nativefy-adapter/push-notification-notifee",
+  "version": "0.0.1",
+  "description": "Push Notification adapter using react-native-notifee",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix"
+  },
+  "peerDependencies": {
+    "@nativefy/core": "*",
+    "react-native-notifee": ">=7.0.0"
+  },
+  "devDependencies": {
+    "@nativefy/core": "workspace:*",
+    "@types/react-native": "*",
+    "react-native-notifee": "^7.8.2",
+    "typescript": "*"
+  },
+  "keywords": [
+    "react-native",
+    "push-notification",
+    "notifee",
+    "nativefy"
+  ],
+  "license": "MIT"
+}
+

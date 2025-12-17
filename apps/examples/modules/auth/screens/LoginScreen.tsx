@@ -34,7 +34,8 @@ export function LoginScreen() {
                 autoCapitalize="none"
                 autoCorrect={false}
                 editable={!state.isLoading}
-                error={state.error?.message}
+                error={state.fieldErrors?.email}
+                onBlur={actions.handleEmailBlur}
               />
 
               <Input
@@ -44,6 +45,8 @@ export function LoginScreen() {
                 placeholder="Ingresa tu contraseña"
                 secureTextEntry
                 editable={!state.isLoading}
+                error={state.fieldErrors?.password}
+                onBlur={actions.handlePasswordBlur}
               />
 
               <Button
@@ -51,7 +54,7 @@ export function LoginScreen() {
                 onPress={actions.login}
                 variant="primary"
                 loading={state.isLoading}
-                disabled={state.isLoading}
+                disabled={state.isLoading || !state.isFormValid}
                 fullWidth
               />
 

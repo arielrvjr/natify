@@ -18,3 +18,6 @@ export * from './Form';
 
 // Display
 export * from './Display';
+
+// Icon
+export * from './Icon';

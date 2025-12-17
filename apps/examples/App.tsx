@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { StrictMode } from 'react';
 import { StatusBar, Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -80,7 +80,9 @@ function ThemedApp() {
     <>
       <StatusBar
         barStyle={isDark ? 'light-content' : 'dark-content'}
-        backgroundColor={Platform.OS === 'android' ? theme.colors.surface.primary : undefined}
+        backgroundColor={
+          Platform.OS === 'android' ? theme.colors.surface.primary : undefined
+        }
         translucent={Platform.OS === 'android'}
       />
       <NativefyApp
@@ -117,11 +119,13 @@ function ThemedApp() {
 
 function App() {
   return (
-    <SafeAreaProvider>
-      <ThemeProvider>
-        <ThemedApp />
-      </ThemeProvider>
-    </SafeAreaProvider>
+    <StrictMode>
+      <SafeAreaProvider>
+        <ThemeProvider>
+          <ThemedApp />
+        </ThemeProvider>
+      </SafeAreaProvider>
+    </StrictMode>
   );
 }
 

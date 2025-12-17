@@ -1,4 +1,5 @@
 import { createModule } from "@nativefy/core";
+import { createTopAppBarHeader } from "@nativefy/ui";
 import { ProfileScreen } from "./screens/ProfileScreen";
 import { SettingsScreen } from "./screens/SettingsScreen";
 import { GetProfileUseCase } from "./usecases/GetProfileUseCase";
@@ -8,12 +9,18 @@ export const ProfileModule = createModule("profile", "Profile")
   .screen({
     name: "Profile",
     component: ProfileScreen,
-    options: { headerShown: false },
+    options: createTopAppBarHeader({
+      title: "Perfil",
+      showBack: true,
+    }),
   })
   .screen({
     name: "Settings",
     component: SettingsScreen,
-    options: { title: "Configuración" },
+    options: createTopAppBarHeader({
+      title: "Configuración",
+      showBack: true,
+    }),
   })
   // Tipos inferidos automáticamente
   .useCase("getProfile", (adapters) =>

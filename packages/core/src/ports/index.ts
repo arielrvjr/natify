@@ -8,3 +8,4 @@ export * from './AnalyticsPort';
 export * from './NavigationPort';
 export * from './ImagePickerPort';
 export * from './ValidationPort';
+export * from './PushNotificationPort';

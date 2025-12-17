@@ -1,9 +1,9 @@
-import React, { ReactNode, useState, ComponentType } from 'react';
+import React, { ReactNode, useState, ComponentType, useEffect } from 'react';
 import { View, ActivityIndicator, StyleSheet, Text } from 'react-native';
-import { NativefyProvider } from '../context/NativefyProvider';
-import { DIProvider, container } from '../di';
+import { DIProvider, container, useDIContainer } from '../di';
 import { ModuleProvider } from '../module/ModuleProvider';
 import { AdapterMap, ModuleDefinition, RegisteredModule } from '../module/types';
+import { Port } from '../ports/Port';
 
 /**
  * Props del componente NativefyApp
@@ -89,8 +89,8 @@ interface NavigationAdapterWithComponents {
  * Componente principal de Nativefy
  *
  * Encapsula toda la configuración necesaria:
- * - NativefyProvider (adapters)
  * - DIProvider (inyección de dependencias)
+ * - AdapterRegistry (registra adapters en DI)
  * - ModuleProvider (sistema de módulos)
  * - NavigationContainer + AppNavigator
  *
@@ -111,6 +111,30 @@ interface NavigationAdapterWithComponents {
  * }
  * ```
  */
+/**
+ * Componente interno que registra adapters en DI
+ */
+const AdapterRegistry: React.FC<{ adapters: AdapterMap }> = ({ adapters }) => {
+  const container = useDIContainer();
+
+  useEffect(() => {
+    // Registrar todos los adapters como singletons en el contenedor DI
+    // Esto permite que UseCases y otros servicios resuelvan adapters directamente
+    Object.entries(adapters).forEach(([key, adapter]) => {
+      // Registrar por nombre (ej: "http", "storage")
+      container.instance(`adapter:${key}`, adapter);
+
+      // También registrar por capability para búsqueda por tipo
+      if (adapter && typeof adapter === 'object' && 'capability' in adapter) {
+        const capability = (adapter as Port).capability;
+        container.instance(`adapter:${capability}`, adapter);
+      }
+    });
+  }, [adapters, container]);
+
+  return null;
+};
+
 export const NativefyApp: React.FC<NativefyAppProps> = ({
   adapters,
   modules,
@@ -173,30 +197,25 @@ export const NativefyApp: React.FC<NativefyAppProps> = ({
   }
 
   return (
-    <NativefyProvider config={adapters}>
-      <DIProvider container={container}>
-        <ModuleProvider
-          modules={modules}
-          onModulesLoaded={handleModulesLoaded}
-          onError={handleError}
+    <DIProvider container={container}>
+      <AdapterRegistry adapters={adapters} />
+      <ModuleProvider modules={modules} onModulesLoaded={handleModulesLoaded} onError={handleError}>
+        <NavigationContainer
+          theme={navigationTheme}
+          deeplinkConfig={navigationAdapter.deeplinkConfig}
         >
-          <NavigationContainer 
-            theme={navigationTheme}
-            deeplinkConfig={navigationAdapter.deeplinkConfig}
-          >
-            {!isReady ? (
-              splashScreen || <DefaultSplash />
-            ) : (
-              <AppNavigator
-                modules={modules}
-                initialModule={initialModule}
-                screenOptions={screenOptions}
-              />
-            )}
-          </NavigationContainer>
-        </ModuleProvider>
-      </DIProvider>
-    </NativefyProvider>
+          {!isReady ? (
+            splashScreen || <DefaultSplash />
+          ) : (
+            <AppNavigator
+              modules={modules}
+              initialModule={initialModule}
+              screenOptions={screenOptions}
+            />
+          )}
+        </NavigationContainer>
+      </ModuleProvider>
+    </DIProvider>
   );
 };
 

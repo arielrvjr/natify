@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../theme';
 import { Text } from '../Text';
 import { Row } from '../Layout';
+import { Icon } from '../Icon';
 
 export interface TopAppBarAction {
   icon?: React.ReactNode;
@@ -82,79 +83,78 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
   const bgColor = backgroundColor || theme.colors.surface.secondary;
 
   return (
-    <>
-      <View
-        style={[
-          styles.container,
-          {
-            backgroundColor: bgColor,
-            paddingTop: insets.top,
-            ...(elevated && theme.shadows.sm),
-          },
-          style,
-        ]}
-      >
-        <View style={styles.content}>
-          <Row alignItems="center" justifyContent="space-between" style={styles.row}>
-            {/* Lado izquierdo: Back button o título */}
-            <Row alignItems="center" style={styles.leftSection}>
-              {showBack && (
-                <TouchableOpacity
-                  onPress={onBackPress}
-                  style={styles.backButton}
-                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                >
-                  <Text variant="body" color="primary">
-                    ←
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: bgColor,
+          paddingTop: insets.top,
+          ...(elevated && theme.shadows.sm),
+        },
+        style,
+      ]}
+    >
+      <View style={styles.content}>
+        <Row
+          alignItems="center"
+          justifyContent="space-between"
+          padding="md"
+          style={styles.row}
+          id="top-app-bar-content"
+        >
+          <Row alignItems="center" style={styles.leftSection}>
+            {showBack && (
+              <TouchableOpacity
+                onPress={onBackPress}
+                style={styles.backButton}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
+                <Icon name="ArrowLeft" size={24} color="primary" />
+              </TouchableOpacity>
+            )}
+
+            {children || (
+              <View style={styles.titleContainer}>
+                {title && (
+                  <Text variant="title" color="primary" numberOfLines={1}>
+                    {title}
                   </Text>
-                </TouchableOpacity>
-              )}
-
-              {children || (
-                <View style={styles.titleContainer}>
-                  {title && (
-                    <Text variant="title" color="primary" numberOfLines={1}>
-                      {title}
-                    </Text>
-                  )}
-                  {subtitle && (
-                    <Text variant="caption" color="secondary" numberOfLines={1}>
-                      {subtitle}
-                    </Text>
-                  )}
-                </View>
-              )}
-            </Row>
-
-            {/* Lado derecho: Acciones */}
-            {actions.length > 0 && (
-              <Row alignItems="center" gap="sm">
-                {actions.map((action, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={action.onPress}
-                    disabled={action.disabled}
-                    style={[styles.actionButton, action.disabled && styles.actionButtonDisabled]}
-                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                  >
-                    {action.icon && <View style={styles.actionIcon}>{action.icon}</View>}
-                    {action.label && (
-                      <Text
-                        variant="label"
-                        color={action.disabled ? 'tertiary' : 'primary'}
-                        style={styles.actionLabel}
-                      >
-                        {action.label}
-                      </Text>
-                    )}
-                  </TouchableOpacity>
-                ))}
-              </Row>
+                )}
+                {subtitle && (
+                  <Text variant="caption" color="secondary" numberOfLines={1}>
+                    {subtitle}
+                  </Text>
+                )}
+              </View>
             )}
           </Row>
-        </View>
+          {actions.length > 0 && (
+            <Row alignItems="center" gap="sm">
+              {actions.map((action, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={action.onPress}
+                  disabled={action.disabled}
+                  style={[styles.actionButton, action.disabled && styles.actionButtonDisabled]}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                >
+                  {action.icon && <View style={styles.actionIcon}>{action.icon}</View>}
+                  {action.label && (
+                    <Text
+                      variant="label"
+                      color={action.disabled ? 'tertiary' : 'primary'}
+                      style={styles.actionLabel}
+                    >
+                      {action.label}
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              ))}
+            </Row>
+          )}
+        </Row>
       </View>
-    </>
+    </View>
   );
 };
 

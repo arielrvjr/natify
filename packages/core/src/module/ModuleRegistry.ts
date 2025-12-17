@@ -1,34 +1,54 @@
 import { ModuleDefinition, RegisteredModule, AdapterMap, ScreenDefinition } from './types';
 import { DIContainer } from '../di/Container';
 import { NativefyError, NativefyErrorCode } from '../errors';
+import { Port } from '../ports/Port';
 
 /**
  * Registry central de módulos
  *
  * Maneja el registro, validación y resolución de módulos
  * junto con sus dependencias.
+ * Ahora obtiene los adapters directamente del contenedor DI.
  */
 export class ModuleRegistry {
   private modules = new Map<string, RegisteredModule>();
-  private availableAdapters: AdapterMap = {};
 
   constructor(private diContainer: DIContainer) {}
 
   /**
-   * Configura los adapters disponibles globalmente
+   * Obtiene los adapters disponibles del contenedor DI
    */
-  setAdapters(adapters: AdapterMap): void {
-    this.availableAdapters = adapters;
+  private getAvailableAdapters(): AdapterMap {
+    const adapters: AdapterMap = {};
+    const adapterKeys = this.diContainer.getKeys().filter(key => key.startsWith('adapter:'));
+
+    for (const key of adapterKeys) {
+      const adapter = this.diContainer.tryResolve<Port>(key);
+      if (adapter) {
+        // Usar el capability como key principal
+        adapters[adapter.capability] = adapter;
+        // También mantener por nombre si es diferente
+        const name = key.replace('adapter:', '');
+        if (name !== adapter.capability) {
+          adapters[name] = adapter;
+        }
+      }
+    }
+
+    return adapters;
   }
 
   /**
    * Registra un módulo
    */
   async register(module: ModuleDefinition): Promise<RegisteredModule> {
+    // Obtener adapters disponibles del contenedor DI
+    const availableAdapters = this.getAvailableAdapters();
+
     // Validar que las capacidades requeridas estén disponibles
     // Convertir a string[] ya que todas las keys de CapabilityPortMap son strings
     const requiredCapabilities = module.requires as string[];
-    const missingCapabilities = this.validateCapabilities(requiredCapabilities);
+    const missingCapabilities = this.validateCapabilities(requiredCapabilities, availableAdapters);
     if (missingCapabilities.length > 0) {
       throw new NativefyError(
         NativefyErrorCode.VALIDATION_ERROR,
@@ -49,7 +69,7 @@ export class ModuleRegistry {
     }
 
     // Obtener solo los adapters que el módulo necesita
-    const moduleAdapters = this.getAdaptersForModule(requiredCapabilities);
+    const moduleAdapters = this.getAdaptersForModule(requiredCapabilities, availableAdapters);
 
     // Registrar UseCases en el DI Container
     for (const useCase of module.useCases) {
@@ -136,10 +156,10 @@ export class ModuleRegistry {
   /**
    * Valida que las capacidades requeridas estén disponibles
    */
-  private validateCapabilities(required: string[]): string[] {
+  private validateCapabilities(required: string[], availableAdapters: AdapterMap): string[] {
     const missing: string[] = [];
     for (const capability of required) {
-      if (!this.availableAdapters[capability]) {
+      if (!availableAdapters[capability]) {
         missing.push(capability);
       }
     }
@@ -149,11 +169,11 @@ export class ModuleRegistry {
   /**
    * Obtiene los adapters necesarios para un módulo
    */
-  private getAdaptersForModule(required: string[]): AdapterMap {
+  private getAdaptersForModule(required: string[], availableAdapters: AdapterMap): AdapterMap {
     const adapters: AdapterMap = {};
     for (const capability of required) {
-      if (this.availableAdapters[capability]) {
-        adapters[capability] = this.availableAdapters[capability];
+      if (availableAdapters[capability]) {
+        adapters[capability] = availableAdapters[capability];
       }
     }
     return adapters;

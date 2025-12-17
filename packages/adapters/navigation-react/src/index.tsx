@@ -42,23 +42,23 @@ export interface DeeplinkConfig {
    * Ejemplo: ['myapp://', 'https://myapp.com', 'https://*.myapp.com']
    */
   prefixes: string[];
-  
+
   /**
    * Configuración personalizada de linking (opcional)
    * Si no se proporciona, se genera automáticamente desde los módulos
    */
   config?: LinkingOptions<ParamListBase>['config'];
-  
+
   /**
    * Función para filtrar o transformar URLs antes de procesarlas
    */
   filter?: (url: string) => boolean;
-  
+
   /**
    * Función para obtener el estado inicial desde una URL
    */
   getInitialURL?: () => Promise<string | null | undefined>;
-  
+
   /**
    * Función para suscribirse a cambios de URL
    */
@@ -153,14 +153,14 @@ function generateLinkingConfig(
   modules.forEach(module => {
     module.screens.forEach(screen => {
       const routeName = `${module.id}/${screen.name}`;
-      
+
       // Si la pantalla tiene configuración de deeplink personalizada
       if (screen.deeplink) {
         const deeplinkConfig: any = {};
-        
+
         // Path personalizado o generado automáticamente
-        if (screen.deeplink.path) {
-          deeplinkConfig.path = screen.deeplink.path;
+        if (screen.deeplink?.path) {
+          deeplinkConfig.path = screen.deeplink?.path;
         } else {
           // Generar path automáticamente desde el nombre
           // Ejemplo: "ProductDetail" -> "productdetail" o "product-detail"
@@ -170,17 +170,17 @@ function generateLinkingConfig(
             .replace(/^-/, '');
           deeplinkConfig.path = `${module.id}/${autoPath}`;
         }
-        
+
         // Parse personalizado
         if (screen.deeplink.parse) {
           deeplinkConfig.parse = screen.deeplink.parse;
         }
-        
+
         // Stringify personalizado
-        if (screen.deeplink.stringify) {
-          deeplinkConfig.stringify = screen.deeplink.stringify;
+        if (screen.deeplink?.stringify) {
+          deeplinkConfig.stringify = screen.deeplink?.stringify;
         }
-        
+
         screens[routeName] = deeplinkConfig;
       } else {
         // Generación automática: convertir nombre a path
@@ -204,13 +204,13 @@ function generateLinkingConfig(
 function createNavigationContainerWrapper(
   navigationRef: NavigationContainerRef<ParamListBase>,
 ): ComponentType<NavigationContainerWrapperProps> {
-  return function NavigationContainerWrapper({ 
-    children, 
+  return function NavigationContainerWrapper({
+    children,
     theme,
     deeplinkConfig,
   }: NavigationContainerWrapperProps) {
     const { modules } = useModules();
-    
+
     const resolvedTheme = useMemo((): Theme | undefined => {
       if (theme === 'dark') return DarkTheme;
       if (theme === 'light') return DefaultTheme;
@@ -233,11 +233,7 @@ function createNavigationContainerWrapper(
     }, [deeplinkConfig, modules]);
 
     return (
-      <NavigationContainer 
-        ref={navigationRef as any} 
-        theme={resolvedTheme}
-        linking={linking}
-      >
+      <NavigationContainer ref={navigationRef as any} theme={resolvedTheme} linking={linking}>
         {children}
       </NavigationContainer>
     );

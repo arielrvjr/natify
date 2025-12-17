@@ -1,4 +1,4 @@
-import { useAdapter } from '../context/NativefyProvider';
+import { useAdapter } from '../di/DIProvider';
 import { NavigationPort, NavigationParams } from '../ports/NavigationPort';
 
 /**

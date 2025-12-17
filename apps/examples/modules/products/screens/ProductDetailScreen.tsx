@@ -59,7 +59,7 @@ export function ProductDetailScreen() {
             </Text>
             <Text variant="title">{product.title}</Text>
 
-            <Row align="center" gap="sm">
+            <Row alignItems="center" gap="sm">
               <Badge variant="warning">{`⭐ ${product.rating.rate}`}</Badge>
               <Text variant="body" color="secondary">
                 ({product.rating.count} reviews)

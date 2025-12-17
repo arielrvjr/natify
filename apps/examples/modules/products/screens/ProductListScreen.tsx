@@ -25,7 +25,7 @@ export function ProductListScreen() {
       onPress={() => actions.goToDetail(item)}
       style={{ marginBottom: 16 }}
     >
-      <Row gap="sm" align="center">
+      <Row gap="sm" alignItems="center">
         <Image
           source={{ uri: item.image }}
           style={{ width: 80, height: 80, resizeMode: 'contain' }}
@@ -41,7 +41,7 @@ export function ProductListScreen() {
           >
             {item.category}
           </Text>
-          <Row justify="between" align="center">
+          <Row justifyContent="space-between" alignItems="center">
             <Text variant="title" color="primary">
               ${item.price.toFixed(2)}
             </Text>
@@ -80,7 +80,7 @@ export function ProductListScreen() {
   return (
     <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
       <Container padding={'md'}>
-        <Row justify="between" align="center">
+        <Row justifyContent="space-between" alignItems="center">
           <Text variant="title">Productos</Text>
           <Avatar name="Usuario" size="md" onPress={actions.goToProfile} />
         </Row>

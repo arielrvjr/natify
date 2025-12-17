@@ -20,9 +20,6 @@ export const ProductsModule = createModule("products", "Products")
     name: "ProductList",
     component: ProductListScreen,
     options: { headerShown: false },
-    // Deeplink automático: "products/productlist"
-    // O personalizado:
-    // deeplink: { path: "products" }
   })
   .screen({
     name: "ProductDetail",
@@ -30,11 +27,10 @@ export const ProductsModule = createModule("products", "Products")
     options: {
       title: "Detalle",
     },
-    // Configuración personalizada de deeplink
     deeplink: {
       path: "product/:productId",
       parse: {
-        productId: (id: string) => id, // O Number para convertir a número
+        productId: (id: string) => id, 
       },
     },
   })
