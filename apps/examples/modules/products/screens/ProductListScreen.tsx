@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, Image, RefreshControl } from 'react-native';
+import { FlatList, Image, RefreshControl, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Container,
@@ -22,21 +22,21 @@ export function ProductListScreen() {
     <Card
       variant="elevated"
       onPress={() => actions.goToDetail(item)}
-      style={{ marginBottom: 16 }}
+      style={styles.productCard}
     >
       <Row gap="sm" alignItems="center">
         <Image
           source={{ uri: item.image }}
-          style={{ width: 80, height: 80, resizeMode: 'contain' }}
+          style={styles.productImage}
         />
-        <Column gap="xs" style={{ flex: 1 }}>
+        <Column gap="xs" style={styles.productInfo}>
           <Text variant="body" numberOfLines={2}>
             {item.title}
           </Text>
           <Text
             variant="caption"
             color="secondary"
-            style={{ textTransform: 'capitalize' }}
+            style={styles.categoryText}
           >
             {item.category}
           </Text>
@@ -53,7 +53,7 @@ export function ProductListScreen() {
 
   if (state.isLoading && state.products.length === 0) {
     return (
-      <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
+      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
         <Container centered>
           <Loading size="large" message="Cargando productos..." />
         </Container>
@@ -63,7 +63,7 @@ export function ProductListScreen() {
 
   if (state.error && state.products.length === 0) {
     return (
-      <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
+      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
         <Container centered>
           <EmptyState
             title="Error al cargar productos"
@@ -77,7 +77,7 @@ export function ProductListScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={['bottom']}>
+    <SafeAreaView style={styles.container} edges={['bottom']}>
       <Container padding={'md'}>
         <FlatList
           data={state.products}
@@ -100,3 +100,23 @@ export function ProductListScreen() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  productCard: {
+    marginBottom: 16,
+  },
+  productImage: {
+    width: 80,
+    height: 80,
+    resizeMode: 'contain',
+  },
+  productInfo: {
+    flex: 1,
+  },
+  categoryText: {
+    textTransform: 'capitalize',
+  },
+});

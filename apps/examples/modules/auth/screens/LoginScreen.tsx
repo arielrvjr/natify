@@ -1,5 +1,5 @@
 import React from 'react';
-import { KeyboardAvoidingView, Platform } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, Input, Button, Column, Spacer, Container } from '@nativefy/ui';
 import { useLoginViewModel } from '../viewmodels/useLoginViewModel';
@@ -9,11 +9,11 @@ export function LoginScreen() {
 
   return (
     <SafeAreaView
-      style={{ flex: 1, flexDirection: 'column', flexGrow: 1 }}
+      style={styles.container}
       edges={['top', 'bottom']}
     >
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <Container padding={'md'} centered>
@@ -73,3 +73,14 @@ export function LoginScreen() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    flexGrow: 1,
+  },
+  keyboardView: {
+    flex: 1,
+  },
+});

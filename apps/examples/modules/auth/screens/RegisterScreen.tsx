@@ -1,5 +1,5 @@
 import React from 'react';
-import { KeyboardAvoidingView, Platform } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { Container, Text, Input, Button, Column, Spacer } from '@nativefy/ui';
 import { useRegisterViewModel } from '../viewmodels/useRegisterViewModel';
 
@@ -15,7 +15,7 @@ export function RegisterScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <Container padding={'md'}>
@@ -96,3 +96,9 @@ export function RegisterScreen() {
     </KeyboardAvoidingView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

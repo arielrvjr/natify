@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Container,
@@ -21,7 +21,7 @@ export function ProfileScreen() {
 
   if (state.isLoading) {
     return (
-      <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
+      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
         <Container centered>
           <Loading size="large" />
         </Container>
@@ -57,10 +57,10 @@ export function ProfileScreen() {
   ];
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={['bottom']}>
+    <SafeAreaView style={styles.container} edges={['bottom']}>
       <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         <Container padding>
@@ -81,12 +81,12 @@ export function ProfileScreen() {
                   variant="filled"
                   padding="md"
                   onPress={item.onPress}
-                  style={{ borderRadius: 0 }}
+                  style={styles.menuCard}
                 >
                   <Row alignItems="center" justifyContent="space-between">
-                    <Row alignItems="center" gap="md" style={{ flex: 1 }}>
+                    <Row alignItems="center" gap="md" style={styles.menuRow}>
                       {item.icon}
-                      <Column gap="xs" style={{ flex: 1, marginRight: 8 }}>
+                      <Column gap="xs" style={styles.menuColumn}>
                         <Text variant="body">{item.title}</Text>
                         <Text
                           variant="caption"
@@ -113,3 +113,25 @@ export function ProfileScreen() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 20,
+  },
+  menuCard: {
+    borderRadius: 0,
+  },
+  menuRow: {
+    flex: 1,
+  },
+  menuColumn: {
+    flex: 1,
+    marginRight: 8,
+  },
+});

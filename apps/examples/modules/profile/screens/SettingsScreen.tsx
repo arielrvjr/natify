@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Container,
@@ -18,19 +18,19 @@ export function SettingsScreen() {
   const { state, actions } = useSettingsViewModel();
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={['bottom']}>
+    <SafeAreaView style={styles.container} edges={['bottom']}>
       <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         <Container padding>
           <Column gap="xl">
-            <Column gap="sm" style={{ marginTop: 0 }}>
+            <Column gap="sm" style={styles.section}>
               <Text
                 variant="caption"
                 color="secondary"
-                style={{ textTransform: 'uppercase', marginBottom: 8 }}
+                style={styles.sectionTitle}
               >
                 Preferencias
               </Text>
@@ -39,10 +39,10 @@ export function SettingsScreen() {
                   <Row
                     alignItems="center"
                     gap="md"
-                    style={{ flex: 1, marginRight: 12 }}
+                    style={styles.settingRow}
                   >
                     <Icon name="Bell" size={20} color="primary" />
-                    <Column gap="xs" style={{ flex: 1 }}>
+                    <Column gap="xs" style={styles.settingColumn}>
                       <Text variant="body">Notificaciones</Text>
                       <Text
                         variant="caption"
@@ -67,10 +67,10 @@ export function SettingsScreen() {
                   <Row
                     alignItems="center"
                     gap="md"
-                    style={{ flex: 1, marginRight: 12 }}
+                    style={styles.settingRow}
                   >
                     <Icon name="Moon" size={20} color="primary" />
-                    <Column gap="xs" style={{ flex: 1 }}>
+                    <Column gap="xs" style={styles.settingColumn}>
                       <Text variant="body">Modo Oscuro</Text>
                       <Text
                         variant="caption"
@@ -95,10 +95,10 @@ export function SettingsScreen() {
                   <Row
                     alignItems="center"
                     gap="md"
-                    style={{ flex: 1, marginRight: 12 }}
+                    style={styles.settingRow}
                   >
                     <Icon name="Shield" size={20} color="primary" />
-                    <Column gap="xs" style={{ flex: 1 }}>
+                    <Column gap="xs" style={styles.settingColumn}>
                       <Text variant="body">Autenticación Biométrica</Text>
                       <Text
                         variant="caption"
@@ -120,11 +120,11 @@ export function SettingsScreen() {
               </Card>
             </Column>
 
-            <Column gap="sm" style={{ marginTop: 24 }}>
+            <Column gap="sm" style={styles.sectionWithMargin}>
               <Text
                 variant="caption"
                 color="secondary"
-                style={{ textTransform: 'uppercase', marginBottom: 8 }}
+                style={styles.sectionTitle}
               >
                 Permisos
               </Text>
@@ -137,10 +137,10 @@ export function SettingsScreen() {
                   <Row
                     alignItems="center"
                     gap="md"
-                    style={{ flex: 1, marginRight: 12 }}
+                    style={styles.settingRow}
                   >
                     <Icon name="Camera" size={20} color="primary" />
-                    <Column gap="xs" style={{ flex: 1 }}>
+                    <Column gap="xs" style={styles.settingColumn}>
                       <Text variant="body">Cámara</Text>
                       <Text
                         variant="caption"
@@ -168,10 +168,10 @@ export function SettingsScreen() {
                   <Row
                     alignItems="center"
                     gap="md"
-                    style={{ flex: 1, marginRight: 12 }}
+                    style={styles.settingRow}
                   >
                     <Icon name="Image" size={20} color="primary" />
-                    <Column gap="xs" style={{ flex: 1 }}>
+                    <Column gap="xs" style={styles.settingColumn}>
                       <Text variant="body">Galería de Fotos</Text>
                       <Text
                         variant="caption"
@@ -197,10 +197,10 @@ export function SettingsScreen() {
                   <Row
                     alignItems="center"
                     gap="md"
-                    style={{ flex: 1, marginRight: 12 }}
+                    style={styles.settingRow}
                   >
                     <Icon name="ImagePlus" size={20} color="primary" />
-                    <Column gap="xs" style={{ flex: 1 }}>
+                    <Column gap="xs" style={styles.settingColumn}>
                       <Text variant="body">Seleccionar Imagen</Text>
                       <Text
                         variant="caption"
@@ -220,11 +220,11 @@ export function SettingsScreen() {
               </Card>
             </Column>
 
-            <Column gap="sm" style={{ marginTop: 24 }}>
+            <Column gap="sm" style={styles.sectionWithMargin}>
               <Text
                 variant="caption"
                 color="secondary"
-                style={{ textTransform: 'uppercase', marginBottom: 8 }}
+                style={styles.sectionTitle}
               >
                 Idioma
               </Text>
@@ -234,9 +234,9 @@ export function SettingsScreen() {
                   justifyContent="space-between"
                   padding="md"
                 >
-                  <Row alignItems="center" gap="md" style={{ flex: 1 }}>
+                  <Row alignItems="center" gap="md" style={styles.settingRow}>
                     <Icon name="Languages" size={20} color="primary" />
-                    <Column gap="xs" style={{ flex: 1 }}>
+                    <Column gap="xs" style={styles.settingColumn}>
                       <Text variant="body">Español</Text>
                       <Text variant="caption" color="secondary">
                         Idioma actual
@@ -248,18 +248,18 @@ export function SettingsScreen() {
               </Card>
             </Column>
 
-            <Column gap="sm" style={{ marginTop: 24 }}>
+            <Column gap="sm" style={styles.sectionWithMargin}>
               <Text
                 variant="caption"
                 color="secondary"
-                style={{ textTransform: 'uppercase', marginBottom: 8 }}
+                style={styles.sectionTitle}
               >
                 Información
               </Text>
               <Card variant="elevated" padding="md">
                 <Row alignItems="center" gap="md">
                   <Icon name="Info" size={20} color="primary" />
-                  <Column gap="xs" style={{ flex: 1 }}>
+                  <Column gap="xs" style={styles.settingColumn}>
                     <Text variant="body">Versión</Text>
                     <Text variant="caption" color="secondary">
                       1.0.0
@@ -274,3 +274,32 @@ export function SettingsScreen() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 20,
+  },
+  section: {
+    marginTop: 0,
+  },
+  sectionWithMargin: {
+    marginTop: 24,
+  },
+  sectionTitle: {
+    textTransform: 'uppercase',
+    marginBottom: 8,
+  },
+  settingRow: {
+    flex: 1,
+    marginRight: 12,
+  },
+  settingColumn: {
+    flex: 1,
+  },
+});

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, Image } from 'react-native';
+import { ScrollView, Image, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Container,
@@ -19,7 +19,7 @@ export function ProductDetailScreen() {
 
   if (state.isLoading || !state.product) {
     return (
-      <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
+      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
         <Container centered>
           <Loading size="large" />
         </Container>
@@ -29,7 +29,7 @@ export function ProductDetailScreen() {
 
   if (state.error) {
     return (
-      <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
+      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
         <Container centered>
           <EmptyState
             title="Error"
@@ -45,11 +45,11 @@ export function ProductDetailScreen() {
   const { product } = state;
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <ScrollView>
         <Image
           source={{ uri: product.image }}
-          style={{ width: '100%', height: 300, resizeMode: 'contain' }}
+          style={styles.productImage}
         />
 
         <Container padding>
@@ -90,3 +90,14 @@ export function ProductDetailScreen() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  productImage: {
+    width: '100%',
+    height: 300,
+    resizeMode: 'contain',
+  },
+});
