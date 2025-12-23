@@ -291,6 +291,21 @@ describe('AxiosHttpAdapter', () => {
 
       expect(mockInstance.post).toHaveBeenCalledWith('/users', body, config);
     });
+
+    it('should throw NativefyError on POST error', async () => {
+      const mockError = {
+        isAxiosError: true,
+        message: 'Network Error',
+        code: 'ECONNABORTED',
+        config: {} as any,
+        response: undefined,
+      } as AxiosError;
+
+      const mockInstance = mockedAxios.create.mock.results[0].value;
+      (mockInstance.post as jest.Mock).mockRejectedValue(mockError);
+
+      await expect(adapter.post('/users', {})).rejects.toThrow(NativefyError);
+    });
   });
 
   describe('put', () => {
@@ -312,6 +327,21 @@ describe('AxiosHttpAdapter', () => {
       expect(mockInstance.put).toHaveBeenCalledWith('/users/1', body, {});
       expect(result.data).toEqual({ id: 1, name: 'Updated' });
     });
+
+    it('should throw NativefyError on PUT error', async () => {
+      const mockError = {
+        isAxiosError: true,
+        message: 'Network Error',
+        code: 'ECONNABORTED',
+        config: {} as any,
+        response: undefined,
+      } as AxiosError;
+
+      const mockInstance = mockedAxios.create.mock.results[0].value;
+      (mockInstance.put as jest.Mock).mockRejectedValue(mockError);
+
+      await expect(adapter.put('/users/1', {})).rejects.toThrow(NativefyError);
+    });
   });
 
   describe('patch', () => {
@@ -332,6 +362,21 @@ describe('AxiosHttpAdapter', () => {
 
       expect(mockInstance.patch).toHaveBeenCalledWith('/users/1', body, {});
       expect(result.data).toEqual({ id: 1, name: 'Patched' });
+    });
+
+    it('should throw NativefyError on PATCH error', async () => {
+      const mockError = {
+        isAxiosError: true,
+        message: 'Network Error',
+        code: 'ECONNABORTED',
+        config: {} as any,
+        response: undefined,
+      } as AxiosError;
+
+      const mockInstance = mockedAxios.create.mock.results[0].value;
+      (mockInstance.patch as jest.Mock).mockRejectedValue(mockError);
+
+      await expect(adapter.patch('/users/1', {})).rejects.toThrow(NativefyError);
     });
   });
 
@@ -370,6 +415,31 @@ describe('AxiosHttpAdapter', () => {
       await adapter.delete('/users/1', config);
 
       expect(mockInstance.delete).toHaveBeenCalledWith('/users/1', config);
+    });
+
+    it('should throw NativefyError on DELETE error', async () => {
+      const mockError = {
+        isAxiosError: true,
+        message: 'Network Error',
+        code: 'ECONNABORTED',
+        config: {} as any,
+        response: undefined,
+      } as AxiosError;
+
+      const mockInstance = mockedAxios.create.mock.results[0].value;
+      (mockInstance.delete as jest.Mock).mockRejectedValue(mockError);
+
+      await expect(adapter.delete('/users/1')).rejects.toThrow(NativefyError);
+    });
+
+    it('should throw NativefyError for non-AxiosError', async () => {
+      const mockError = new Error('Generic error');
+
+      const mockInstance = mockedAxios.create.mock.results[0].value;
+      (mockInstance.get as jest.Mock).mockRejectedValue(mockError);
+
+      await expect(adapter.get('/users')).rejects.toThrow(NativefyError);
+      await expect(adapter.get('/users')).rejects.toThrow('Generic error');
     });
   });
 });

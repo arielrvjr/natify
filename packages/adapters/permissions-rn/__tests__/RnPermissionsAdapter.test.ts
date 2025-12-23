@@ -218,6 +218,76 @@ describe('RnPermissionsAdapter', () => {
         'Error al verificar permiso: unsupported',
       );
     });
+
+    it('should return DENIED for unknown result status (default case)', async () => {
+      // Simular un resultado desconocido que no coincide con ningún case
+      mockCheck.mockResolvedValue('unknown-status');
+
+      const result = await adapter.check('camera');
+
+      // Debe retornar DENIED como default case
+      expect(result).toBe(PermissionStatus.DENIED);
+    });
+  });
+
+  describe('Android platform mapping', () => {
+    beforeEach(() => {
+      // Cambiar a Android
+      require('react-native').Platform.OS = 'android';
+    });
+
+    afterEach(() => {
+      // Volver a iOS
+      require('react-native').Platform.OS = 'ios';
+    });
+
+    it('should map camera permission correctly for Android', async () => {
+      mockCheck.mockResolvedValue('granted');
+
+      await adapter.check('camera');
+
+      expect(mockCheck).toHaveBeenCalledWith('android.permission.CAMERA');
+    });
+
+    it('should map photoLibrary permission correctly for Android', async () => {
+      mockCheck.mockResolvedValue('granted');
+
+      await adapter.check('photoLibrary');
+
+      expect(mockCheck).toHaveBeenCalledWith('android.permission.READ_EXTERNAL_STORAGE');
+    });
+
+    it('should map location permission correctly for Android', async () => {
+      mockCheck.mockResolvedValue('granted');
+
+      await adapter.check('location');
+
+      expect(mockCheck).toHaveBeenCalledWith('android.permission.ACCESS_FINE_LOCATION');
+    });
+
+    it('should map microphone permission correctly for Android', async () => {
+      mockCheck.mockResolvedValue('granted');
+
+      await adapter.check('microphone');
+
+      expect(mockCheck).toHaveBeenCalledWith('android.permission.RECORD_AUDIO');
+    });
+
+    it('should map notification permission correctly for Android', async () => {
+      mockCheck.mockResolvedValue('granted');
+
+      await adapter.check('notification');
+
+      expect(mockCheck).toHaveBeenCalledWith('android.permission.READ_EXTERNAL_STORAGE');
+    });
+
+    it('should map biometrics permission correctly for Android', async () => {
+      mockCheck.mockResolvedValue('granted');
+
+      await adapter.check('biometrics');
+
+      expect(mockCheck).toHaveBeenCalledWith('android.permission.CAMERA');
+    });
   });
 });
 

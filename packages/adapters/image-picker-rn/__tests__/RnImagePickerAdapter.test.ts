@@ -148,6 +148,77 @@ describe('RnImagePickerAdapter', () => {
         expect.any(Function),
       );
     });
+
+    it('should handle mixed mediaType', async () => {
+      const mockResponse = {
+        didCancel: true,
+        errorCode: undefined,
+        assets: [],
+      };
+
+      mockLaunchImageLibrary.mockImplementation((options, callback) => {
+        callback(mockResponse);
+      });
+
+      await adapter.pickImage({
+        mediaType: 'mixed',
+      });
+
+      expect(mockLaunchImageLibrary).toHaveBeenCalledWith(
+        expect.objectContaining({
+          mediaType: 'mixed',
+        }),
+        expect.any(Function),
+      );
+    });
+
+    it('should handle errorCode in launchImageLibrary', async () => {
+      const mockResponse = {
+        didCancel: false,
+        errorCode: 'permission',
+        errorMessage: 'Permission denied',
+        assets: [],
+      };
+
+      mockLaunchImageLibrary.mockImplementation((options, callback) => {
+        callback(mockResponse);
+      });
+
+      await expect(adapter.pickImage()).rejects.toThrow(NativefyError);
+    });
+
+    it('should handle empty uri in mapResponseToResult', async () => {
+      const mockResponse = {
+        didCancel: false,
+        errorCode: undefined,
+        assets: [
+          {
+            uri: undefined,
+            type: 'image/jpeg',
+            fileName: 'image.jpg',
+            fileSize: 1024,
+            width: 100,
+            height: 100,
+          },
+        ],
+      };
+
+      mockLaunchImageLibrary.mockImplementation((options, callback) => {
+        callback(mockResponse);
+      });
+
+      const result = await adapter.pickImage();
+
+      expect(result).toEqual({
+        uri: '',
+        type: 'image/jpeg',
+        fileName: 'image.jpg',
+        fileSize: 1024,
+        width: 100,
+        height: 100,
+        base64: undefined,
+      });
+    });
   });
 
   describe('takePhoto', () => {
@@ -215,6 +286,21 @@ describe('RnImagePickerAdapter', () => {
 
       await expect(adapter.takePhoto()).rejects.toThrow(NativefyError);
       await expect(adapter.takePhoto()).rejects.toThrow('Error al tomar foto');
+    });
+
+    it('should handle errorCode in launchCamera', async () => {
+      const mockResponse = {
+        didCancel: false,
+        errorCode: 'camera_error',
+        errorMessage: 'Camera error',
+        assets: [],
+      };
+
+      mockLaunchCamera.mockImplementation((options, callback) => {
+        callback(mockResponse);
+      });
+
+      await expect(adapter.takePhoto()).rejects.toThrow(NativefyError);
     });
 
     it('should pass options to launchCamera', async () => {
@@ -337,6 +423,41 @@ describe('RnImagePickerAdapter', () => {
 
       await expect(adapter.pickMultipleImages()).rejects.toThrow(NativefyError);
       await expect(adapter.pickMultipleImages()).rejects.toThrow('Error al seleccionar imágenes');
+    });
+
+    it('should handle empty uri in mapMultipleResponseToResults', async () => {
+      const mockResponse = {
+        didCancel: false,
+        errorCode: undefined,
+        assets: [
+          {
+            uri: undefined,
+            type: 'image/jpeg',
+            fileName: 'image1.jpg',
+            fileSize: 1024,
+            width: 100,
+            height: 100,
+          },
+          {
+            uri: 'file:///path/to/image2.jpg',
+            type: 'image/png',
+            fileName: 'image2.png',
+            fileSize: 2048,
+            width: 200,
+            height: 200,
+          },
+        ],
+      };
+
+      mockLaunchImageLibrary.mockImplementation((options, callback) => {
+        callback(mockResponse);
+      });
+
+      const result = await adapter.pickMultipleImages();
+
+      expect(result).toHaveLength(2);
+      expect(result[0].uri).toBe('');
+      expect(result[1].uri).toBe('file:///path/to/image2.jpg');
     });
   });
 });
