@@ -1,50 +1,5 @@
 import { ComponentType } from 'react';
-import { Port } from '../ports/Port';
-import { HttpClientPort } from '../ports/HttpClientPort';
-import { StoragePort } from '../ports/StoragePort';
-import { BiometricPort } from '../ports/BiometricPort';
-import { PermissionPort } from '../ports/PermissionPort';
-import { NavigationPort } from '../ports/NavigationPort';
-import { AnalyticsPort } from '../ports/AnalyticsPort';
-import { LoggerPort } from '../ports/LoggerPort';
-import { ImagePickerPort } from '../ports/ImagePickerPort';
-import { ValidationPort } from '../ports/ValidationPort';
-import { PushNotificationPort } from '../ports/PushNotificationPort';
-
-/**
- * Mapa de capacidades a sus tipos de Port correspondientes
- */
-export interface CapabilityPortMap {
-  http: HttpClientPort;
-  storage: StoragePort;
-  secureStorage: StoragePort;
-  biometrics: BiometricPort;
-  permissions: PermissionPort;
-  navigation: NavigationPort;
-  analytics: AnalyticsPort;
-  logger: LoggerPort;
-  imagePicker: ImagePickerPort;
-  validation: ValidationPort;
-  pushNotification: PushNotificationPort;
-  [key: string]: Port;
-}
-
-/**
- * Capacidades requeridas por un módulo
- */
-export type RequiredCapability = keyof CapabilityPortMap & string;
-
-/**
- * Mapa de adapters tipado según las capacidades requeridas
- */
-export type TypedAdapterMap<T extends RequiredCapability[]> = {
-  [K in T[number]]: CapabilityPortMap[K];
-};
-
-/**
- * Mapa de adapters genérico (para compatibilidad)
- */
-export type AdapterMap = Record<string, Port>;
+import { RequiredCapability, TypedAdapterMap, AdapterMap } from '../types/adapters';
 
 /**
  * Configuración de deeplink para una pantalla

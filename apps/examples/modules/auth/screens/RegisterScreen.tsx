@@ -7,7 +7,7 @@ import { useRegisterViewModel } from '../viewmodels/useRegisterViewModel';
  * Pantalla de registro
  *
  * Esta pantalla demuestra cómo usar un ViewModel que internamente
- * usa Formik directamente y ValidationPort para esquemas. La pantalla
+ * usa Formik directamente con Yup para validación. La pantalla
  * solo se encarga de renderizar y delegar al ViewModel.
  */
 export function RegisterScreen() {

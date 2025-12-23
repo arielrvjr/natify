@@ -670,8 +670,6 @@ export function LoginScreen() {
 | **State Management** | `@nativefy/store-zustand`       | Zustand                              |
 | **Storage**          | `@nativefy/storage-async`       | AsyncStorage                         |
 | **Storage**          | `@nativefy/storage-mmkv`        | react-native-mmkv (30x más rápido) |
-| **Validation**       | `@nativefy/validation-zod`       | zod                                 |
-| **Validation**       | `@nativefy/validation-yup`       | yup                                 |
 
 ### Planificadas
 

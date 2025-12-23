@@ -7,12 +7,12 @@ import React, {
   useCallback,
   ReactNode,
 } from 'react';
-import { ModuleRegistry } from './ModuleRegistry';
 import { ModuleDefinition, RegisteredModule } from './types';
-import { useDIContainer } from '../di';
+import { useAdapter, useUseCase } from '../di/DIProvider';
+import { RegisterModuleUseCase, UnregisterModuleUseCase, GetModuleUseCase } from './usecases';
+import { LoggerPort } from '../ports/LoggerPort';
 
 interface ModuleContextValue {
-  registry: ModuleRegistry;
   modules: RegisteredModule[];
   isLoading: boolean;
   error: Error | null;
@@ -51,11 +51,14 @@ export const ModuleProvider: React.FC<ModuleProviderProps> = ({
   onError,
   children,
 }) => {
-  const container = useDIContainer();
-  const [registry] = useState(() => new ModuleRegistry(container));
   const [modules, setModules] = useState<RegisteredModule[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const logger = useAdapter<LoggerPort>('logger');
+  // Obtener UseCases a través de useUseCase (ViewModels)
+  const registerModule = useUseCase<RegisterModuleUseCase>('usecase:RegisterModuleUseCase');
+  const unregisterModule = useUseCase<UnregisterModuleUseCase>('usecase:UnregisterModuleUseCase');
+  const getModule = useUseCase<GetModuleUseCase>('usecase:GetModuleUseCase');
 
   useEffect(() => {
     async function loadModules() {
@@ -63,23 +66,24 @@ export const ModuleProvider: React.FC<ModuleProviderProps> = ({
       setError(null);
 
       try {
-        // Los adapters ya están registrados en DI por AdapterRegistry
-        // El ModuleRegistry los obtiene automáticamente del contenedor DI
-
-        // Registrar todos los módulos iniciales
+        // Registrar todos los módulos iniciales usando UseCases
         const loadedModules: RegisteredModule[] = [];
 
         for (const moduleDef of initialModules) {
           try {
-            const registered = await registry.register(moduleDef);
+            const registered = await registerModule.execute(moduleDef);
             loadedModules.push(registered);
           } catch (err) {
-            console.error(`[Nativefy] Failed to load module "${moduleDef.id}":`, err);
+            logger.error(
+              `[Nativefy] Failed to load module "${moduleDef.id}":`,
+              err as unknown as Error,
+            );
             throw err;
           }
         }
 
-        setModules(loadedModules);
+        // Actualizar estado con todos los módulos
+        setModules(getModule.executeAll());
         setIsLoading(false);
         onModulesLoaded?.(loadedModules);
       } catch (err) {
@@ -94,41 +98,47 @@ export const ModuleProvider: React.FC<ModuleProviderProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const registerModule = useCallback(
+  const registerModuleCallback = useCallback(
     async (module: ModuleDefinition): Promise<RegisteredModule> => {
-      const registered = await registry.register(module);
-      setModules(registry.getAllModules());
+      const registered = await registerModule.execute(module);
+      setModules(getModule.executeAll());
       return registered;
     },
-    [registry],
+    [registerModule, getModule],
   );
 
-  const unregisterModule = useCallback(
+  const unregisterModuleCallback = useCallback(
     async (moduleId: string) => {
-      await registry.unregister(moduleId);
-      setModules(registry.getAllModules());
+      await unregisterModule.execute(moduleId);
+      setModules(getModule.executeAll());
     },
-    [registry],
+    [unregisterModule, getModule],
   );
 
-  const getModule = useCallback(
+  const getModuleCallback = useCallback(
     (moduleId: string) => {
-      return registry.getModule(moduleId);
+      return getModule.execute(moduleId);
     },
-    [registry],
+    [getModule],
   );
 
   const contextValue = useMemo<ModuleContextValue>(
     () => ({
-      registry,
       modules,
       isLoading,
       error,
-      registerModule,
-      unregisterModule,
-      getModule,
+      registerModule: registerModuleCallback,
+      unregisterModule: unregisterModuleCallback,
+      getModule: getModuleCallback,
     }),
-    [registry, modules, isLoading, error, registerModule, unregisterModule, getModule],
+    [
+      modules,
+      isLoading,
+      error,
+      registerModuleCallback,
+      unregisterModuleCallback,
+      getModuleCallback,
+    ],
   );
 
   return <ModuleContext.Provider value={contextValue}>{children}</ModuleContext.Provider>;

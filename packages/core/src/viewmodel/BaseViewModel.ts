@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { NativefyError, NativefyErrorCode } from '../errors';
+import { NativefyError } from '../errors';
+import { toNativefyError } from './utils/errorHandling';
 
 /**
  * Estado base de un ViewModel
@@ -125,15 +126,7 @@ export function useBaseViewModel(): [BaseViewModelState, BaseViewModelActions] {
     } catch (err) {
       if (isMounted.current) {
         setIsLoading(false);
-        const nativefyError =
-          err instanceof NativefyError
-            ? err
-            : new NativefyError(
-                NativefyErrorCode.UNKNOWN,
-                (err as Error).message || 'Unknown error',
-                err,
-              );
-        setError(nativefyError);
+        setError(toNativefyError(err));
       }
       return undefined;
     }
@@ -158,15 +151,7 @@ export function useBaseViewModel(): [BaseViewModelState, BaseViewModelActions] {
     } catch (err) {
       if (isMounted.current) {
         setIsLoading(false);
-        const nativefyError =
-          err instanceof NativefyError
-            ? err
-            : new NativefyError(
-                NativefyErrorCode.UNKNOWN,
-                (err as Error).message || 'Unknown error',
-                err,
-              );
-        setError(nativefyError);
+        setError(toNativefyError(err));
       }
       throw err;
     }

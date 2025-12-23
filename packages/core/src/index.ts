@@ -1,3 +1,6 @@
+// Types (generic types used across the framework)
+export * from './types';
+
 // Ports
 export * from './ports';
 
@@ -18,6 +21,7 @@ export * from './viewmodel';
 
 // App
 export * from './app';
+export * from './components';
 
 // Navigation Hooks
 export * from './navigation';

@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { useFormik } from "formik";
+import * as yup from "yup";
 import {
   useBaseViewModel,
   useUseCase,
   useAdapter,
   NavigationPort,
-  ValidationPort,
 } from "@nativefy/core";
 import { useTheme } from "@nativefy/ui";
 import { LoginUseCase } from "../usecases/LoginUseCase";
@@ -18,11 +18,9 @@ interface LoginFormValues {
 }
 
 /**
- * ViewModel de login usando Formik directamente y ValidationPort
+ * ViewModel de login usando Formik directamente con Yup
  *
- * Usa Formik directamente (sin adapter) para simplicidad, pero mantiene
- * ValidationPort para crear esquemas de forma consistente y poder
- * intercambiar entre Yup y Zod fácilmente.
+ * Usa Formik directamente con esquemas de Yup para validación.
  */
 export function useLoginViewModel() {
   const [baseState, { execute, clearError, setLoading }] = useBaseViewModel();
@@ -30,7 +28,6 @@ export function useLoginViewModel() {
   const loginUseCase = useUseCase<LoginUseCase>("auth:login");
   const checkAuthUseCase = useUseCase<CheckAuthUseCase>("auth:checkAuth");
   const navigation = useAdapter<NavigationPort>("navigation");
-  const validator = useAdapter<ValidationPort>("validation");
   const { setDarkMode } = useTheme();
   const getPreferences = useUseCase<GetAppPreferencesUseCase>(
     "shared:getAppPreferences",
@@ -65,10 +62,10 @@ export function useLoginViewModel() {
     initialize();
   }, [getPreferences, setDarkMode, checkAuthUseCase, navigation, setLoading]);
 
-  // Crear esquema de validación usando ValidationPort
-  const validationSchema = validator.createSchema({
-    email: validator.string().email("Email inválido").required("El email es requerido").build(),
-    password: validator.string().min(6, "La contraseña debe tener al menos 6 caracteres").required("La contraseña es requerida").build(),
+  // Crear esquema de validación usando Yup directamente
+  const validationSchema = yup.object({
+    email: yup.string().email("Email inválido").required("El email es requerido"),
+    password: yup.string().min(6, "La contraseña debe tener al menos 6 caracteres").required("La contraseña es requerida"),
   });
 
   // Usar Formik directamente (sin adapter)

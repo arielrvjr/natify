@@ -30,7 +30,10 @@ const Stack = createNativeStackNavigator();
 interface AppNavigatorProps {
   modules: ModuleDefinition[];
   initialModule?: string;
-  screenOptions?: object;
+  /**
+   * Opciones de pantalla (sobrescribe las del adapter si se proporcionan)
+   */
+  screenOptions?: ScreenOptions;
 }
 
 /**
@@ -66,6 +69,27 @@ export interface DeeplinkConfig {
 }
 
 /**
+ * Configuración completa del adapter de navegación
+ */
+export interface ReactNavigationAdapterConfig {
+  /**
+   * Configuración de deeplinks (opcional)
+   */
+  deeplinkConfig?: DeeplinkConfig;
+
+  /**
+   * Tema de navegación ('light' | 'dark' | objeto custom de React Navigation)
+   */
+  theme?: 'light' | 'dark' | Theme;
+
+  /**
+   * Opciones globales de pantallas
+   * Se aplican a todas las pantallas del stack navigator
+   */
+  screenOptions?: ScreenOptions;
+}
+
+/**
  * Props del NavigationContainer wrapper
  */
 interface NavigationContainerWrapperProps {
@@ -85,6 +109,14 @@ export interface ReactNavigationAdapterType extends NavigationPort {
    * Configuración de deeplinks
    */
   deeplinkConfig?: DeeplinkConfig;
+  /**
+   * Tema de navegación
+   */
+  theme?: 'light' | 'dark' | Theme;
+  /**
+   * Opciones globales de pantallas
+   */
+  screenOptions?: ScreenOptions;
 }
 
 /**
@@ -92,9 +124,13 @@ export interface ReactNavigationAdapterType extends NavigationPort {
  */
 function createAppNavigator(
   _navigationRef: NavigationContainerRef<ParamListBase>,
+  defaultScreenOptions?: ScreenOptions,
 ): ComponentType<AppNavigatorProps> {
   return function AppNavigator({ initialModule, screenOptions }: AppNavigatorProps) {
     const { modules, isLoading } = useModules();
+    
+    // Usar screenOptions del prop si está disponible, sino usar el default del adapter
+    const finalScreenOptions = screenOptions || defaultScreenOptions;
 
     // Determinar la ruta inicial
     // Filtrar módulos sin pantallas (módulos compartidos)
@@ -120,7 +156,7 @@ function createAppNavigator(
     }
 
     return (
-      <Stack.Navigator initialRouteName={initialRouteName} screenOptions={screenOptions as any}>
+      <Stack.Navigator initialRouteName={initialRouteName} screenOptions={finalScreenOptions as any}>
         {modulesWithScreens.map(module =>
           module.screens.map(screen => (
             <Stack.Screen
@@ -206,6 +242,7 @@ function generateLinkingConfig(
  */
 function createNavigationContainerWrapper(
   navigationRef: NavigationContainerRef<ParamListBase>,
+  defaultTheme?: 'light' | 'dark' | Theme,
 ): ComponentType<NavigationContainerWrapperProps> {
   return function NavigationContainerWrapper({
     children,
@@ -214,12 +251,15 @@ function createNavigationContainerWrapper(
   }: NavigationContainerWrapperProps) {
     const { modules } = useModules();
 
+    // Usar theme del prop si está disponible, sino usar el default del adapter
+    const finalTheme = theme || defaultTheme;
+
     const resolvedTheme = useMemo((): Theme | undefined => {
-      if (theme === 'dark') return DarkTheme;
-      if (theme === 'light') return DefaultTheme;
-      if (typeof theme === 'object') return theme as Theme;
+      if (finalTheme === 'dark') return DarkTheme;
+      if (finalTheme === 'light') return DefaultTheme;
+      if (typeof finalTheme === 'object') return finalTheme as Theme;
       return DefaultTheme;
-    }, [theme]);
+    }, [finalTheme]);
 
     const linking = useMemo((): LinkingOptions<ParamListBase> | undefined => {
       if (!deeplinkConfig) {
@@ -246,16 +286,38 @@ function createNavigationContainerWrapper(
 /**
  * Factory para crear el adapter de navegación
  *
- * @param deeplinkConfig Configuración opcional de deeplinks
+ * @param config Configuración opcional del adapter (deeplinks, theme, screenOptions)
  *
  * @example
  * ```typescript
- * // Sin deeplinks
+ * // Sin configuración
  * const navigationAdapter = createReactNavigationAdapter();
  *
  * // Con deeplinks
  * const navigationAdapter = createReactNavigationAdapter({
- *   prefixes: ['myapp://', 'https://myapp.com'],
+ *   deeplinkConfig: {
+ *     prefixes: ['myapp://', 'https://myapp.com'],
+ *   },
+ * });
+ *
+ * // Con theme y screenOptions
+ * const navigationAdapter = createReactNavigationAdapter({
+ *   theme: 'dark',
+ *   screenOptions: {
+ *     headerStyle: { backgroundColor: '#000' },
+ *     headerTintColor: '#fff',
+ *   },
+ * });
+ *
+ * // Configuración completa
+ * const navigationAdapter = createReactNavigationAdapter({
+ *   deeplinkConfig: {
+ *     prefixes: ['myapp://'],
+ *   },
+ *   theme: 'dark',
+ *   screenOptions: {
+ *     headerShown: true,
+ *   },
  * });
  *
  * // En NativefyApp
@@ -266,20 +328,24 @@ function createNavigationContainerWrapper(
  * ```
  */
 export function createReactNavigationAdapter(
-  deeplinkConfig?: DeeplinkConfig,
+  config?: ReactNavigationAdapterConfig,
 ): ReactNavigationAdapterType {
+  const { deeplinkConfig, theme, screenOptions } = config || {};
+
   // Crear la ref de navegación
   const navigationRef = createNavigationContainerRef<ParamListBase>();
 
-  // Crear componentes
-  const NavigationContainerComponent = createNavigationContainerWrapper(navigationRef);
-  const AppNavigatorComponent = createAppNavigator(navigationRef);
+  // Crear componentes con valores por defecto del adapter
+  const NavigationContainerComponent = createNavigationContainerWrapper(navigationRef, theme);
+  const AppNavigatorComponent = createAppNavigator(navigationRef, screenOptions);
 
   // El adapter con todos los métodos de NavigationPort
   const adapter: ReactNavigationAdapterType = {
     capability: 'navigation',
     navigationRef,
     deeplinkConfig,
+    theme,
+    screenOptions,
 
     // Componentes
     NavigationContainer: NavigationContainerComponent,

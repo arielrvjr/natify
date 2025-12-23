@@ -1,4 +1,4 @@
-import { CapabilityPortMap, RequiredCapability } from './types';
+import { CapabilityPortMap, RequiredCapability } from '../types/adapters';
 import { Port } from '../ports/Port';
 
 /**

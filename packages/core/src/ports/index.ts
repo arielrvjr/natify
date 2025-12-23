@@ -7,7 +7,6 @@ export * from './StateManagerPort';
 export * from './AnalyticsPort';
 export * from './NavigationPort';
 export * from './ImagePickerPort';
-export * from './ValidationPort';
 export * from './PushNotificationPort';
 export * from './FileSystemPort';
 export * from './GraphQLPort';

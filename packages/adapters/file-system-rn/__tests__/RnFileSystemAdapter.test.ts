@@ -372,27 +372,25 @@ describe('RnFileSystemAdapter', () => {
       
       // Mock config para que retorne un objeto con fetch que rechace
       // El código usa: ReactNativeBlobUtil.config(config).fetch('GET', url).progress(...)
-      // Así que config() devuelve un objeto con fetch() que devuelve una promesa que rechaza
-      // Pero fetch() también debe devolver un objeto con progress() antes de rechazar
-      const downloadError = new Error('Download failed');
+      // Así que config() devuelve un objeto con fetch()
+      // fetch() devuelve un objeto con progress() que devuelve this (el mismo objeto)
+      // El await se hace sobre el resultado de fetch(), así que fetch() debe devolver una promesa que rechace
+      // Pero primero debe devolver un objeto con progress() para que el código pueda llamarlo
       const mockProgress = jest.fn().mockReturnThis();
       const mockFetchResult = {
         progress: mockProgress,
       };
-      // fetch() debe devolver un objeto con progress() que luego rechaza cuando se await
-      const mockFetchFn = jest.fn().mockReturnValue(mockFetchResult);
-      // Hacer que la promesa rechace cuando se await
-      mockFetchResult.progress.mockRejectedValue(downloadError);
+      // fetch() debe devolver una promesa que rechace
+      // El problema es que el código llama a .progress() después de fetch(), así que necesitamos
+      // que fetch() devuelva un objeto con progress() primero, pero luego rechace
+      // La solución: hacer que fetch() devuelva una promesa que rechace directamente
+      // El objeto mockFetchResult no se necesita porque el error ocurre antes de llamar a progress()
+      const downloadError = { message: 'Download failed', name: 'Error' };
+      const mockFetchFn = jest.fn().mockRejectedValue(downloadError);
       const mockConfigObj = {
         fetch: mockFetchFn,
       };
       config.mockReturnValue(mockConfigObj);
-
-      // El código await config().fetch().progress(), así que necesitamos que progress() rechace
-      // Pero progress() se llama con un callback, no se await directamente
-      // El problema es que fetch() devuelve una promesa que se await
-      // Necesitamos que fetch() rechace directamente
-      mockFetchFn.mockRejectedValue(downloadError);
 
       await expect(
         adapter.downloadFile('https://example.com/file.txt', '/path/to/file.txt'),

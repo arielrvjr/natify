@@ -46,19 +46,15 @@ export function useDIContainer(): DIContainer {
  */
 export function useUseCase<T>(key: string): T {
   const container = useDIContainer();
-  if (!container) {
-    throw new Error('useUseCase must be used within DIProvider');
-  }
+  // container ya está validado en useDIContainer, no necesita validación adicional
   return useMemo(() => container.resolve<T>(key), [container, key]);
 }
 
 /**
  * Hook para resolver un adapter del contenedor DI
  *
- * Los adapters se registran automáticamente cuando se inicializa NativefyApp
- * con el formato: `adapter:{name}` o `adapter:{capability}`
- *
- * Busca primero por nombre, luego por capability.
+ * Usa GetAdapterUseCase para mantener consistencia arquitectónica.
+ * Si el UseCase no está disponible, usa fallback directo (backward compatibility).
  *
  * @example
  * ```tsx
@@ -70,16 +66,22 @@ export function useUseCase<T>(key: string): T {
 export function useAdapter<T extends Port>(lookupKey: string): T {
   const container = useDIContainer();
 
-  // Intentar primero por nombre (adapter:http, adapter:storage)
+  // Intentar usar GetAdapterUseCase (ViewModel usando UseCase)
+  const getAdapterUseCase = container.tryResolve<{ execute: (key: string) => T }>(
+    'usecase:GetAdapterUseCase',
+  );
+
+  if (getAdapterUseCase) {
+    return getAdapterUseCase.execute(lookupKey);
+  }
+
+  // Fallback: acceso directo (para backward compatibility cuando UseCaseProvider no está disponible)
   const byName = container.tryResolve<T>(`adapter:${lookupKey}`);
   if (byName) {
     return byName;
   }
 
-  // Si no encontramos por nombre, buscar por capability
-  // Iterar sobre todas las keys registradas que empiecen con "adapter:"
   const adapterKeys = container.getKeys().filter(key => key.startsWith('adapter:'));
-
   for (const key of adapterKeys) {
     const adapter = container.tryResolve<Port>(key);
     if (adapter && adapter.capability === lookupKey) {

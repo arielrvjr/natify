@@ -75,11 +75,7 @@ export interface ErrorReportingPort extends Port {
    * @param context Contexto adicional del error
    * @param level Nivel de severidad (default: ERROR)
    */
-  captureException(
-    error: Error,
-    context?: ErrorReportingContext,
-    level?: SeverityLevel,
-  ): void;
+  captureException(error: Error, context?: ErrorReportingContext, level?: SeverityLevel): void;
 
   /**
    * Captura un mensaje.
@@ -87,11 +83,7 @@ export interface ErrorReportingPort extends Port {
    * @param level Nivel de severidad (default: INFO)
    * @param context Contexto adicional
    */
-  captureMessage(
-    message: string,
-    level?: SeverityLevel,
-    context?: ErrorReportingContext,
-  ): void;
+  captureMessage(message: string, level?: SeverityLevel, context?: ErrorReportingContext): void;
 
   /**
    * Establece el contexto del usuario actual.
@@ -142,4 +134,3 @@ export interface ErrorReportingPort extends Port {
    */
   clearBreadcrumbs(): void;
 }
-

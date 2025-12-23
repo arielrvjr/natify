@@ -1,10 +1,10 @@
 import { useCallback } from "react";
 import { useFormik } from "formik";
+import * as yup from "yup";
 import {
   useBaseViewModel,
   useAdapter,
   NavigationPort,
-  ValidationPort,
 } from "@nativefy/core";
 
 interface RegisterFormValues {
@@ -15,23 +15,20 @@ interface RegisterFormValues {
 }
 
 /**
- * ViewModel de registro usando Formik directamente y ValidationPort
+ * ViewModel de registro usando Formik directamente con Yup
  *
- * Usa Formik directamente (sin adapter) para simplicidad, pero mantiene
- * ValidationPort para crear esquemas de forma consistente y poder
- * intercambiar entre Yup y Zod fácilmente.
+ * Usa Formik directamente con esquemas de Yup para validación.
  */
 export function useRegisterViewModel() {
   const [baseState, { execute, clearError }] = useBaseViewModel();
   const navigation = useAdapter<NavigationPort>("navigation");
-  const validator = useAdapter<ValidationPort>("validation");
 
-  // Crear esquema de validación usando ValidationPort
-  const validationSchema = validator.createSchema({
-    name: validator.string().min(2, "El nombre debe tener al menos 2 caracteres").required("El nombre es requerido").build(),
-    email: validator.string().email("Email inválido").required("El email es requerido").build(),
-    password: validator.string().min(6, "La contraseña debe tener al menos 6 caracteres").required("La contraseña es requerida").build(),
-    confirmPassword: validator.string().required("Confirma tu contraseña").build(),
+  // Crear esquema de validación usando Yup directamente
+  const validationSchema = yup.object({
+    name: yup.string().min(2, "El nombre debe tener al menos 2 caracteres").required("El nombre es requerido"),
+    email: yup.string().email("Email inválido").required("El email es requerido"),
+    password: yup.string().min(6, "La contraseña debe tener al menos 6 caracteres").required("La contraseña es requerida"),
+    confirmPassword: yup.string().required("Confirma tu contraseña"),
   });
 
   // Usar Formik directamente (sin adapter)

@@ -17,7 +17,6 @@
     "@nativefy/permissions-rn": "workspace:*",
     "@nativefy/storage-keychain": "workspace:*",
     "@nativefy/storage-mmkv": "workspace:*",
-    "@nativefy/validation-yup": "workspace:*",
     "@nativefy/core": "workspace:*",
     "@nativefy/ui": "workspace:*",
     "@react-navigation/native": "^7.1.6",

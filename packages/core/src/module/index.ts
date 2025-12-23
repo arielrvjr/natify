@@ -1,5 +1,5 @@
 export * from './types';
-export * from './ModuleRegistry';
+export * from './usecases';
 export * from './ModuleProvider';
 export * from './createModule';
 export * from './validation';

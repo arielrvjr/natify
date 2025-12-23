@@ -2,23 +2,20 @@ import { LoggerPort, LogLevel } from '../../ports';
 
 export class ConsoleLoggerAdapter implements LoggerPort {
   readonly capability = 'logger';
+
+  /**
+   * Mapa de niveles de log a sus funciones correspondientes
+   */
+  private readonly logHandlers: Record<LogLevel, (message: string, metadata?: object) => void> = {
+    [LogLevel.DEBUG]: (message: string, metadata?: object) => this.debug(message, metadata),
+    [LogLevel.INFO]: (message: string, metadata?: object) => this.info(message, metadata),
+    [LogLevel.WARN]: (message: string, metadata?: object) => this.warn(message, metadata),
+    [LogLevel.ERROR]: (message: string, metadata?: object) => this.error(message, metadata),
+  };
+
   log(level: LogLevel, message: string, metadata?: object): void {
-    switch (level) {
-      case LogLevel.DEBUG:
-        this.debug(message, metadata);
-        break;
-      case LogLevel.INFO:
-        this.info(message, metadata);
-        break;
-      case LogLevel.WARN:
-        this.warn(message, metadata);
-        break;
-      case LogLevel.ERROR:
-        this.error(message, metadata);
-        break;
-      default:
-        this.info(message, metadata);
-    }
+    const handler = this.logHandlers[level] ?? this.logHandlers[LogLevel.INFO];
+    handler(message, metadata);
   }
   debug(message: string, ...args: any[]): void {
     // eslint-disable-next-line no-console

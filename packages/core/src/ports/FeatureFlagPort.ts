@@ -102,4 +102,3 @@ export interface FeatureFlagPort extends Port {
    */
   clearAttributes(): void;
 }
-

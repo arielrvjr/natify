@@ -10,7 +10,6 @@ import { createReactNavigationAdapter } from '@nativefy/navigation-react';
 import { RnBiometricAdapter } from '@nativefy/biometrics-rn';
 import { RnPermissionsAdapter } from '@nativefy/permissions-rn';
 import { RnImagePickerAdapter } from '@nativefy/image-picker-rn';
-import { YupValidationAdapter } from '@nativefy/validation-yup';
 // Módulos
 import {
   AuthModule,
@@ -58,7 +57,6 @@ const navigationAdapter = createReactNavigationAdapter({
 const biometricAdapter = new RnBiometricAdapter();
 const permissionsAdapter = new RnPermissionsAdapter();
 const imagePickerAdapter = new RnImagePickerAdapter();
-const validationAdapter = new YupValidationAdapter();
 
 // Configuración de adapters
 // Nota: logger se agrega automáticamente si no se proporciona
@@ -70,7 +68,6 @@ const adapters = {
   biometrics: biometricAdapter,
   permissions: permissionsAdapter,
   imagePicker: imagePickerAdapter,
-  validation: validationAdapter,
 };
 
 // Módulos de la app

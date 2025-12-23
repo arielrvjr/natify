@@ -72,10 +72,7 @@ export interface GeolocationPort extends Port {
    * @param options Opciones de observación
    * @returns Función para detener la observación
    */
-  watchPosition(
-    callback: (location: Location) => void,
-    options?: WatchLocationOptions,
-  ): () => void;
+  watchPosition(callback: (location: Location) => void, options?: WatchLocationOptions): () => void;
 
   /**
    * Verifica si el servicio de ubicación está habilitado en el dispositivo.
@@ -99,4 +96,3 @@ export interface GeolocationPort extends Port {
    */
   calculateBearing(from: Coordinates, to: Coordinates): number;
 }
-

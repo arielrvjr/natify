@@ -1,10 +1,5 @@
-import {
-  ModuleDefinition,
-  ScreenDefinition,
-  UseCaseDefinition,
-  RequiredCapability,
-  TypedAdapterMap,
-} from './types';
+import { RequiredCapability, TypedAdapterMap } from '../types/adapters';
+import { ModuleDefinition, ScreenDefinition, UseCaseDefinition } from './types';
 
 /**
  * Builder para crear módulos de forma fluida con tipos inferidos

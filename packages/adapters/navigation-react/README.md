@@ -35,33 +35,61 @@ export type RootStackParamList = {
 
 ### 2. Configurar el Adapter
 
+#### Con NativefyApp (Recomendado)
+
+```typescript
+// App.tsx
+import { NativefyApp } from "@nativefy/core";
+import { createReactNavigationAdapter } from "@nativefy/navigation-react";
+
+// Crear adapter con configuración
+const navigationAdapter = createReactNavigationAdapter({
+  theme: 'dark',
+  screenOptions: {
+    headerStyle: { backgroundColor: '#000' },
+    headerTintColor: '#fff',
+  },
+  deeplinkConfig: {
+    prefixes: ['myapp://', 'https://myapp.com'],
+  },
+});
+
+export default function App() {
+  return (
+    <NativefyApp
+      adapters={{ navigation: navigationAdapter }}
+      modules={[AuthModule, ProductsModule]}
+    />
+  );
+}
+```
+
+#### Con NativefyProvider (Nivel 1 - Solo Abstracción)
+
 ```typescript
 // App.tsx
 import { NativefyProvider } from "@nativefy/core";
-import { ReactNavigationAdapter } from "@nativefy/navigation-react";
+import { createReactNavigationAdapter } from "@nativefy/navigation-react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-// Crear el adapter (instancia global)
-const navigationAdapter = new ReactNavigationAdapter();
+// Crear el adapter con configuración
+const navigationAdapter = createReactNavigationAdapter({
+  theme: 'light',
+  screenOptions: {
+    headerShown: true,
+  },
+});
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-const config = {
-  navigation: navigationAdapter,
-  // ... otros adapters
-};
-
 function App() {
   return (
-    <NativefyProvider config={config}>
-      {/* Importante: pasar la ref del adapter al NavigationContainer */}
+    <NativefyProvider adapters={{ navigation: navigationAdapter }}>
       <NavigationContainer ref={navigationAdapter.navigationRef}>
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
-          <Stack.Screen name="Settings" component={SettingsScreen} />
-          <Stack.Screen name="Login" component={LoginScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </NativefyProvider>
@@ -224,9 +252,11 @@ El adapter soporta deeplinks de forma automática. Configura los prefijos al cre
 // App.tsx
 import { createReactNavigationAdapter } from '@nativefy/navigation-react';
 
-// Crear adapter con deeplinks (solo prefijos)
+// Crear adapter con deeplinks
 const navigationAdapter = createReactNavigationAdapter({
-  prefixes: ['myapp://', 'https://myapp.com'],
+  deeplinkConfig: {
+    prefixes: ['myapp://', 'https://myapp.com'],
+  },
 });
 
 // En NativefyApp (se pasa automáticamente)
@@ -234,6 +264,22 @@ const navigationAdapter = createReactNavigationAdapter({
   adapters={{ navigation: navigationAdapter }}
   modules={[AuthModule, ProductsModule]}
 />
+```
+
+**Con theme y screenOptions:**
+
+```typescript
+const navigationAdapter = createReactNavigationAdapter({
+  theme: 'dark', // 'light' | 'dark' | Theme object
+  screenOptions: {
+    headerStyle: { backgroundColor: '#000' },
+    headerTintColor: '#fff',
+    headerShown: true,
+  },
+  deeplinkConfig: {
+    prefixes: ['myapp://'],
+  },
+});
 ```
 
 **Configuración por pantalla (Recomendado):**
@@ -321,9 +367,73 @@ function ProfileScreen() {
 }
 ```
 
+## Configuración del Adapter
+
+### Opciones de Configuración
+
+```typescript
+interface ReactNavigationAdapterConfig {
+  /**
+   * Configuración de deeplinks (opcional)
+   */
+  deeplinkConfig?: {
+    prefixes: string[];
+    config?: LinkingOptions['config'];
+    filter?: (url: string) => boolean;
+    getInitialURL?: () => Promise<string | null | undefined>;
+    subscribe?: (listener: (url: string) => void) => () => void;
+  };
+
+  /**
+   * Tema de navegación ('light' | 'dark' | Theme object de React Navigation)
+   */
+  theme?: 'light' | 'dark' | Theme;
+
+  /**
+   * Opciones globales de pantallas
+   * Se aplican a todas las pantallas del stack navigator
+   */
+  screenOptions?: ScreenOptions;
+}
+```
+
+### Ejemplos de Configuración
+
+```typescript
+// Configuración mínima
+const adapter1 = createReactNavigationAdapter();
+
+// Solo theme
+const adapter2 = createReactNavigationAdapter({
+  theme: 'dark',
+});
+
+// Theme y screenOptions
+const adapter3 = createReactNavigationAdapter({
+  theme: 'dark',
+  screenOptions: {
+    headerStyle: { backgroundColor: '#1a1a1a' },
+    headerTintColor: '#fff',
+    headerTitleStyle: { fontWeight: 'bold' },
+  },
+});
+
+// Configuración completa
+const adapter4 = createReactNavigationAdapter({
+  theme: 'dark',
+  screenOptions: {
+    headerShown: true,
+    animation: 'slide_from_right',
+  },
+  deeplinkConfig: {
+    prefixes: ['myapp://', 'https://myapp.com'],
+  },
+});
+```
+
 ## Consideraciones
 
 1. **Crear el adapter fuera de componentes**: Debe ser una instancia global
-2. **Pasar la ref al NavigationContainer**: Obligatorio para que funcione
+2. **Configuración en el adapter**: `theme` y `screenOptions` se configuran al crear el adapter, no en `NativefyApp`
 3. **Verificar isReady**: El adapter maneja esto internamente, pero ten en cuenta que la navegación no funciona antes de que el container esté montado
 

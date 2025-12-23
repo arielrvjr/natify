@@ -171,4 +171,3 @@ export interface FileSystemPort extends Port {
    */
   getTempPath(): string;
 }
-
