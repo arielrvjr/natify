@@ -1,9 +1,8 @@
-import React, { ReactNode, useState, ComponentType, useEffect } from 'react';
+import React, { ReactNode, useState, ComponentType } from 'react';
 import { View, ActivityIndicator, StyleSheet, Text } from 'react-native';
-import { DIProvider, container, useDIContainer } from '../di';
+import { NativefyProvider } from '../context/NativefyProvider';
 import { ModuleProvider } from '../module/ModuleProvider';
 import { AdapterMap, ModuleDefinition, RegisteredModule } from '../module/types';
-import { Port } from '../ports/Port';
 
 /**
  * Props del componente NativefyApp
@@ -91,8 +90,7 @@ interface NavigationAdapterWithComponents {
  * Componente principal de Nativefy
  *
  * Encapsula toda la configuración necesaria:
- * - DIProvider (inyección de dependencias)
- * - AdapterRegistry (registra adapters en DI)
+ * - NativefyProvider (DI + registro de adapters)
  * - ModuleProvider (sistema de módulos)
  * - NavigationContainer + AppNavigator
  *
@@ -113,29 +111,6 @@ interface NavigationAdapterWithComponents {
  * }
  * ```
  */
-/**
- * Componente interno que registra adapters en DI
- */
-const AdapterRegistry: React.FC<{ adapters: AdapterMap }> = ({ adapters }) => {
-  const container = useDIContainer();
-
-  useEffect(() => {
-    // Registrar todos los adapters como singletons en el contenedor DI
-    // Esto permite que UseCases y otros servicios resuelvan adapters directamente
-    Object.entries(adapters).forEach(([key, adapter]) => {
-      // Registrar por nombre (ej: "http", "storage")
-      container.instance(`adapter:${key}`, adapter);
-
-      // También registrar por capability para búsqueda por tipo
-      if (adapter && typeof adapter === 'object' && 'capability' in adapter) {
-        const capability = (adapter as Port).capability;
-        container.instance(`adapter:${capability}`, adapter);
-      }
-    });
-  }, [adapters, container]);
-
-  return null;
-};
 
 export const NativefyApp: React.FC<NativefyAppProps> = ({
   adapters,
@@ -199,8 +174,7 @@ export const NativefyApp: React.FC<NativefyAppProps> = ({
   }
 
   return (
-    <DIProvider container={container}>
-      <AdapterRegistry adapters={adapters} />
+    <NativefyProvider adapters={adapters}>
       <ModuleProvider modules={modules} onModulesLoaded={handleModulesLoaded} onError={handleError}>
         <NavigationContainer
           theme={navigationTheme}
@@ -217,7 +191,7 @@ export const NativefyApp: React.FC<NativefyAppProps> = ({
           )}
         </NavigationContainer>
       </ModuleProvider>
-    </DIProvider>
+    </NativefyProvider>
   );
 };
 

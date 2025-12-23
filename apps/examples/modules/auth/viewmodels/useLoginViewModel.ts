@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useFormik } from "formik";
 import {
   useBaseViewModel,
@@ -9,6 +9,7 @@ import {
 } from "@nativefy/core";
 import { useTheme } from "@nativefy/ui";
 import { LoginUseCase } from "../usecases/LoginUseCase";
+import { CheckAuthUseCase } from "../usecases/CheckAuthUseCase";
 import { GetAppPreferencesUseCase } from "../../shared/usecases/GetAppPreferencesUseCase";
 
 interface LoginFormValues {
@@ -24,8 +25,10 @@ interface LoginFormValues {
  * intercambiar entre Yup y Zod fácilmente.
  */
 export function useLoginViewModel() {
-  const [baseState, { execute, clearError }] = useBaseViewModel();
+  const [baseState, { execute, clearError, setLoading }] = useBaseViewModel();
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const loginUseCase = useUseCase<LoginUseCase>("auth:login");
+  const checkAuthUseCase = useUseCase<CheckAuthUseCase>("auth:checkAuth");
   const navigation = useAdapter<NavigationPort>("navigation");
   const validator = useAdapter<ValidationPort>("validation");
   const { setDarkMode } = useTheme();
@@ -33,20 +36,34 @@ export function useLoginViewModel() {
     "shared:getAppPreferences",
   );
 
-  // Cargar preferencias al montar (primera pantalla del módulo inicial)
+  // Cargar preferencias y verificar autenticación al montar
   useEffect(() => {
-    const loadPreferences = async () => {
+    const initialize = async () => {
+      setLoading(true);
+      setIsCheckingAuth(true);
+      
       try {
+        // Cargar preferencias
         const preferences = await getPreferences.execute();
         // Sincronizar dark mode con ThemeProvider
         setDarkMode(preferences.darkMode);
+
+        // Verificar si hay sesión activa
+        const user = await checkAuthUseCase.execute();
+        if (user) {
+          // Si hay sesión activa, redirigir a la pantalla principal
+          navigation.reset([{ name: "products/ProductList" }]);
+        }
       } catch (error) {
-        console.error("[useLoginViewModel] Error loading preferences:", error);
+        console.error("[useLoginViewModel] Error initializing:", error);
+      } finally {
+        setLoading(false);
+        setIsCheckingAuth(false);
       }
     };
 
-    loadPreferences();
-  }, [getPreferences, setDarkMode]);
+    initialize();
+  }, [getPreferences, setDarkMode, checkAuthUseCase, navigation, setLoading]);
 
   // Crear esquema de validación usando ValidationPort
   const validationSchema = validator.createSchema({
@@ -121,6 +138,7 @@ export function useLoginViewModel() {
   return {
     state: {
       ...baseState,
+      isLoading: baseState.isLoading || isCheckingAuth,
       email: formik.values.email,
       password: formik.values.password,
       fieldErrors: {
@@ -129,6 +147,7 @@ export function useLoginViewModel() {
       },
       isFormValid: Object.keys(formik.errors).length === 0,
       isFormDirty: formik.dirty,
+      isCheckingAuth,
     },
     actions: {
       setEmail: handleSetEmail,

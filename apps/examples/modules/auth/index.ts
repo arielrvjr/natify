@@ -1,4 +1,4 @@
-import { createModule, actionBus } from "@nativefy/core";
+import { createModule, actionBus, LoggerPort } from "@nativefy/core";
 
 // Screens
 import { LoginScreen } from "./screens/LoginScreen";
@@ -15,7 +15,7 @@ import { CheckAuthUseCase } from "./usecases/CheckAuthUseCase";
  */
 export const AuthModule = createModule("auth", "Authentication")
   // Capacidades requeridas - tipos inferidos automáticamente
-  .requires("http", "secureStorage", "navigation", "validation")
+  .requires("http", "secureStorage", "navigation", "validation", "logger")
 
   // Pantallas
   .screen({
@@ -44,25 +44,27 @@ export const AuthModule = createModule("auth", "Authentication")
     new CheckAuthUseCase(adapters.http, adapters.secureStorage)
   )
 
-  // Registrar handler de logout en ActionBus para comunicación inter-módulo
-  .onInit(async (adapters) => {
-    const logoutUseCase = new LogoutUseCase(adapters.http, adapters.secureStorage);
-    
-    // Registrar acción de logout que otros módulos pueden invocar
-    actionBus.register("auth:logout", async () => {
-      await logoutUseCase.execute();
-      console.log("[AuthModule] User logged out via ActionBus");
-    });
-
-    console.log("[AuthModule] Initialized with ActionBus handlers");
-  })
-
   // Ruta inicial
   .initialRoute("Login")
 
-  // Inicialización
-  .onInit(async () => {
-    console.log("[AuthModule] Initialized");
+  // Inicialización - Registrar handler de logout en ActionBus para comunicación inter-módulo
+  .onInit(async (adapters) => {
+    const logger = adapters.logger as LoggerPort;
+    logger.info("[AuthModule] Starting initialization...");
+    
+    const logoutUseCase = new LogoutUseCase(adapters.http, adapters.secureStorage);
+    
+    // Registrar acción de logout que otros módulos pueden invocar
+    actionBus.register("auth:logout", async (action) => {
+      logger.info("[AuthModule] Logout action received", { action });
+      await logoutUseCase.execute();
+      logger.info("[AuthModule] User logged out via ActionBus");
+    });
+
+    // Verificar que el handler se registró
+    const hasHandler = actionBus.hasHandlers("auth:logout");
+    logger.info("[AuthModule] Handler registered", { hasHandler });
+    logger.info("[AuthModule] Initialized with ActionBus handlers");
   })
 
   .build();

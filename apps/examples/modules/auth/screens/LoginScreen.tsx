@@ -1,11 +1,24 @@
 import React from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Text, Input, Button, Column, Spacer, Container } from '@nativefy/ui';
+import { Text, Input, Button, Column, Spacer, Container, useTheme } from '@nativefy/ui';
+import { DefaultSplash } from '@nativefy/core';
 import { useLoginViewModel } from '../viewmodels/useLoginViewModel';
 
 export function LoginScreen() {
   const { state, actions } = useLoginViewModel();
+  const { theme } = useTheme();
+
+  // Mostrar splash mientras se verifica la autenticación
+  if (state.isCheckingAuth) {
+    return (
+      <DefaultSplash
+        message="Verificando sesión..."
+        color={theme.colors.action.primary}
+        backgroundColor={theme.colors.surface.primary}
+      />
+    );
+  }
 
   return (
     <SafeAreaView

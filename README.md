@@ -14,6 +14,7 @@
 - [¿Por qué Nativefy?](#por-qué-nativefy)
 - [Arquitectura](#arquitectura)
 - [Características Principales](#características-principales)
+- [Niveles de Integración](#niveles-de-integración)
 - [Quick Start](#quick-start)
 - [Casos de Uso](#casos-de-uso)
 - [Capacidades Disponibles](#capacidades-disponibles)
@@ -34,23 +35,43 @@ Nativefy implementa **casos de negocio (UseCases)** y **ViewModels** para manten
 En React Native tradicional, tu código de negocio está **acoplado directamente** a librerías específicas:
 
 ```typescript
-// ❌ Código acoplado - difícil de testear y cambiar
+// Código acoplado - difícil de testear y cambiar
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import * as ImagePicker from 'expo-image-picker';
 
-// Si quieres cambiar a MMKV, debes buscar y reemplazar en TODO el código
-await AsyncStorage.setItem('token', token);
+async function login(email: string, password: string) {
+  // Si cambias de axios a fetch, debes reescribir todas las llamadas
+  const response = await axios.post('https://api.example.com/auth/login', {
+    email,
+    password,
+  });
+  // Si quieres cambiar a MMKV, debes buscar y reemplazar en TODO el código
+  await AsyncStorage.setItem('token', response.data.token);
+  
+  return response.data.user;
+}
 ```
 
 Con Nativefy, usas **interfaces** y cambias implementaciones sin tocar tu código:
 
 ```typescript
-// ✅ Código desacoplado - fácil de testear y cambiar
-const storage = useAdapter<StoragePort>('storage');
-await storage.setItem('token', token);
+// Código desacoplado - fácil de testear y cambiar
+import { useAdapter, HttpClientPort, StoragePort } from '@nativefy/core';
 
-// Cambiar de AsyncStorage a MMKV es solo cambiar el adapter en App.tsx
+function useLogin() {
+  const http = useAdapter<HttpClientPort>('http');
+  const storage = useAdapter<StoragePort>('storage');
+  
+  return async (email: string, password: string) => {
+    const response = await http.post('/auth/login', { email, password });
+  
+    await storage.setItem('token', response.data.token);
+  
+    // Cambiar de AsyncStorage a MMKV o de axios a fetch
+    // es solo cambiar el adapter en App.tsx - este código NO cambia
+    return response.data.user;
+  };
+}
 ```
 
 ---
@@ -59,13 +80,13 @@ await storage.setItem('token', token);
 
 ### Para Equipos y Proyectos
 
-| Escenario | Beneficio |
-|----------|-----------|
-| **Equipos grandes (3+ devs)** | Arquitectura clara, fácil onboarding |
-| **Proyectos a largo plazo** | Mantenibilidad y escalabilidad |
-| **Apps empresariales** | Governance y control sobre capacidades |
-| **Testing robusto** | Mocks fáciles, tests aislados |
-| **Migración de librerías** | Cambiar implementaciones sin romper código |
+| Escenario                           | Beneficio                                   |
+| ----------------------------------- | ------------------------------------------- |
+| **Equipos grandes (3+ devs)** | Arquitectura clara, fácil onboarding       |
+| **Proyectos a largo plazo**   | Mantenibilidad y escalabilidad              |
+| **Apps empresariales**        | Governance y control sobre capacidades      |
+| **Testing robusto**           | Mocks fáciles, tests aislados              |
+| **Migración de librerías**  | Cambiar implementaciones sin romper código |
 
 ### Ventajas Clave
 
@@ -102,7 +123,7 @@ const storage = new MMKVStorageAdapter();
 
 #### 4. Arquitectura Escalable
 
-- **Sistema de módulos**: Organiza tu app en mini-apps independientes
+- **Sistema de módulos**: Organiza tu app en módulos independientes
 - **Casos de negocio (UseCases)**: Lógica de negocio encapsulada y testeable
 - **ViewModels**: Separación clara entre UI y lógica, UI limpia y mantenible
 - **Inyección de dependencias**: Gestión automática de dependencias
@@ -112,44 +133,12 @@ const storage = new MMKVStorageAdapter();
 
 ## Arquitectura
 
-Nativefy sigue el patrón **Hexagonal (Ports & Adapters)** combinado con **Clean Architecture**, separando la aplicación en capas bien definidas:
+Nativefy sigue el patrón **Hexagonal (Ports & Adapters)** combinado con **Clean Architecture**:
 
-- **UI Layer (Vistas)**: Componentes React Native puros, sin lógica de negocio
-- **ViewModels**: Manejan el estado de la UI, loading, errores y coordinan con UseCases
-- **UseCases (Casos de Negocio)**: Contienen la lógica de negocio pura, orquestan adapters
 - **Ports (Interfaces)**: Contratos que definen capacidades sin implementación
 - **Adapters**: Implementaciones concretas de los Ports usando librerías nativas
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        APLICACIÓN                            │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │                    @nativefy/core                    │    │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │    │
-│  │  │   PORTS     │  │   ERRORS    │  │  PROVIDER   │  │    │
-│  │  │ (Interfaces)│  │(NativefyErr)│  │  (Context)  │  │    │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  │    │
-│  └─────────────────────────────────────────────────────┘    │
-│                            ▲                                 │
-│                            │ implements                      │
-│  ┌─────────────────────────┴───────────────────────────┐    │
-│  │               @nativefy-adapter/*                    │    │
-│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────┐  │    │
-│  │  │http-axios│ │storage-  │ │biometrics│ │store-  │  │    │
-│  │  │          │ │mmkv      │ │-rn       │ │zustand │  │    │
-│  │  └──────────┘ └──────────┘ └──────────┘ └────────┘  │    │
-│  └─────────────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Flujo de Dependencias y Capas
-
-1. **Core** define las interfaces (Ports) - `HttpClientPort`, `StoragePort`, etc.
-2. **Adapters** implementan las interfaces usando librerías específicas
-3. **UseCases** encapsulan la lógica de negocio y usan adapters inyectados
-4. **ViewModels** coordinan entre UI y UseCases, manejan estado de UI
-5. **Componentes UI** consumen ViewModels y permanecen libres de lógica de negocio
-6. Los componentes usan `useUseCase<T>()` para casos de negocio y `useAdapter<Port>()` para acceso directo a adapters
+- **ViewModels** (Nivel 2): Manejan el estado de la UI, loading, errores y coordinan con UseCases
+- **UseCases** (Nivel 2): Contienen la lógica de negocio pura, orquestan adapters
 
 ### Principios
 
@@ -166,42 +155,276 @@ Nativefy sigue el patrón **Hexagonal (Ports & Adapters)** combinado con **Clean
 ## Características Principales
 
 ### Arquitectura Hexagonal
+
 - Patrón Ports & Adapters implementado completamente
 - Separación clara entre lógica de negocio e infraestructura
 - Dependencias invertidas (Dependency Inversion Principle)
 
 ### Sistema de Módulos
+
 - Organiza tu app en módulos independientes (Auth, Products, Profile, etc.)
 - Cada módulo declara sus dependencias explícitamente
 - Carga/descarga dinámica de módulos (Hot Reload)
 
 ### Inyección de Dependencias
+
 - Container DI con soporte para singletons y factories
 - Inferencia automática de tipos de adapters
 - Hooks `useAdapter<T>()` y `useUseCase<T>()` para acceso tipado
 
 ### ActionBus
+
 - Comunicación inter-módulo sin acoplamiento directo
-- Patrón similar a MediatR (C#) o Command Bus
 - Permite que módulos se comuniquen sin conocerse
 
 ### Tipado Fuerte
+
 - TypeScript en todo el framework
 - Interfaces tipadas para todos los Ports
 - Inferencia automática de tipos en adapters
 
 ### Casos de Negocio (UseCases)
+
 - Encapsulan la lógica de negocio pura, independiente de la UI
 - Reciben adapters inyectados, no dependen de implementaciones concretas
 - Altamente testeables sin necesidad de mocks complejos
 - Un UseCase = Una responsabilidad de negocio
 
 ### ViewModels
+
 - Hook base (`useBaseViewModel`) para manejo automático de loading y errores
 - Coordinan entre componentes UI y UseCases
 - Mantienen el estado de la UI (loading, error, data)
 - Reducen boilerplate en componentes
 - Estado consistente en toda la app
+
+---
+
+## Niveles de Integración
+
+Nativefy ofrece **dos niveles de integración** para adaptarse a las necesidades de tu proyecto. Puedes integrarlo hasta el nivel que desees:
+
+### Nivel 1: Solo Abstracción (NativefyProvider)
+
+**Ideal para:** Proyectos existentes que solo quieren abstraer las librerías nativas sin cambiar su arquitectura.
+
+Este nivel te da acceso a los **adapters y ports** (abstracción de implementaciones), pero sin el sistema de módulos ni la inyección de dependencias completa.
+
+#### Arquitectura del Nivel 1
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    TU APLICACIÓN                             │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │              Componentes React Native               │    │
+│  │  ┌──────────────────────────────────────────────┐   │    │
+│  │  │  useAdapter<Port>() → Acceso directo         │   │    │
+│  │  └──────────────────────────────────────────────┘   │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                            │                                 │
+│                            ▼                                 │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │            NativefyProvider (DI + Registry)          │    │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │    │
+│  │  │   PORTS     │  │   ERRORS    │  │   DI        │  │    │
+│  │  │ (Interfaces)│  │(NativefyErr)│  │ Container  │  │    │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘  │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                            ▲                                 │
+│                            │ implements                      │
+│  ┌─────────────────────────┴───────────────────────────┐    │
+│  │               @nativefy-adapter/*                    │    │
+│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐             │    │
+│  │  │http-axios│ │storage-  │ │biometrics│             │    │
+│  │  │          │ │mmkv      │ │-rn       │             │    │
+│  │  └──────────┘ └──────────┘ └──────────┘             │    │
+│  └─────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────┘
+
+Incluye: Ports, Errors, DI Container, Adapters
+NO incluye: Módulos, UseCases, ViewModels, ActionBus, Navigation
+```
+
+#### Flujo del Nivel 1
+
+1. **Core** define las interfaces (Ports) - `HttpClientPort`, `StoragePort`, etc.
+2. **Adapters** implementan las interfaces usando librerías específicas
+3. **NativefyProvider** registra adapters en el contenedor DI
+4. **Componentes UI** usan `useAdapter<Port>()` para acceder directamente a adapters
+5. La lógica de negocio puede estar en los componentes o en funciones/hooks personalizados
+
+```typescript
+// App.tsx
+import { NativefyProvider, useAdapter } from '@nativefy/core';
+import { AxiosHttpAdapter } from '@nativefy-adapter/http-axios';
+import { MMKVStorageAdapter } from '@nativefy-adapter/storage-mmkv';
+import { HttpClientPort, StoragePort } from '@nativefy/core';
+
+export default function App() {
+  return (
+    <NativefyProvider
+      adapters={{
+        http: new AxiosHttpAdapter('https://api.example.com'),
+        storage: new MMKVStorageAdapter(),
+      }}
+    >
+      <MyApp />
+    </NativefyProvider>
+  );
+}
+
+// Usar adapters en componentes
+function MyComponent() {
+  const http = useAdapter<HttpClientPort>('http');
+  const storage = useAdapter<StoragePort>('storage');
+  
+  const fetchData = async () => {
+    const response = await http.get('/users');
+    await storage.setItem('lastFetch', Date.now());
+  };
+  
+  return <Button onPress={fetchData} title="Fetch" />;
+}
+```
+
+**Lo que obtienes:**
+
+- Abstracción de librerías nativas (Ports & Adapters)
+- Acceso a adapters tipados con `useAdapter<T>()`
+- Cambio de implementaciones sin tocar código de negocio
+- Testing simplificado con mocks
+
+**Lo que NO incluye:**
+
+- Sistema de módulos
+- Inyección de dependencias para UseCases
+- Module Registry
+- ActionBus
+- Navegación integrada
+
+---
+
+### Nivel 2: Framework Completo (NativefyApp)
+
+**Ideal para:** Proyectos nuevos o refactorizaciones que buscan arquitectura completa con módulos, UseCases y ViewModels.
+
+Este nivel incluye **todo el framework**: sistema de módulos, inyección de dependencias, Module Registry, ActionBus y navegación integrada.
+
+#### Arquitectura del Nivel 2
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    TU APLICACIÓN                             │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │              Componentes React Native               │    │
+│  │  ┌──────────────────────────────────────────────┐   │    │
+│  │  │  ViewModels → useBaseViewModel()             │   │    │
+│  │  │  useUseCase<T>() → Casos de negocio         │   │    │
+│  │  │  useAdapter<T>() → Acceso directo           │   │    │
+│  │  └──────────────────────────────────────────────┘   │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                            │                                 │
+│                            ▼                                 │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │              NativefyApp (Framework Completo)      │    │
+│  │  ┌──────────────────────────────────────────────┐ │    │
+│  │  │  ModuleProvider → Sistema de módulos         │ │    │
+│  │  │  ModuleRegistry → Validación dependencias    │ │    │
+│  │  │  ActionBus → Comunicación inter-módulo       │ │    │
+│  │  └──────────────────────────────────────────────┘ │    │
+│  │  ┌──────────────────────────────────────────────┐ │    │
+│  │  │  NativefyProvider (DI + Registry)            │ │    │
+│  │  │  ┌─────────────┐  ┌─────────────┐           │ │    │
+│  │  │  │   PORTS     │  │   ERRORS    │           │ │    │
+│  │  │  │ (Interfaces)│  │(NativefyErr)│           │ │    │
+│  │  │  └─────────────┘  └─────────────┘           │ │    │
+│  │  └──────────────────────────────────────────────┘ │    │
+│  │  ┌──────────────────────────────────────────────┐ │    │
+│  │  │  NavigationContainer + AppNavigator         │ │    │
+│  │  └──────────────────────────────────────────────┘ │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                            ▲                                 │
+│                            │ implements                      │
+│  ┌─────────────────────────┴───────────────────────────┐    │
+│  │               @nativefy-adapter/*                    │    │
+│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────┐  │    │
+│  │  │http-axios│ │storage-  │ │biometrics│ │nav-    │  │    │
+│  │  │          │ │mmkv      │ │-rn       │ │react   │  │    │
+│  │  └──────────┘ └──────────┘ └──────────┘ └────────┘  │    │
+│  └─────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────┘
+
+Incluye: TODO (Ports, Errors, DI, Adapters, Módulos, UseCases, 
+         ViewModels, ActionBus, Navigation, Module Registry)
+```
+
+#### Flujo del Nivel 2
+
+1. **Core** define las interfaces (Ports) - `HttpClientPort`, `StoragePort`, etc.
+2. **Adapters** implementan las interfaces usando librerías específicas
+3. **NativefyProvider** (interno) registra adapters en el contenedor DI
+4. **ModuleProvider** carga y valida módulos con sus dependencias
+5. **UseCases** encapsulan la lógica de negocio y usan adapters inyectados
+6. **ViewModels** coordinan entre UI y UseCases, manejan estado de UI
+7. **Componentes UI** consumen ViewModels y permanecen libres de lógica de negocio
+8. Los componentes usan `useUseCase<T>()` para casos de negocio y `useAdapter<Port>()` para acceso directo a adapters
+
+```typescript
+// App.tsx
+import { NativefyApp } from '@nativefy/core';
+import { AxiosHttpAdapter } from '@nativefy-adapter/http-axios';
+import { MMKVStorageAdapter } from '@nativefy-adapter/storage-mmkv';
+import { createReactNavigationAdapter } from '@nativefy-adapter/navigation-react';
+
+// Módulos
+import { AuthModule, ProductsModule } from './modules';
+
+const adapters = {
+  http: new AxiosHttpAdapter('https://api.example.com'),
+  storage: new MMKVStorageAdapter(),
+  navigation: createReactNavigationAdapter(),
+};
+
+export default function App() {
+  return (
+    <NativefyApp
+      adapters={adapters}
+      modules={[AuthModule, ProductsModule]}
+      initialModule="auth"
+    />
+  );
+}
+```
+
+**Lo que obtienes:**
+
+- Todo lo del Nivel 1
+- Sistema de módulos
+- Inyección de dependencias completa
+- UseCases con `useUseCase<T>()`
+- Module Registry (validación de dependencias)
+- ActionBus (comunicación inter-módulo)
+- Navegación integrada
+- Hot Reload de módulos
+- ViewModels con `useBaseViewModel()`
+
+---
+
+### Comparación de Niveles
+
+| Característica                      | Nivel 1 (NativefyProvider) | Nivel 2 (NativefyApp) |
+| ------------------------------------ | -------------------------- | --------------------- |
+| **Abstracción de librerías** | Sí                        | Sí                   |
+| **useAdapter `<T>`()**       | Sí                        | Sí                   |
+| **Sistema de módulos**        | No                         | Sí                   |
+| **useUseCase `<T>`()**       | No                         | Sí                   |
+| **Module Registry**            | No                         | Sí                   |
+| **ActionBus**                  | No                         | Sí                   |
+| **Navegación integrada**      | No                         | Sí                   |
+| **Hot Reload módulos**        | No                         | Sí                   |
+| **ViewModels**                 | No                         | Sí                   |
+| **Complejidad**                | Baja                       | Media-Alta            |
+| **Recomendado para**           | Proyectos existentes       | Proyectos nuevos      |
 
 ---
 
@@ -223,7 +446,40 @@ pnpm add @nativefy-adapter/permissions-rn
 pnpm add @nativefy-adapter/image-picker-rn
 ```
 
-### Configuración Básica
+### Configuración Básica (Nivel 1 - Solo Abstracción)
+
+Si prefieres solo la abstracción sin el sistema completo:
+
+```typescript
+// App.tsx
+import { NativefyProvider, useAdapter } from '@nativefy/core';
+import { AxiosHttpAdapter } from '@nativefy-adapter/http-axios';
+import { MMKVStorageAdapter } from '@nativefy-adapter/storage-mmkv';
+import { HttpClientPort, StoragePort } from '@nativefy/core';
+
+export default function App() {
+  return (
+    <NativefyProvider
+      adapters={{
+        http: new AxiosHttpAdapter('https://api.example.com'),
+        storage: new MMKVStorageAdapter(),
+      }}
+    >
+      <MyApp />
+    </NativefyProvider>
+  );
+}
+
+// Usar en componentes
+function MyComponent() {
+  const http = useAdapter<HttpClientPort>('http');
+  const storage = useAdapter<StoragePort>('storage');
+  
+  // Tu lógica aquí
+}
+```
+
+### Configuración Básica (Nivel 2 - Framework Completo)
 
 ```typescript
 // App.tsx
@@ -263,7 +519,7 @@ export default function App() {
 }
 ```
 
-### Crear un Módulo
+### Crear un Módulo (Solo Nivel 2)
 
 ```typescript
 // modules/auth/index.ts
@@ -281,7 +537,7 @@ export const AuthModule = createModule('auth', 'Authentication')
   .build();
 ```
 
-### Crear un ViewModel
+### Crear un ViewModel (Solo Nivel 2)
 
 ```typescript
 // viewmodels/useLoginViewModel.ts
@@ -354,11 +610,11 @@ export function LoginScreen() {
         secureTextEntry
         editable={!state.isLoading}
       />
-      
+  
       {state.error && (
         <Text style={{ color: 'red' }}>{state.error.message}</Text>
       )}
-      
+  
       {state.isLoading ? (
         <ActivityIndicator />
       ) : (
@@ -395,28 +651,33 @@ export function LoginScreen() {
 
 ### Implementadas
 
-| Capacidad | Adapter | Librería Subyacente |
-|-----------|---------|---------------------|
-| **HTTP Client** | `@nativefy-adapter/http-axios` | Axios |
-| **Storage** | `@nativefy-adapter/storage-mmkv` | react-native-mmkv (30x más rápido) |
-| **Storage** | `@nativefy-adapter/storage-async` | AsyncStorage |
-| **Secure Storage** | `@nativefy-adapter/storage-keychain` | react-native-keychain |
-| **Biometrics** | `@nativefy-adapter/biometrics-rn` | react-native-biometrics |
-| **Permissions** | `@nativefy-adapter/permissions-rn` | react-native-permissions |
-| **Navigation** | `@nativefy-adapter/navigation-react` | React Navigation |
-| **Image Picker** | `@nativefy-adapter/image-picker-rn` | react-native-image-picker |
-| **State Management** | `@nativefy-adapter/store-zustand` | Zustand |
-| **Analytics** | `@nativefy-adapter/analytics-composite` | Composite (múltiples providers) |
+| Capacidad                  | Adapter                                   | Librería Subyacente                 |
+| -------------------------- | ----------------------------------------- | ------------------------------------ |
+| **Analytics**        | `@nativefy-adapter/analytics-mixpanel`  | mixpanel-react-native                |
+| **Biometrics**       | `@nativefy-adapter/biometrics-rn`       | react-native-biometrics              |
+| **Error Reporting**  | `@nativefy-adapter/error-reporting-sentry` | @sentry/react-native            |
+| **Feature Flags**    | `@nativefy-adapter/feature-flag-growthbook` | @growthbook/growthbook-react   |
+| **File System**      | `@nativefy-adapter/file-system-rn`      | react-native-blob-util               |
+| **Geolocation**      | `@nativefy-adapter/geolocation-rn`      | @react-native-community/geolocation  |
+| **GraphQL**          | `@nativefy-adapter/graphql-apollo`       | @apollo/client                       |
+| **HTTP Client**      | `@nativefy-adapter/http-axios`          | Axios                                |
+| **Image Picker**     | `@nativefy-adapter/image-picker-rn`     | react-native-image-picker            |
+| **Navigation**       | `@nativefy-adapter/navigation-react`    | React Navigation                     |
+| **Permissions**      | `@nativefy-adapter/permissions-rn`      | react-native-permissions             |
+| **Push Notifications** | `@nativefy-adapter/push-notification-firebase` | @react-native-firebase/messaging |
+| **Push Notifications** | `@nativefy-adapter/push-notification-notifee` | @notifee/react-native        |
+| **Secure Storage**   | `@nativefy-adapter/storage-keychain`    | react-native-keychain                |
+| **State Management** | `@nativefy-adapter/store-zustand`       | Zustand                              |
+| **Storage**          | `@nativefy-adapter/storage-async`       | AsyncStorage                         |
+| **Storage**          | `@nativefy-adapter/storage-mmkv`        | react-native-mmkv (30x más rápido) |
+| **Validation**       | `@nativefy-adapter/validation-zod`       | zod                                 |
+| **Validation**       | `@nativefy-adapter/validation-yup`       | yup                                 |
 
 ### Planificadas
 
 - Camera/Media (react-native-vision-camera)
-- Location (react-native-geolocation-service)
-- File System (react-native-blob-util)
 - Theme Engine (@shopify/restyle)
 - Toast/Alerts (react-native-toast-message)
-- Crash Reporting (Sentry)
-- Validation (Zod)
 
 ---
 
@@ -424,26 +685,26 @@ export function LoginScreen() {
 
 ### Nativefy vs Expo
 
-| Aspecto | Expo | Nativefy | Combinación |
-|---------|------|----------|-------------|
-| **Propósito** | Plataforma de desarrollo | Framework de arquitectura | Compatible |
-| **Setup** | Muy rápido | Más lento | Expo + Nativefy |
-| **Flexibilidad** | Limitada (managed) | Alta | Nativefy gana |
-| **Testing** | Estándar | Más fácil | Nativefy gana |
-| **Arquitectura** | No impone | Hexagonal | Nativefy gana |
-| **Build System** | EAS Build | Manual | Expo gana |
+| Aspecto                | Expo                     | Nativefy                  |
+| ---------------------- | ------------------------ | ------------------------- |
+| **Propósito**   | Plataforma de desarrollo | Framework de arquitectura |
+| **Setup**        | Muy rápido              | Más lento                |
+| **Flexibilidad** | Limitada (managed)       | Alta                      |
+| **Testing**      | Estándar                | Más fácil               |
+| **Arquitectura** | No impone                | Hexagonal                 |
+| **Build System** | EAS Build                | Manual                    |
 
 **Recomendación**: Usar **Expo para tooling** (EAS Build, Updates) + **Nativefy para arquitectura**.
 
 ### Nativefy vs React Native Puro
 
-| Aspecto | RN Puro | Nativefy |
-|---------|---------|----------|
-| **Testing** | Difícil (mocks complejos) | Fácil (adapters mockeables) |
-| **Mantenibilidad** | Depende del equipo | Estructura clara |
-| **Migración de librerías** | Buscar/reemplazar todo | Cambiar adapter |
-| **Onboarding** | Depende del proyecto | Arquitectura documentada |
-| **Governance** | Manual | Interfaces tipadas |
+| Aspecto                            | RN Puro                    | Nativefy                     |
+| ---------------------------------- | -------------------------- | ---------------------------- |
+| **Testing**                  | Difícil (mocks complejos) | Fácil (adapters mockeables) |
+| **Mantenibilidad**           | Depende del equipo         | Estructura clara             |
+| **Migración de librerías** | Buscar/reemplazar todo     | Cambiar adapter              |
+| **Onboarding**               | Depende del proyecto       | Arquitectura documentada     |
+| **Governance**               | Manual                     | Interfaces tipadas           |
 
 ---
 
@@ -457,8 +718,9 @@ export function LoginScreen() {
 ### Guías
 
 Consulta la documentación en [`.cursorrules`](.cursorrules) para:
+
 - Cómo crear un Port
-- Cómo crear un Adapter  
+- Cómo crear un Adapter
 - Cómo crear un Módulo
 - Testing con Nativefy
 
@@ -466,13 +728,13 @@ Consulta la documentación en [`.cursorrules`](.cursorrules) para:
 
 ## Stack Tecnológico
 
-| Herramienta | Versión | Propósito |
-|-------------|---------|-----------|
-| **pnpm** | 10.24.0 | Package manager (workspaces) |
-| **Turbo** | 2.6.2 | Build system monorepo |
-| **TypeScript** | 5.9.3 | Tipado estático |
-| **React Native** | 0.82+ | Framework móvil |
-| **React** | 19.1.1 | UI library |
+| Herramienta            | Versión | Propósito                   |
+| ---------------------- | -------- | ---------------------------- |
+| **pnpm**         | 10.24.0  | Package manager (workspaces) |
+| **Turbo**        | 2.6.2    | Build system monorepo        |
+| **TypeScript**   | 5.9.3    | Tipado estático             |
+| **React Native** | 0.82+    | Framework móvil             |
+| **React**        | 19.1.1   | UI library                   |
 
 ---
 
@@ -510,6 +772,7 @@ Las contribuciones son bienvenidas. Por favor:
 ### Guías de Contribución
 
 Consulta [`.cursorrules`](.cursorrules) para:
+
 - Cómo crear un nuevo Adapter
 - Cómo crear un nuevo Port
 - Convenciones de código y arquitectura
@@ -519,14 +782,6 @@ Consulta [`.cursorrules`](.cursorrules) para:
 ## Licencia
 
 Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
-
----
-
-## Agradecimientos
-
-- Inspirado en arquitectura hexagonal y Clean Architecture
-- Patrones similares a MediatR (C#) y Command Bus
-- Comunidad de React Native por las excelentes librerías
 
 ---
 
@@ -560,7 +815,7 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para
 ### Próximas Capacidades
 
 - **Camera/Media** - react-native-vision-camera
-- **Location** - react-native-geolocation-service  
+- **Location** - react-native-geolocation-service
 - **File System** - react-native-blob-util
 - **Theme Engine** - @shopify/restyle
 - **Toast/Alerts** - react-native-toast-message

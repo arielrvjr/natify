@@ -9,3 +9,8 @@ export * from './NavigationPort';
 export * from './ImagePickerPort';
 export * from './ValidationPort';
 export * from './PushNotificationPort';
+export * from './FileSystemPort';
+export * from './GraphQLPort';
+export * from './GeolocationPort';
+export * from './FeatureFlagPort';
+export * from './ErrorReportingPort';

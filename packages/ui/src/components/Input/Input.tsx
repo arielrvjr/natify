@@ -42,12 +42,18 @@ export const Input = forwardRef<TextInput, InputProps>(
       if (isFocused) return theme.colors.action.primary;
       return theme.colors.structure.border;
     };
-    const inputTextColor = disabled ? 'tertiary' : 'primary';
+
+    // Resolver el color del texto del input desde el tema
+    // primary para habilitado, tertiary para deshabilitado
+    const inputTextColor = disabled ? theme.colors.content.tertiary : theme.colors.content.primary;
+
+    const labelColorKey = disabled ? 'tertiary' : 'primary';
+
     return (
       <View style={[styles.container, containerStyle]}>
         {label && (
           <View style={styles.labelContainer}>
-            <Text variant="label" style={styles.label} color={inputTextColor}>
+            <Text variant="label" style={styles.label} color={labelColorKey}>
               {label}
               {required && <Text color="error"> *</Text>}
             </Text>

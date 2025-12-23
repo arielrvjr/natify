@@ -139,3 +139,6 @@ verdaccio/plugins/
 verdaccio/htpasswd
 verdaccio/*.log
 .npmrc
+
+# Documentación interna (solo local, no en GitHub)
+.docs/

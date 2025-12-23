@@ -1,0 +1,56 @@
+# Archivos que no afectan el cache de Turborepo
+
+# Dependencias
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs (ya están en outputs)
+dist/
+build/
+*.tsbuildinfo
+
+# Coverage (ya está en outputs de test:coverage)
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporal
+*.tmp
+*.temp
+.cache/
+.temp/
+
+# React Native
+.metro-health-check*
+ios/Pods/
+ios/build/
+ios/DerivedData/
+android/app/build/
+android/build/
+android/.gradle/
+
+# TypeScript
+*.tsbuildinfo
+
+# Misc
+*.pem
+*.key
+*.cert
+

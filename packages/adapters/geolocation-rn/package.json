@@ -1,0 +1,30 @@
+{
+  "name": "@nativefy-adapter/geolocation-rn",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:coverage:watch": "jest --coverage --watch",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\""
+  },
+  "devDependencies": {
+    "@nativefy/core": "workspace:*",
+    "typescript": "*"
+  },
+  "peerDependencies": {
+    "@nativefy/core": "*",
+    "@react-native-community/geolocation": "^3.4.0"
+  }
+}
+

@@ -61,6 +61,7 @@ const imagePickerAdapter = new RnImagePickerAdapter();
 const validationAdapter = new YupValidationAdapter();
 
 // Configuración de adapters
+// Nota: logger se agrega automáticamente si no se proporciona
 const adapters = {
   http: httpAdapter,
   storage: storageAdapter,

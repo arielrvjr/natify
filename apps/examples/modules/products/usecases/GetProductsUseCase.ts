@@ -1,4 +1,4 @@
-import { HttpClientPort, StoragePort } from "@nativefy/core";
+import { HttpClientPort, StoragePort } from '@nativefy/core';
 
 export interface Product {
   id: number;
@@ -17,12 +17,12 @@ export interface Product {
  * UseCase para obtener lista de productos
  */
 export class GetProductsUseCase {
-  private cacheKey = "products_cache";
+  private cacheKey = 'products_cache';
   private cacheTTL = 5 * 60 * 1000; // 5 minutos
 
   constructor(
     private readonly http: HttpClientPort,
-    private readonly storage: StoragePort
+    private readonly storage: StoragePort,
   ) {}
 
   async execute(forceRefresh = false): Promise<Product[]> {
@@ -36,7 +36,7 @@ export class GetProductsUseCase {
 
     // Obtener de API
     const response = await this.http.get<Product[]>(
-      "https://fakestoreapi.com/products?limit=10"
+      'https://fakestoreapi.com/products?limit=10',
     );
 
     // Guardar en cache
@@ -68,4 +68,3 @@ export class GetProductsUseCase {
     });
   }
 }
-

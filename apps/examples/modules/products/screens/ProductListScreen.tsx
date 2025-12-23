@@ -8,7 +8,6 @@ import {
   Badge,
   Row,
   Column,
-  Spacer,
   Loading,
   EmptyState,
 } from '@nativefy/ui';
@@ -25,19 +24,12 @@ export function ProductListScreen() {
       style={styles.productCard}
     >
       <Row gap="sm" alignItems="center">
-        <Image
-          source={{ uri: item.image }}
-          style={styles.productImage}
-        />
+        <Image source={{ uri: item.image }} style={styles.productImage} />
         <Column gap="xs" style={styles.productInfo}>
           <Text variant="body" numberOfLines={2}>
             {item.title}
           </Text>
-          <Text
-            variant="caption"
-            color="secondary"
-            style={styles.categoryText}
-          >
+          <Text variant="caption" color="secondary" style={styles.categoryText}>
             {item.category}
           </Text>
           <Row justifyContent="space-between" alignItems="center">

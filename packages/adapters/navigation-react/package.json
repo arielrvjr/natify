@@ -25,7 +25,7 @@
     "typescript": "*"
   },
   "peerDependencies": {
-    "@nativefy/core": "*",
+    "@nativefy/core": "workspace:*",
     "@react-navigation/native": ">=6.0.0",
     "@react-navigation/native-stack": ">=6.0.0",
     "react": "*",

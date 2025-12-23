@@ -5,6 +5,7 @@ import {
   useActionDispatch,
   useAdapter,
   NavigationPort,
+  LoggerPort,
 } from "@nativefy/core";
 import { GetProfileUseCase } from "../usecases/GetProfileUseCase";
 import { User } from "../../auth/usecases/LoginUseCase";
@@ -21,6 +22,7 @@ export function useProfileViewModel() {
   // Usar hooks del core en lugar de adapters directamente
   const dispatch = useActionDispatch();
   const navigation = useAdapter<NavigationPort>('navigation');
+  const logger = useAdapter<LoggerPort>('logger');
 
   const loadProfile = useCallback(async () => {
     const result = await execute(() => getProfileUseCase.execute());
@@ -38,13 +40,17 @@ export function useProfileViewModel() {
    * El módulo Auth registra el handler para 'auth:logout'
    */
   const logout = useCallback(async () => {
+    logger.info("[ProfileViewModel] Dispatching logout action...");
     const result = await dispatch({ type: "auth:logout" });
+    logger.info("[ProfileViewModel] Logout result", { success: result.success });
     
     if (result.success) {
       // Navegar a login y limpiar el stack
       navigation.reset([{ name: "auth/Login" }]);
+    } else {
+      logger.error("[ProfileViewModel] Logout failed", result.error);
     }
-  }, [dispatch, navigation]);
+  }, [dispatch, navigation, logger]);
 
   const handleGoBack = useCallback(() => {
     navigation.goBack();
