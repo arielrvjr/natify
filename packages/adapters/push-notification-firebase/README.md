@@ -1,11 +1,11 @@
-# @nativefy-adapter/push-notification-firebase
+# @nativefy/push-notification-firebase
 
 Adapter de Push Notifications usando `@react-native-firebase/messaging` y `react-native-notifee`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy-adapter/push-notification-firebase @react-native-firebase/messaging react-native-notifee
+pnpm add @nativefy/push-notification-firebase @react-native-firebase/messaging react-native-notifee
 ```
 
 ### iOS
@@ -27,7 +27,7 @@ apply plugin: 'com.google.gms.google-services'
 ## Uso
 
 ```typescript
-import { FirebasePushAdapter } from '@nativefy-adapter/push-notification-firebase';
+import { FirebasePushAdapter } from '@nativefy/push-notification-firebase';
 import { NativefyApp } from '@nativefy/core';
 
 const pushAdapter = new FirebasePushAdapter();

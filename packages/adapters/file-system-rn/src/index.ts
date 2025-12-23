@@ -24,7 +24,7 @@ import {
  *
  * @example
  * ```typescript
- * import { RnFileSystemAdapter } from '@nativefy-adapter/file-system-rn';
+ * import { RnFileSystemAdapter } from '@nativefy/file-system-rn';
  *
  * const fileSystem = new RnFileSystemAdapter();
  *

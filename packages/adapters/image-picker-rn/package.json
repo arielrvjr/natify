@@ -1,5 +1,5 @@
 {
-  "name": "@nativefy-adapter/image-picker-rn",
+  "name": "@nativefy/image-picker-rn",
   "version": "0.0.1",
   "description": "Image Picker adapter using react-native-image-picker",
   "main": "dist/index.js",

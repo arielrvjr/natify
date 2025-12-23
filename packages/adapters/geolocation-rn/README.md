@@ -1,11 +1,11 @@
-# @nativefy-adapter/geolocation-rn
+# @nativefy/geolocation-rn
 
 Adapter de geolocalización para Nativefy Framework usando `@react-native-community/geolocation`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy-adapter/geolocation-rn @react-native-community/geolocation
+pnpm add @nativefy/geolocation-rn @react-native-community/geolocation
 ```
 
 ### iOS
@@ -42,8 +42,8 @@ Agrega el permiso en `android/app/src/main/AndroidManifest.xml`:
 
 ```typescript
 import { NativefyProvider } from "@nativefy/core";
-import { RnGeolocationAdapter } from "@nativefy-adapter/geolocation-rn";
-import { RnPermissionsAdapter } from "@nativefy-adapter/permissions-rn";
+import { RnGeolocationAdapter } from "@nativefy/geolocation-rn";
+import { RnPermissionsAdapter } from "@nativefy/permissions-rn";
 
 const config = {
   geolocation: new RnGeolocationAdapter(),

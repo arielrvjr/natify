@@ -1,11 +1,11 @@
-# @nativefy-adapter/store-zustand
+# @nativefy/store-zustand
 
 Adapter de gestión de estado para Nativefy Framework usando `zustand`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy-adapter/store-zustand zustand
+pnpm add @nativefy/store-zustand zustand
 ```
 
 ## Por Qué Zustand
@@ -21,7 +21,7 @@ pnpm add @nativefy-adapter/store-zustand zustand
 
 ```typescript
 import { NativefyProvider } from "@nativefy/core";
-import { ZustandStoreAdapter } from "@nativefy-adapter/store-zustand";
+import { ZustandStoreAdapter } from "@nativefy/store-zustand";
 
 const config = {
   stateManager: new ZustandStoreAdapter(),

@@ -1,5 +1,5 @@
 {
-  "name": "@nativefy-adapter/push-notification-notifee",
+  "name": "@nativefy/push-notification-notifee",
   "version": "0.0.1",
   "description": "Push Notification adapter using react-native-notifee",
   "main": "dist/index.js",

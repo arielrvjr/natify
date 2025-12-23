@@ -55,8 +55,8 @@ jobs:
       
       - name: Publish adapters
         run: |
-          pnpm -r --filter '@nativefy-adapter/*' exec npm version ${{ github.event.inputs.version || 'patch' }} --no-git-tag-version
-          pnpm -r --filter '@nativefy-adapter/*' exec npm publish --access public
+          pnpm -r --filter '@nativefy/*' --filter '!@nativefy/core' exec npm version ${{ github.event.inputs.version || 'patch' }} --no-git-tag-version
+          pnpm -r --filter '@nativefy/*' --filter '!@nativefy/core' exec npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
       

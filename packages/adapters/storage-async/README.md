@@ -1,11 +1,11 @@
-# @nativefy-adapter/storage-async
+# @nativefy/storage-async
 
 Adapter de almacenamiento para Nativefy Framework usando `@react-native-async-storage/async-storage`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy-adapter/storage-async @react-native-async-storage/async-storage
+pnpm add @nativefy/storage-async @react-native-async-storage/async-storage
 ```
 
 ## Cuándo Usar
@@ -33,7 +33,7 @@ pnpm add @nativefy-adapter/storage-async @react-native-async-storage/async-stora
 
 ```typescript
 import { NativefyProvider } from "@nativefy/core";
-import { AsyncStorageAdapter } from "@nativefy-adapter/storage-async";
+import { AsyncStorageAdapter } from "@nativefy/storage-async";
 
 const config = {
   storage: new AsyncStorageAdapter(),

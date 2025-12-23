@@ -3,14 +3,14 @@ import { StatusBar, Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { NativefyApp } from '@nativefy/core';
-import { AxiosHttpAdapter } from '@nativefy-adapter/http-axios';
-import { MMKVStorageAdapter } from '@nativefy-adapter/storage-mmkv';
-import { KeychainStorageAdapter } from '@nativefy-adapter/storage-keychain';
-import { createReactNavigationAdapter } from '@nativefy-adapter/navigation-react';
-import { RnBiometricAdapter } from '@nativefy-adapter/biometrics-rn';
-import { RnPermissionsAdapter } from '@nativefy-adapter/permissions-rn';
-import { RnImagePickerAdapter } from '@nativefy-adapter/image-picker-rn';
-import { YupValidationAdapter } from '@nativefy-adapter/validation-yup';
+import { AxiosHttpAdapter } from '@nativefy/http-axios';
+import { MMKVStorageAdapter } from '@nativefy/storage-mmkv';
+import { KeychainStorageAdapter } from '@nativefy/storage-keychain';
+import { createReactNavigationAdapter } from '@nativefy/navigation-react';
+import { RnBiometricAdapter } from '@nativefy/biometrics-rn';
+import { RnPermissionsAdapter } from '@nativefy/permissions-rn';
+import { RnImagePickerAdapter } from '@nativefy/image-picker-rn';
+import { YupValidationAdapter } from '@nativefy/validation-yup';
 // Módulos
 import {
   AuthModule,

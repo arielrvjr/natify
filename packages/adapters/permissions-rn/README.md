@@ -1,11 +1,11 @@
-# @nativefy-adapter/permissions-rn
+# @nativefy/permissions-rn
 
 Adapter de permisos para Nativefy Framework usando `react-native-permissions`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy-adapter/permissions-rn react-native-permissions
+pnpm add @nativefy/permissions-rn react-native-permissions
 ```
 
 ## Configuración Nativa
@@ -50,7 +50,7 @@ Agrega los permisos en `android/app/src/main/AndroidManifest.xml`:
 
 ```typescript
 import { NativefyProvider } from "@nativefy/core";
-import { RnPermissionsAdapter } from "@nativefy-adapter/permissions-rn";
+import { RnPermissionsAdapter } from "@nativefy/permissions-rn";
 
 const config = {
   permissions: new RnPermissionsAdapter(),
@@ -121,7 +121,7 @@ function CameraButton() {
 
 > **\* Notificaciones**: Las notificaciones push en iOS/Android se manejan de forma diferente y típicamente requieren librerías como `notifee` o `@react-native-firebase/messaging`. Este adapter proporciona un fallback básico.
 
-> **\*\* Biometrics en Android**: La autenticación biométrica en Android no requiere un permiso runtime explícito. Usa el `BiometricPort` con `@nativefy-adapter/biometrics-rn` para esta funcionalidad.
+> **\*\* Biometrics en Android**: La autenticación biométrica en Android no requiere un permiso runtime explícito. Usa el `BiometricPort` con `@nativefy/biometrics-rn` para esta funcionalidad.
 
 ## Estados de Permiso
 

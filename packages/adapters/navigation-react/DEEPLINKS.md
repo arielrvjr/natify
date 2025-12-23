@@ -7,7 +7,7 @@ Este documento explica cómo configurar y usar deeplinks con el adapter de naveg
 ### 1. Crear el adapter con deeplinks
 
 ```typescript
-import { createReactNavigationAdapter } from '@nativefy-adapter/navigation-react';
+import { createReactNavigationAdapter } from '@nativefy/navigation-react';
 
 const navigationAdapter = createReactNavigationAdapter({
   prefixes: [

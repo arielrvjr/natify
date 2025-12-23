@@ -1,5 +1,5 @@
 {
-  "name": "@nativefy-adapter/feature-flag-growthbook",
+  "name": "@nativefy/feature-flag-growthbook",
   "version": "0.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

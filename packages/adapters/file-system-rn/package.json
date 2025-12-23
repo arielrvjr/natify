@@ -1,5 +1,5 @@
 {
-  "name": "@nativefy-adapter/file-system-rn",
+  "name": "@nativefy/file-system-rn",
   "version": "0.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

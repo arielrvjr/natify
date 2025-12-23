@@ -33,7 +33,7 @@ export interface MixpanelAdapterConfig {
  *
  * @example
  * ```typescript
- * import { MixpanelAnalyticsAdapter } from '@nativefy-adapter/analytics-mixpanel';
+ * import { MixpanelAnalyticsAdapter } from '@nativefy/analytics-mixpanel';
  *
  * const analyticsAdapter = new MixpanelAnalyticsAdapter({
  *   token: 'YOUR_MIXPANEL_TOKEN',

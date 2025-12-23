@@ -1,11 +1,11 @@
-# @nativefy-adapter/biometrics-rn
+# @nativefy/biometrics-rn
 
 Adapter de autenticación biométrica para Nativefy Framework usando `react-native-biometrics`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy-adapter/biometrics-rn react-native-biometrics
+pnpm add @nativefy/biometrics-rn react-native-biometrics
 ```
 
 ## Configuración Nativa
@@ -29,7 +29,7 @@ No requiere configuración adicional. La librería usa el sistema biométrico na
 
 ```typescript
 import { NativefyProvider } from "@nativefy/core";
-import { RnBiometricAdapter } from "@nativefy-adapter/biometrics-rn";
+import { RnBiometricAdapter } from "@nativefy/biometrics-rn";
 
 const config = {
   biometrics: new RnBiometricAdapter(),

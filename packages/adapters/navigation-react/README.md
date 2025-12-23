@@ -1,11 +1,11 @@
-# @nativefy-adapter/navigation-react
+# @nativefy/navigation-react
 
 Adapter de navegación para Nativefy Framework usando `@react-navigation/native`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy-adapter/navigation-react @react-navigation/native @react-navigation/native-stack react-native-screens react-native-safe-area-context
+pnpm add @nativefy/navigation-react @react-navigation/native @react-navigation/native-stack react-native-screens react-native-safe-area-context
 ```
 
 ### iOS
@@ -38,7 +38,7 @@ export type RootStackParamList = {
 ```typescript
 // App.tsx
 import { NativefyProvider } from "@nativefy/core";
-import { ReactNavigationAdapter } from "@nativefy-adapter/navigation-react";
+import { ReactNavigationAdapter } from "@nativefy/navigation-react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -222,7 +222,7 @@ El adapter soporta deeplinks de forma automática. Configura los prefijos al cre
 
 ```typescript
 // App.tsx
-import { createReactNavigationAdapter } from '@nativefy-adapter/navigation-react';
+import { createReactNavigationAdapter } from '@nativefy/navigation-react';
 
 // Crear adapter con deeplinks (solo prefijos)
 const navigationAdapter = createReactNavigationAdapter({
@@ -301,8 +301,8 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 Para tipado completo de parámetros, puedes usar el hook nativo de React Navigation:
 
 ```typescript
-import { useNavigation } from "@nativefy-adapter/navigation-react";
-import type { NativeStackNavigationProp } from "@nativefy-adapter/navigation-react";
+import { useNavigation } from "@nativefy/navigation-react";
+import type { NativeStackNavigationProp } from "@nativefy/navigation-react";
 import type { RootStackParamList } from "../types/navigation";
 
 type ProfileScreenNavigationProp = NativeStackNavigationProp<

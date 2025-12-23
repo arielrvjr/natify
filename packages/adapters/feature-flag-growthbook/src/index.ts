@@ -39,7 +39,7 @@ export interface GrowthBookAdapterConfig {
  *
  * @example
  * ```typescript
- * import { GrowthBookFeatureFlagAdapter } from '@nativefy-adapter/feature-flag-growthbook';
+ * import { GrowthBookFeatureFlagAdapter } from '@nativefy/feature-flag-growthbook';
  *
  * const featureFlags = new GrowthBookFeatureFlagAdapter({
  *   clientKey: 'YOUR_GROWTHBOOK_CLIENT_KEY',

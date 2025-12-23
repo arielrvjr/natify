@@ -1,5 +1,5 @@
 {
-  "name": "@nativefy-adapter/push-notification-firebase",
+  "name": "@nativefy/push-notification-firebase",
   "version": "0.0.1",
   "description": "Push Notification adapter using @react-native-firebase/messaging",
   "main": "dist/index.js",

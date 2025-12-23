@@ -48,7 +48,7 @@ export interface ApolloAdapterConfig {
  *
  * @example
  * ```typescript
- * import { ApolloGraphQLAdapter } from '@nativefy-adapter/graphql-apollo';
+ * import { ApolloGraphQLAdapter } from '@nativefy/graphql-apollo';
  *
  * const graphqlAdapter = new ApolloGraphQLAdapter({
  *   uri: 'https://api.example.com/graphql',

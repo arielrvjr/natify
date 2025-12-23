@@ -1,5 +1,5 @@
 {
-  "name": "@nativefy-adapter/storage-keychain",
+  "name": "@nativefy/storage-keychain",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",

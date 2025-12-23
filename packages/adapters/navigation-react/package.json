@@ -1,5 +1,5 @@
 {
-  "name": "@nativefy-adapter/navigation-react",
+  "name": "@nativefy/navigation-react",
   "version": "0.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

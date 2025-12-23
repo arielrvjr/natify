@@ -233,7 +233,7 @@ Este nivel te da acceso a los **adapters y ports** (abstracción de implementaci
 │                            ▲                                 │
 │                            │ implements                      │
 │  ┌─────────────────────────┴───────────────────────────┐    │
-│  │               @nativefy-adapter/*                    │    │
+│  │               @nativefy/*                    │    │
 │  │  ┌──────────┐ ┌──────────┐ ┌──────────┐             │    │
 │  │  │http-axios│ │storage-  │ │biometrics│             │    │
 │  │  │          │ │mmkv      │ │-rn       │             │    │
@@ -256,8 +256,8 @@ NO incluye: Módulos, UseCases, ViewModels, ActionBus, Navigation
 ```typescript
 // App.tsx
 import { NativefyProvider, useAdapter } from '@nativefy/core';
-import { AxiosHttpAdapter } from '@nativefy-adapter/http-axios';
-import { MMKVStorageAdapter } from '@nativefy-adapter/storage-mmkv';
+import { AxiosHttpAdapter } from '@nativefy/http-axios';
+import { MMKVStorageAdapter } from '@nativefy/storage-mmkv';
 import { HttpClientPort, StoragePort } from '@nativefy/core';
 
 export default function App() {
@@ -346,7 +346,7 @@ Este nivel incluye **todo el framework**: sistema de módulos, inyección de dep
 │                            ▲                                 │
 │                            │ implements                      │
 │  ┌─────────────────────────┴───────────────────────────┐    │
-│  │               @nativefy-adapter/*                    │    │
+│  │               @nativefy/*                    │    │
 │  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────┐  │    │
 │  │  │http-axios│ │storage-  │ │biometrics│ │nav-    │  │    │
 │  │  │          │ │mmkv      │ │-rn       │ │react   │  │    │
@@ -372,9 +372,9 @@ Incluye: TODO (Ports, Errors, DI, Adapters, Módulos, UseCases,
 ```typescript
 // App.tsx
 import { NativefyApp } from '@nativefy/core';
-import { AxiosHttpAdapter } from '@nativefy-adapter/http-axios';
-import { MMKVStorageAdapter } from '@nativefy-adapter/storage-mmkv';
-import { createReactNavigationAdapter } from '@nativefy-adapter/navigation-react';
+import { AxiosHttpAdapter } from '@nativefy/http-axios';
+import { MMKVStorageAdapter } from '@nativefy/storage-mmkv';
+import { createReactNavigationAdapter } from '@nativefy/navigation-react';
 
 // Módulos
 import { AuthModule, ProductsModule } from './modules';
@@ -437,13 +437,13 @@ export default function App() {
 pnpm add @nativefy/core @nativefy/ui
 
 # Instalar adapters necesarios
-pnpm add @nativefy-adapter/http-axios
-pnpm add @nativefy-adapter/storage-mmkv
-pnpm add @nativefy-adapter/storage-keychain
-pnpm add @nativefy-adapter/navigation-react
-pnpm add @nativefy-adapter/biometrics-rn
-pnpm add @nativefy-adapter/permissions-rn
-pnpm add @nativefy-adapter/image-picker-rn
+pnpm add @nativefy/http-axios
+pnpm add @nativefy/storage-mmkv
+pnpm add @nativefy/storage-keychain
+pnpm add @nativefy/navigation-react
+pnpm add @nativefy/biometrics-rn
+pnpm add @nativefy/permissions-rn
+pnpm add @nativefy/image-picker-rn
 ```
 
 ### Configuración Básica (Nivel 1 - Solo Abstracción)
@@ -453,8 +453,8 @@ Si prefieres solo la abstracción sin el sistema completo:
 ```typescript
 // App.tsx
 import { NativefyProvider, useAdapter } from '@nativefy/core';
-import { AxiosHttpAdapter } from '@nativefy-adapter/http-axios';
-import { MMKVStorageAdapter } from '@nativefy-adapter/storage-mmkv';
+import { AxiosHttpAdapter } from '@nativefy/http-axios';
+import { MMKVStorageAdapter } from '@nativefy/storage-mmkv';
 import { HttpClientPort, StoragePort } from '@nativefy/core';
 
 export default function App() {
@@ -489,10 +489,10 @@ import { NativefyApp } from '@nativefy/core';
 import { ThemeProvider } from '@nativefy/ui';
 
 // Adapters
-import { AxiosHttpAdapter } from '@nativefy-adapter/http-axios';
-import { MMKVStorageAdapter } from '@nativefy-adapter/storage-mmkv';
-import { KeychainStorageAdapter } from '@nativefy-adapter/storage-keychain';
-import { createReactNavigationAdapter } from '@nativefy-adapter/navigation-react';
+import { AxiosHttpAdapter } from '@nativefy/http-axios';
+import { MMKVStorageAdapter } from '@nativefy/storage-mmkv';
+import { KeychainStorageAdapter } from '@nativefy/storage-keychain';
+import { createReactNavigationAdapter } from '@nativefy/navigation-react';
 
 // Módulos
 import { AuthModule, ProductsModule } from './modules';
@@ -653,25 +653,25 @@ export function LoginScreen() {
 
 | Capacidad                  | Adapter                                   | Librería Subyacente                 |
 | -------------------------- | ----------------------------------------- | ------------------------------------ |
-| **Analytics**        | `@nativefy-adapter/analytics-mixpanel`  | mixpanel-react-native                |
-| **Biometrics**       | `@nativefy-adapter/biometrics-rn`       | react-native-biometrics              |
-| **Error Reporting**  | `@nativefy-adapter/error-reporting-sentry` | @sentry/react-native            |
-| **Feature Flags**    | `@nativefy-adapter/feature-flag-growthbook` | @growthbook/growthbook-react   |
-| **File System**      | `@nativefy-adapter/file-system-rn`      | react-native-blob-util               |
-| **Geolocation**      | `@nativefy-adapter/geolocation-rn`      | @react-native-community/geolocation  |
-| **GraphQL**          | `@nativefy-adapter/graphql-apollo`       | @apollo/client                       |
-| **HTTP Client**      | `@nativefy-adapter/http-axios`          | Axios                                |
-| **Image Picker**     | `@nativefy-adapter/image-picker-rn`     | react-native-image-picker            |
-| **Navigation**       | `@nativefy-adapter/navigation-react`    | React Navigation                     |
-| **Permissions**      | `@nativefy-adapter/permissions-rn`      | react-native-permissions             |
-| **Push Notifications** | `@nativefy-adapter/push-notification-firebase` | @react-native-firebase/messaging |
-| **Push Notifications** | `@nativefy-adapter/push-notification-notifee` | @notifee/react-native        |
-| **Secure Storage**   | `@nativefy-adapter/storage-keychain`    | react-native-keychain                |
-| **State Management** | `@nativefy-adapter/store-zustand`       | Zustand                              |
-| **Storage**          | `@nativefy-adapter/storage-async`       | AsyncStorage                         |
-| **Storage**          | `@nativefy-adapter/storage-mmkv`        | react-native-mmkv (30x más rápido) |
-| **Validation**       | `@nativefy-adapter/validation-zod`       | zod                                 |
-| **Validation**       | `@nativefy-adapter/validation-yup`       | yup                                 |
+| **Analytics**        | `@nativefy/analytics-mixpanel`  | mixpanel-react-native                |
+| **Biometrics**       | `@nativefy/biometrics-rn`       | react-native-biometrics              |
+| **Error Reporting**  | `@nativefy/error-reporting-sentry` | @sentry/react-native            |
+| **Feature Flags**    | `@nativefy/feature-flag-growthbook` | @growthbook/growthbook-react   |
+| **File System**      | `@nativefy/file-system-rn`      | react-native-blob-util               |
+| **Geolocation**      | `@nativefy/geolocation-rn`      | @react-native-community/geolocation  |
+| **GraphQL**          | `@nativefy/graphql-apollo`       | @apollo/client                       |
+| **HTTP Client**      | `@nativefy/http-axios`          | Axios                                |
+| **Image Picker**     | `@nativefy/image-picker-rn`     | react-native-image-picker            |
+| **Navigation**       | `@nativefy/navigation-react`    | React Navigation                     |
+| **Permissions**      | `@nativefy/permissions-rn`      | react-native-permissions             |
+| **Push Notifications** | `@nativefy/push-notification-firebase` | @react-native-firebase/messaging |
+| **Push Notifications** | `@nativefy/push-notification-notifee` | @notifee/react-native        |
+| **Secure Storage**   | `@nativefy/storage-keychain`    | react-native-keychain                |
+| **State Management** | `@nativefy/store-zustand`       | Zustand                              |
+| **Storage**          | `@nativefy/storage-async`       | AsyncStorage                         |
+| **Storage**          | `@nativefy/storage-mmkv`        | react-native-mmkv (30x más rápido) |
+| **Validation**       | `@nativefy/validation-zod`       | zod                                 |
+| **Validation**       | `@nativefy/validation-yup`       | yup                                 |
 
 ### Planificadas
 

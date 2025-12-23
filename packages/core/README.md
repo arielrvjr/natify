@@ -120,9 +120,9 @@ Para prototipos rápidos o apps simples, puedes usar UseCases directamente en co
 
 ```typescript
 import { NativefyApp, ConsoleLoggerAdapter } from "@nativefy/core";
-import { AxiosHttpAdapter } from "@nativefy-adapter/http-axios";
-import { MMKVStorageAdapter } from "@nativefy-adapter/storage-mmkv";
-import { createReactNavigationAdapter } from "@nativefy-adapter/navigation-react";
+import { AxiosHttpAdapter } from "@nativefy/http-axios";
+import { MMKVStorageAdapter } from "@nativefy/storage-mmkv";
+import { createReactNavigationAdapter } from "@nativefy/navigation-react";
 
 const adapters = {
   http: new AxiosHttpAdapter("https://api.example.com"),
@@ -198,8 +198,8 @@ Adapter de analytics que permite combinar múltiples proveedores de analytics en
 
 ```typescript
 import { CompositeAnalyticsAdapter } from "@nativefy/core";
-import { FirebaseAnalyticsAdapter } from "@nativefy-adapter/analytics-firebase";
-import { MixpanelAnalyticsAdapter } from "@nativefy-adapter/analytics-mixpanel";
+import { FirebaseAnalyticsAdapter } from "@nativefy/analytics-firebase";
+import { MixpanelAnalyticsAdapter } from "@nativefy/analytics-mixpanel";
 
 // Crear adapters individuales
 const firebase = new FirebaseAnalyticsAdapter();

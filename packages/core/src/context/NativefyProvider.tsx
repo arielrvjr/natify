@@ -67,8 +67,8 @@ const AdapterRegistry: React.FC<{ adapters: AdapterMap }> = ({ adapters }) => {
  * @example
  * ```tsx
  * import { NativefyProvider } from '@nativefy/core';
- * import { AxiosHttpAdapter } from '@nativefy-adapter/http-axios';
- * import { MMKVStorageAdapter } from '@nativefy-adapter/storage-mmkv';
+ * import { AxiosHttpAdapter } from '@nativefy/http-axios';
+ * import { MMKVStorageAdapter } from '@nativefy/storage-mmkv';
  *
  * export default function App() {
  *   return (

@@ -20,7 +20,7 @@ import {
  *
  * @example
  * ```typescript
- * import { RnGeolocationAdapter } from '@nativefy-adapter/geolocation-rn';
+ * import { RnGeolocationAdapter } from '@nativefy/geolocation-rn';
  *
  * const geolocationAdapter = new RnGeolocationAdapter();
  *

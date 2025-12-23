@@ -46,7 +46,7 @@ export interface SentryAdapterConfig {
  *
  * @example
  * ```typescript
- * import { SentryErrorReportingAdapter } from '@nativefy-adapter/error-reporting-sentry';
+ * import { SentryErrorReportingAdapter } from '@nativefy/error-reporting-sentry';
  *
  * const errorReporting = new SentryErrorReportingAdapter({
  *   dsn: 'YOUR_SENTRY_DSN',

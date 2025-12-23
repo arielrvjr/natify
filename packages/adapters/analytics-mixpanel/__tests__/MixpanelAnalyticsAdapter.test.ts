@@ -1,17 +1,11 @@
 import { MixpanelAnalyticsAdapter } from '../src';
 import { NativefyError } from '@nativefy/core';
 
-// Mock Mixpanel - Mixpanel es un default export con métodos estáticos
-const mockInit = jest.fn().mockResolvedValue(undefined);
-const mockIdentify = jest.fn();
-const mockTrack = jest.fn();
-const mockRegisterSuperProperties = jest.fn();
-const mockSetUserProperties = jest.fn();
-const mockGetPeople = jest.fn(() => ({
+// Crear un objeto mock único para getPeople que se reutilice
+const mockPeople = {
   set: jest.fn(),
   increment: jest.fn(),
-}));
-const mockReset = jest.fn();
+};
 
 jest.mock('mixpanel-react-native', () => {
   // Crear los mocks dentro de la factory function
@@ -20,10 +14,8 @@ jest.mock('mixpanel-react-native', () => {
   const track = jest.fn();
   const registerSuperProperties = jest.fn();
   const setUserProperties = jest.fn();
-  const getPeople = jest.fn(() => ({
-    set: jest.fn(),
-    increment: jest.fn(),
-  }));
+  // getPeople debe devolver siempre el mismo objeto mock
+  const getPeople = jest.fn(() => mockPeople);
   const reset = jest.fn();
 
   return {
@@ -53,7 +45,12 @@ describe('MixpanelAnalyticsAdapter', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    // Limpiar también los mocks de mockPeople
+    mockPeople.set.mockClear();
+    mockPeople.increment.mockClear();
     mockMixpanel = getMockMixpanel();
+    // Asegurar que getPeople devuelve el mismo objeto
+    mockMixpanel.getPeople.mockReturnValue(mockPeople);
     adapter = new MixpanelAnalyticsAdapter({
       token: mockToken,
       autoInit: false, // Disable auto-init for tests
@@ -105,10 +102,13 @@ describe('MixpanelAnalyticsAdapter', () => {
     });
 
     it('should throw NativefyError on initialization failure', async () => {
-      mockMixpanel.init.mockRejectedValueOnce(new Error('Init failed'));
+      const error = new Error('Init failed');
+      mockMixpanel.init.mockRejectedValueOnce(error);
 
-      await expect(adapter.init()).rejects.toThrow(NativefyError);
-      await expect(adapter.init()).rejects.toThrow('Failed to initialize Mixpanel');
+      const result = await adapter.init().catch((e) => e);
+      
+      expect(result).toBeInstanceOf(NativefyError);
+      expect(result.message).toContain('Failed to initialize Mixpanel');
     });
   });
 
@@ -133,7 +133,7 @@ describe('MixpanelAnalyticsAdapter', () => {
       adapter.identify('user-123', traits);
 
       expect(mockMixpanel.identify).toHaveBeenCalledWith('user-123');
-      expect(mockMixpanel.getPeople().set).toHaveBeenCalledWith(traits);
+      expect(mockPeople.set).toHaveBeenCalledWith(traits);
     });
 
     it('should warn if not initialized', () => {
@@ -142,7 +142,7 @@ describe('MixpanelAnalyticsAdapter', () => {
         autoInit: false,
       });
 
-      adapter.identify('user-123');
+      uninitializedAdapter.identify('user-123');
 
       expect(console.warn).toHaveBeenCalledWith(
         expect.stringContaining('Not initialized'),
@@ -238,13 +238,13 @@ describe('MixpanelAnalyticsAdapter', () => {
     it('should increment user property with default value', () => {
       adapter.incrementUserProperty('count');
 
-      expect(mockMixpanel.getPeople().increment).toHaveBeenCalledWith('count', 1);
+      expect(mockPeople.increment).toHaveBeenCalledWith('count', 1);
     });
 
     it('should increment user property with custom value', () => {
       adapter.incrementUserProperty('count', 5);
 
-      expect(mockMixpanel.getPeople().increment).toHaveBeenCalledWith('count', 5);
+      expect(mockPeople.increment).toHaveBeenCalledWith('count', 5);
     });
   });
 
@@ -257,7 +257,7 @@ describe('MixpanelAnalyticsAdapter', () => {
       const properties = { plan: 'premium', role: 'admin' };
       adapter.setUserProperties(properties);
 
-      expect(mockMixpanel.getPeople().set).toHaveBeenCalledWith(properties);
+      expect(mockPeople.set).toHaveBeenCalledWith(properties);
     });
   });
 });

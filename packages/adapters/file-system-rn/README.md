@@ -1,11 +1,11 @@
-# @nativefy-adapter/file-system-rn
+# @nativefy/file-system-rn
 
 Adapter de sistema de archivos para Nativefy Framework usando `react-native-blob-util`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy-adapter/file-system-rn react-native-blob-util
+pnpm add @nativefy/file-system-rn react-native-blob-util
 ```
 
 ### iOS
@@ -24,7 +24,7 @@ No requiere configuración adicional.
 
 ```typescript
 import { NativefyProvider } from "@nativefy/core";
-import { RnFileSystemAdapter } from "@nativefy-adapter/file-system-rn";
+import { RnFileSystemAdapter } from "@nativefy/file-system-rn";
 
 const config = {
   filesystem: new RnFileSystemAdapter(),

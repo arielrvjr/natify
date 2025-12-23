@@ -1,11 +1,11 @@
-# @nativefy-adapter/feature-flag-growthbook
+# @nativefy/feature-flag-growthbook
 
 Adapter de Feature Flags para Nativefy Framework usando GrowthBook.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy-adapter/feature-flag-growthbook @growthbook/growthbook-react
+pnpm add @nativefy/feature-flag-growthbook @growthbook/growthbook-react
 ```
 
 ### Para Streaming en Tiempo Real (Opcional)
@@ -40,7 +40,7 @@ No requiere configuración adicional.
 
 ```typescript
 import { NativefyProvider } from "@nativefy/core";
-import { GrowthBookFeatureFlagAdapter } from "@nativefy-adapter/feature-flag-growthbook";
+import { GrowthBookFeatureFlagAdapter } from "@nativefy/feature-flag-growthbook";
 
 const featureFlags = new GrowthBookFeatureFlagAdapter({
   clientKey: "YOUR_GROWTHBOOK_CLIENT_KEY",

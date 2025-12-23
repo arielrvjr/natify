@@ -1,11 +1,11 @@
-# @nativefy-adapter/http-axios
+# @nativefy/http-axios
 
 Adapter HTTP para Nativefy Framework usando `axios`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy-adapter/http-axios axios
+pnpm add @nativefy/http-axios axios
 ```
 
 ## Uso
@@ -14,7 +14,7 @@ pnpm add @nativefy-adapter/http-axios axios
 
 ```typescript
 import { NativefyProvider } from "@nativefy/core";
-import { AxiosHttpAdapter } from "@nativefy-adapter/http-axios";
+import { AxiosHttpAdapter } from "@nativefy/http-axios";
 
 // Configuración básica
 const httpAdapter = new AxiosHttpAdapter("https://api.example.com");

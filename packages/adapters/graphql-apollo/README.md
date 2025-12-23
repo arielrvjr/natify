@@ -1,11 +1,11 @@
-# @nativefy-adapter/graphql-apollo
+# @nativefy/graphql-apollo
 
 Adapter de GraphQL para Nativefy Framework usando `@apollo/client`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy-adapter/graphql-apollo @apollo/client graphql
+pnpm add @nativefy/graphql-apollo @apollo/client graphql
 ```
 
 ### iOS
@@ -24,7 +24,7 @@ No requiere configuración adicional.
 
 ```typescript
 import { NativefyProvider } from "@nativefy/core";
-import { ApolloGraphQLAdapter } from "@nativefy-adapter/graphql-apollo";
+import { ApolloGraphQLAdapter } from "@nativefy/graphql-apollo";
 
 const graphqlAdapter = new ApolloGraphQLAdapter({
   uri: "https://api.example.com/graphql",

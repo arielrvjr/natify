@@ -1,11 +1,11 @@
-# @nativefy-adapter/analytics-mixpanel
+# @nativefy/analytics-mixpanel
 
 Adapter de Analytics para Nativefy Framework usando `mixpanel-react-native`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy-adapter/analytics-mixpanel mixpanel-react-native
+pnpm add @nativefy/analytics-mixpanel mixpanel-react-native
 ```
 
 ### iOS
@@ -32,7 +32,7 @@ No requiere configuración adicional.
 
 ```typescript
 import { NativefyProvider } from "@nativefy/core";
-import { MixpanelAnalyticsAdapter } from "@nativefy-adapter/analytics-mixpanel";
+import { MixpanelAnalyticsAdapter } from "@nativefy/analytics-mixpanel";
 
 const analyticsAdapter = new MixpanelAnalyticsAdapter({
   token: "YOUR_MIXPANEL_TOKEN",
@@ -371,8 +371,8 @@ await trackPerformance("load_products", async () => {
 
 ```typescript
 import { CompositeAnalyticsAdapter } from "@nativefy/core";
-import { MixpanelAnalyticsAdapter } from "@nativefy-adapter/analytics-mixpanel";
-// import { FirebaseAnalyticsAdapter } from "@nativefy-adapter/analytics-firebase";
+import { MixpanelAnalyticsAdapter } from "@nativefy/analytics-mixpanel";
+// import { FirebaseAnalyticsAdapter } from "@nativefy/analytics-firebase";
 
 const mixpanel = new MixpanelAnalyticsAdapter({
   token: "YOUR_MIXPANEL_TOKEN",

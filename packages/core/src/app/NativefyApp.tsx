@@ -138,7 +138,7 @@ export const NativefyApp: React.FC<NativefyAppProps> = ({
   if (!navigationAdapter.NavigationContainer || !navigationAdapter.AppNavigator) {
     throw new Error(
       '[NativefyApp] Navigation adapter must provide NavigationContainer and AppNavigator components. ' +
-        'Make sure you are using createReactNavigationAdapter() from @nativefy-adapter/navigation-react.',
+        'Make sure you are using createReactNavigationAdapter() from @nativefy/navigation-react.',
     );
   }
 

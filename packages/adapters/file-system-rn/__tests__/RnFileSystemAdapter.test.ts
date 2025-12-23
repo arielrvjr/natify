@@ -371,12 +371,28 @@ describe('RnFileSystemAdapter', () => {
       fs.mkdir.mockResolvedValue(undefined);
       
       // Mock config para que retorne un objeto con fetch que rechace
-      const error = new Error('Download failed');
-      const mockFetchFn = jest.fn().mockRejectedValue(error);
+      // El código usa: ReactNativeBlobUtil.config(config).fetch('GET', url).progress(...)
+      // Así que config() devuelve un objeto con fetch() que devuelve una promesa que rechaza
+      // Pero fetch() también debe devolver un objeto con progress() antes de rechazar
+      const downloadError = new Error('Download failed');
+      const mockProgress = jest.fn().mockReturnThis();
+      const mockFetchResult = {
+        progress: mockProgress,
+      };
+      // fetch() debe devolver un objeto con progress() que luego rechaza cuando se await
+      const mockFetchFn = jest.fn().mockReturnValue(mockFetchResult);
+      // Hacer que la promesa rechace cuando se await
+      mockFetchResult.progress.mockRejectedValue(downloadError);
       const mockConfigObj = {
         fetch: mockFetchFn,
       };
       config.mockReturnValue(mockConfigObj);
+
+      // El código await config().fetch().progress(), así que necesitamos que progress() rechace
+      // Pero progress() se llama con un callback, no se await directamente
+      // El problema es que fetch() devuelve una promesa que se await
+      // Necesitamos que fetch() rechace directamente
+      mockFetchFn.mockRejectedValue(downloadError);
 
       await expect(
         adapter.downloadFile('https://example.com/file.txt', '/path/to/file.txt'),

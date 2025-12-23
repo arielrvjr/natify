@@ -1,4 +1,4 @@
-# @nativefy-adapter/storage-mmkv
+# @nativefy/storage-mmkv
 
 The **High Performance Storage Adapter** for the Nativefy Framework.
 This package implements the `IAsyncStorage` interface using [react-native-mmkv](https://www.google.com/search?q=https://github.com/mamous/react-native-mmkv), which is roughly **30x faster** than the standard AsyncStorage
@@ -14,7 +14,7 @@ Since this is an adapter, you must install both the package and its native drive
 **Bash**
 
 ```
-pnpm add @nativefy-adapter/storage-mmkv react-native-mmkv
+pnpm add @nativefy/storage-mmkv react-native-mmkv
 ```
 
 ### Using yarn
@@ -22,7 +22,7 @@ pnpm add @nativefy-adapter/storage-mmkv react-native-mmkv
 **Bash**
 
 ```
-yarn add @nativefy-adapter/storage-mmkv react-native-mmkv
+yarn add @nativefy/storage-mmkv react-native-mmkv
 ```
 
 ### Native Linking (Required)
@@ -47,8 +47,8 @@ Register this adapter in your `NativefyProvider` configuration at the root of yo
 
 ```
 import { NativefyProvider } from '@nativefy/core';
-import { MMKVAdapter } from '@nativefy-adapter/storage-mmkv';
-import { AxiosHttpAdapter } from '@nativefy-adapter/http-axios';
+import { MMKVAdapter } from '@nativefy/storage-mmkv';
+import { AxiosHttpAdapter } from '@nativefy/http-axios';
 
 // 1. Instantiate the adapter
 // Optional: You can pass an instance ID for data isolation

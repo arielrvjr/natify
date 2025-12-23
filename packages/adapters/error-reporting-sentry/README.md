@@ -1,11 +1,11 @@
-# @nativefy-adapter/error-reporting-sentry
+# @nativefy/error-reporting-sentry
 
 Adapter de Error Reporting para Nativefy Framework usando Sentry.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy-adapter/error-reporting-sentry @sentry/react-native
+pnpm add @nativefy/error-reporting-sentry @sentry/react-native
 ```
 
 ### Configuración Automática
@@ -48,7 +48,7 @@ No requiere configuración adicional después de ejecutar el wizard.
 
 ```typescript
 import { NativefyProvider } from "@nativefy/core";
-import { SentryErrorReportingAdapter } from "@nativefy-adapter/error-reporting-sentry";
+import { SentryErrorReportingAdapter } from "@nativefy/error-reporting-sentry";
 
 const errorReporting = new SentryErrorReportingAdapter({
   dsn: "YOUR_SENTRY_DSN",
