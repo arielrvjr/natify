@@ -16,8 +16,12 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\""
   },
-  "peerDependencies": {
+  "devDependencies": {
     "@natify/core": "workspace:*",
+    "typescript": "*"
+  },
+  "peerDependencies": {
+    "@natify/core": "*",
     "zustand": "^5.0.9"
   }
 }

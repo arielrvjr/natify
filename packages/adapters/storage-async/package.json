@@ -23,8 +23,12 @@
   "author": "Ariel Rodríguez",
   "license": "MIT",
   "packageManager": "pnpm@10.24.0",
-  "peerDependencies": {
+  "devDependencies": {
     "@natify/core": "workspace:*",
+    "typescript": "*"
+  },
+  "peerDependencies": {
+    "@natify/core": "*",
     "@react-native-async-storage/async-storage": "^1.19.0"
   }
 }

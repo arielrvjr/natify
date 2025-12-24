@@ -20,10 +20,11 @@
   },
   "devDependencies": {
     "@natify/core": "workspace:*",
+    "typescript": "*",
     "react-native-mmkv": "^4.0.1"
   },
   "peerDependencies": {
-    "@natify/core": "workspace:*",
+    "@natify/core": "*",
     "react-native-mmkv": "^4.0.1"
   }
 }
