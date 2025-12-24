@@ -29,6 +29,10 @@ jest.mock('react-native-blob-util', () => {
     ls: jest.fn(),
     mkdir: jest.fn(),
     rmdir: jest.fn(),
+    dirs: {
+      DocumentDir: '/documents',
+      CacheDir: '/cache',
+    },
   };
 
   const config = jest.fn();
@@ -303,6 +307,14 @@ describe('RnFileSystemAdapter', () => {
       expect(fs.unlink).not.toHaveBeenCalled();
       expect(fs.rmdir).not.toHaveBeenCalled();
     });
+
+    it('should throw NatifyError on rmdir error', async () => {
+      const error = new Error('Rmdir failed');
+      fs.exists.mockResolvedValue(true);
+      fs.unlink.mockRejectedValue(error);
+
+      await expect(adapter.rmdir('/path/to/dir')).rejects.toThrow(NatifyError);
+    });
   });
 
   describe('downloadFile', () => {
@@ -362,6 +374,30 @@ describe('RnFileSystemAdapter', () => {
       });
 
       expect(onProgress).toHaveBeenCalledWith(1024, 2048);
+    });
+
+    it('should return existing file info when overwrite is false and file exists', async () => {
+      const mockStat = { size: 1024, lastModified: Date.now() };
+      const mockFileInfo = {
+        path: '/path/to/file.txt',
+        size: 1024,
+        lastModified: new Date(),
+        exists: true,
+        mimeType: 'text/plain',
+      };
+      fs.exists.mockResolvedValue(true);
+      fs.stat.mockResolvedValue(mockStat);
+
+      // Mock getFileInfo to return the file info
+      jest.spyOn(adapter, 'getFileInfo').mockResolvedValue(mockFileInfo);
+
+      const result = await adapter.downloadFile('https://example.com/file.txt', '/path/to/file.txt', {
+        overwrite: false,
+      });
+
+      expect(result.path).toBe('/path/to/file.txt');
+      expect(result.size).toBe(1024);
+      expect(config).not.toHaveBeenCalled(); // Should not download
     });
 
     it('should throw NatifyError on download error', async () => {
@@ -439,6 +475,93 @@ describe('RnFileSystemAdapter', () => {
       await expect(async () => {
         await adapter.uploadFile('/path/to/file.txt', 'https://example.com/upload');
       }).rejects.toThrow(NatifyError);
+    });
+
+    it('should throw NatifyError when getFileInfo returns null', async () => {
+      fs.exists.mockResolvedValue(true);
+      // Mock getFileInfo to return null
+      jest.spyOn(adapter, 'getFileInfo').mockResolvedValue(null);
+
+      await expect(
+        adapter.uploadFile('/path/to/file.txt', 'https://example.com/upload'),
+      ).rejects.toThrow(NatifyError);
+    });
+
+    it('should call onProgress callback during upload', async () => {
+      const mockStat = { size: 1024 };
+      const onProgress = jest.fn();
+      const mockFetchResult = Promise.resolve({
+        info: jest.fn().mockReturnValue({ status: 200 }),
+        json: jest.fn().mockReturnValue({ success: true }),
+        text: jest.fn().mockReturnValue('{"success": true}'),
+      });
+      mockFetchResult.uploadProgress = jest.fn((callback) => {
+        callback(512, 1024);
+        return mockFetchResult;
+      });
+      const mockFetch = jest.fn().mockReturnValue(mockFetchResult);
+      config.mockReturnValue({
+        fetch: mockFetch,
+      });
+      fs.exists.mockResolvedValue(true);
+      fs.stat.mockResolvedValue(mockStat);
+
+      await adapter.uploadFile('/path/to/file.txt', 'https://example.com/upload', {
+        onProgress,
+      });
+
+      expect(onProgress).toHaveBeenCalledWith(512, 1024);
+    });
+
+    it('should use text() when json() fails', async () => {
+      const mockStat = { size: 1024 };
+      const mockFetchResult = Promise.resolve({
+        info: jest.fn().mockReturnValue({ status: 200, headers: {} }),
+        json: jest.fn().mockImplementation(() => {
+          throw new Error('Not JSON');
+        }),
+        text: jest.fn().mockReturnValue('plain text response'),
+      });
+      mockFetchResult.uploadProgress = jest.fn().mockReturnValue(mockFetchResult);
+      const mockFetch = jest.fn().mockReturnValue(mockFetchResult);
+      config.mockReturnValue({
+        fetch: mockFetch,
+      });
+      fs.exists.mockResolvedValue(true);
+      fs.stat.mockResolvedValue(mockStat);
+
+      const result = await adapter.uploadFile('/path/to/file.txt', 'https://example.com/upload');
+
+      expect(result.data).toBe('plain text response');
+    });
+  });
+
+  describe('getDocumentsPath', () => {
+    it('should return documents directory path', () => {
+      const path = adapter.getDocumentsPath();
+
+      expect(path).toBe('/documents');
+      expect(typeof path).toBe('string');
+    });
+  });
+
+  describe('getCachePath', () => {
+    it('should return cache directory path', () => {
+      const path = adapter.getCachePath();
+
+      expect(path).toBe('/cache');
+      expect(typeof path).toBe('string');
+    });
+  });
+
+  describe('getTempPath', () => {
+    it('should return temp directory path', () => {
+      const path = adapter.getTempPath();
+
+      expect(path).toBe('/cache');
+      expect(typeof path).toBe('string');
+      // getTempPath returns CacheDir
+      expect(path).toBe(adapter.getCachePath());
     });
   });
 });

@@ -1,11 +1,13 @@
 # @natify/push-notification-firebase
 
-Adapter de Push Notifications usando `@react-native-firebase/messaging` y `react-native-notifee`.
+Adapter de Push Notifications usando `@react-native-firebase/messaging` para recibir notificaciones remotas y manejar tokens FCM.
+
+> **Nota:** Este adapter se enfoca en notificaciones remotas. Para mostrar notificaciones locales, usa `@natify/push-notification-notifee`.
 
 ## Instalación
 
 ```bash
-pnpm add @natify/push-notification-firebase @react-native-firebase/messaging react-native-notifee
+pnpm add @natify/push-notification-firebase @react-native-firebase/messaging
 ```
 
 ### iOS
@@ -43,12 +45,11 @@ const adapters = {
 ## Características
 
 - ✅ Notificaciones remotas (FCM)
-- ✅ Notificaciones locales
 - ✅ Tokens FCM/APNS
-- ✅ Canales de notificación (Android)
-- ✅ Acciones de notificación (botones)
 - ✅ Manejo de eventos (recibido, presionado, token refresh)
 - ✅ Permisos de notificación
+- ❌ Notificaciones locales (usa `@natify/push-notification-notifee`)
+- ❌ Canales de notificación (usa `@natify/push-notification-notifee`)
 
 ## Ejemplo
 
@@ -74,10 +75,11 @@ function MyComponent() {
     }
   };
 
-  // Escuchar cuando se recibe una notificación
+  // Escuchar cuando se recibe una notificación remota
   useEffect(() => {
     const unsubscribe = push.onNotificationReceived(notification => {
-      console.log('Notificación recibida:', notification);
+      console.log('Notificación remota recibida:', notification);
+      // Para mostrar la notificación localmente, usa @natify/push-notification-notifee
     });
     return unsubscribe;
   }, [push]);
@@ -102,6 +104,29 @@ function MyComponent() {
 }
 ```
 
+## Combinar con Notifee
+
+Para mostrar notificaciones locales cuando recibes notificaciones remotas, puedes usar ambos adapters:
+
+```typescript
+import { FirebasePushAdapter } from '@natify/push-notification-firebase';
+import { NotifeePushAdapter } from '@natify/push-notification-notifee';
+
+const firebaseAdapter = new FirebasePushAdapter();
+const notifeeAdapter = new NotifeePushAdapter();
+
+// Escuchar notificaciones remotas y mostrarlas localmente
+firebaseAdapter.onNotificationReceived(async (notification) => {
+  // Mostrar usando Notifee
+  await notifeeAdapter.displayNotification(notification);
+});
+
+const adapters = {
+  pushNotification: firebaseAdapter, // Para tokens y notificaciones remotas
+  pushNotificationLocal: notifeeAdapter, // Para notificaciones locales
+};
+```
+
 ## Configuración de Firebase
 
 ### iOS
@@ -121,4 +146,3 @@ buildscript {
   }
 }
 ```
-

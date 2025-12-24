@@ -1,5 +1,4 @@
 import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
-import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
 import { Platform } from 'react-native';
 import {
   PushNotificationPort,
@@ -8,22 +7,15 @@ import {
   PushNotificationListener,
   PushNotificationPressListener,
   PushNotificationTokenListener,
-  PushNotificationPriority,
-  PushNotificationAction,
 } from '@natify/core';
 import { NatifyError, NatifyErrorCode } from '@natify/core';
-import {
-  mapFirebasePriorityToPriority,
-  mapAndroidImportanceToPriority,
-  mapPriorityToAndroidImportance,
-} from './utils/priorityMappers';
-import { mapFirebaseMessageToData, mapNotifeeNotificationToData } from './utils/notificationMappers';
+import { mapFirebaseMessageToData } from './utils/notificationMappers';
 
 /**
  * Adapter de Push Notifications usando Firebase Cloud Messaging (FCM)
  *
- * Este adapter combina Firebase Messaging para recibir tokens y notificaciones remotas,
- * con Notifee para mostrar notificaciones locales y manejar la UI de notificaciones.
+ * Este adapter se enfoca en recibir notificaciones remotas y manejar tokens FCM.
+ * Para mostrar notificaciones locales, usa @natify/push-notification-notifee.
  */
 export class FirebasePushAdapter implements PushNotificationPort {
   readonly capability = 'push-notification';
@@ -32,22 +24,18 @@ export class FirebasePushAdapter implements PushNotificationPort {
   private pressListeners: Set<PushNotificationPressListener> = new Set();
   private tokenListeners: Set<PushNotificationTokenListener> = new Set();
   private unsubscribeMessaging: (() => void)[] = [];
-  private unsubscribeNotifee: (() => void)[] = [];
 
   constructor() {
     this.setupEventListeners();
   }
 
   /**
-   * Configura los listeners de eventos de Firebase y Notifee
+   * Configura los listeners de eventos de Firebase Messaging
    */
   private setupEventListeners(): void {
     // Listener para cuando se recibe una notificación en foreground (Firebase)
     const unsubscribeForeground = messaging().onMessage(
       async (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
-        // Mostrar la notificación usando Notifee
-        await this.displayNotificationFromFirebase(remoteMessage);
-
         // Notificar a los listeners
         const notification = mapFirebaseMessageToData(remoteMessage);
         this.notificationListeners.forEach(listener => listener(notification));
@@ -83,90 +71,15 @@ export class FirebasePushAdapter implements PushNotificationPort {
       this.tokenListeners.forEach(listener => listener(pushToken));
     });
     this.unsubscribeMessaging.push(unsubscribeToken);
-
-    // Listener para cuando se presiona una notificación (Notifee)
-    const unsubscribeNotifeePress = notifee.onForegroundEvent(
-      ({ type, detail }: { type: EventType; detail: any }) => {
-        if (type === EventType.PRESS) {
-          const notification = mapNotifeeNotificationToData(detail.notification);
-          this.pressListeners.forEach(listener =>
-            listener({
-              ...notification,
-              actionId: detail.pressAction?.id,
-            }),
-          );
-        }
-      },
-    );
-    this.unsubscribeNotifee.push(unsubscribeNotifeePress);
-
-    // Listener para cuando se presiona una notificación en background (Notifee)
-    notifee.onBackgroundEvent(async ({ type, detail }: { type: EventType; detail: any }) => {
-      if (type === EventType.PRESS) {
-        const notification = mapNotifeeNotificationToData(detail.notification);
-        this.pressListeners.forEach(listener =>
-          listener({
-            ...notification,
-            actionId: detail.pressAction?.id,
-          }),
-        );
-      }
-    });
-  }
-
-
-  /**
-   * Muestra una notificación desde un mensaje de Firebase usando Notifee
-   */
-  private async displayNotificationFromFirebase(
-    remoteMessage: FirebaseMessagingTypes.RemoteMessage,
-  ): Promise<void> {
-    const notification = remoteMessage.notification;
-    if (!notification) return;
-
-    try {
-      await notifee.displayNotification({
-        title: notification.title || '',
-        body: notification.body || '',
-        data: remoteMessage.data || {},
-        android: {
-          channelId: 'default',
-          importance: AndroidImportance.HIGH,
-          smallIcon: 'ic_notification',
-          largeIcon: notification.android?.imageUrl,
-          pressAction: {
-            id: 'default',
-          },
-        },
-        ios: {
-          sound: notification.ios?.sound?.toString() || 'default',
-        },
-      });
-    } catch (error) {
-      console.error('[FirebasePushAdapter] Error al mostrar notificación:', error);
-    }
   }
 
   async requestPermission(): Promise<boolean> {
     try {
-      // Solicitar permisos de Firebase
       const authStatus = await messaging().requestPermission();
-      const enabled =
+      return (
         authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-      if (Platform.OS === 'android') {
-        // También solicitar permisos de Notifee en Android
-        const notifeeSettings = await notifee.requestPermission();
-        // AndroidNotificationSetting usa valores numéricos: 1 = AUTHORIZED, 2 = PROVISIONAL
-        return (
-          enabled &&
-          (notifeeSettings.authorizationStatus === 1 || // AUTHORIZED
-            notifeeSettings.authorizationStatus === 2) // PROVISIONAL
-        );
-      }
-
-      return enabled;
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL
+      );
     } catch (error) {
       throw new NatifyError(
         NatifyErrorCode.UNKNOWN,
@@ -179,21 +92,10 @@ export class FirebasePushAdapter implements PushNotificationPort {
   async hasPermission(): Promise<boolean> {
     try {
       const authStatus = await messaging().hasPermission();
-      const enabled =
+      return (
         authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-      if (Platform.OS === 'android') {
-        const notifeeSettings = await notifee.getNotificationSettings();
-        // AndroidNotificationSetting usa valores numéricos: 1 = AUTHORIZED, 2 = PROVISIONAL
-        return (
-          enabled &&
-          (notifeeSettings.authorizationStatus === 1 || // AUTHORIZED
-            notifeeSettings.authorizationStatus === 2) // PROVISIONAL
-        );
-      }
-
-      return enabled;
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL
+      );
     } catch (error) {
       throw new NatifyError(
         NatifyErrorCode.UNKNOWN,
@@ -234,79 +136,34 @@ export class FirebasePushAdapter implements PushNotificationPort {
   }
 
   async displayNotification(
-    notification: PushNotificationData,
+    _notification: PushNotificationData,
     _scheduleId?: string,
   ): Promise<string> {
-    try {
-      // Usar Notifee para mostrar notificaciones locales
-      const notifeeNotification: any = {
-        title: notification.title,
-        body: notification.body,
-        data: notification.data || {},
-        android: {
-          channelId: notification.channelId || 'default',
-          importance: mapPriorityToAndroidImportance(
-            notification.priority || PushNotificationPriority.Default,
-          ),
-          smallIcon: notification.smallImageUrl || 'ic_notification',
-          largeIcon: notification.largeImageUrl,
-          vibrate: notification.vibration !== false,
-          pressAction: {
-            id: 'default',
-          },
-          ...(notification.actions && {
-            actions: notification.actions.map((action: PushNotificationAction) => ({
-              title: action.title,
-              pressAction: {
-                id: action.id,
-              },
-              icon: action.icon,
-            })),
-          }),
-        },
-        ios: {
-          sound: notification.sound || 'default',
-          badge: notification.badge,
-        },
-      };
-
-      return await notifee.displayNotification(notifeeNotification);
-    } catch (error) {
-      throw new NatifyError(NatifyErrorCode.UNKNOWN, 'Error al mostrar notificación', error);
-    }
+    throw new NatifyError(
+      NatifyErrorCode.VALIDATION_ERROR,
+      'Firebase Messaging no soporta notificaciones locales. Usa @natify/push-notification-notifee para mostrar notificaciones locales.',
+    );
   }
 
-  async cancelNotification(notificationId: string): Promise<void> {
-    try {
-      await notifee.cancelNotification(notificationId);
-    } catch (error) {
-      throw new NatifyError(NatifyErrorCode.UNKNOWN, 'Error al cancelar notificación', error);
-    }
+  async cancelNotification(_notificationId: string): Promise<void> {
+    throw new NatifyError(
+      NatifyErrorCode.VALIDATION_ERROR,
+      'Firebase Messaging no soporta cancelar notificaciones locales. Usa @natify/push-notification-notifee para gestionar notificaciones locales.',
+    );
   }
 
   async cancelAllNotifications(): Promise<void> {
-    try {
-      await notifee.cancelAllNotifications();
-    } catch (error) {
-      throw new NatifyError(
-        NatifyErrorCode.UNKNOWN,
-        'Error al cancelar todas las notificaciones',
-        error,
-      );
-    }
+    throw new NatifyError(
+      NatifyErrorCode.VALIDATION_ERROR,
+      'Firebase Messaging no soporta cancelar notificaciones locales. Usa @natify/push-notification-notifee para gestionar notificaciones locales.',
+    );
   }
 
   async getScheduledNotifications(): Promise<string[]> {
-    try {
-      const notifications = await notifee.getTriggerNotifications();
-      return notifications.map((n: { notification: { id?: string } }) => n.notification.id || '');
-    } catch (error) {
-      throw new NatifyError(
-        NatifyErrorCode.UNKNOWN,
-        'Error al obtener notificaciones programadas',
-        error,
-      );
-    }
+    throw new NatifyError(
+      NatifyErrorCode.VALIDATION_ERROR,
+      'Firebase Messaging no soporta notificaciones programadas. Usa @natify/push-notification-notifee para gestionar notificaciones locales.',
+    );
   }
 
   onNotificationReceived(listener: PushNotificationListener): () => void {
@@ -330,56 +187,6 @@ export class FirebasePushAdapter implements PushNotificationPort {
     };
   }
 
-  async createChannel(
-    channelId: string,
-    channelName: string,
-    options?: {
-      sound?: string;
-      vibration?: boolean;
-      importance?: 'low' | 'default' | 'high';
-    },
-  ): Promise<void> {
-    if (Platform.OS !== 'android') {
-      return; // Solo Android
-    }
-
-    try {
-      const importanceMap: Record<string, AndroidImportance> = {
-        low: AndroidImportance.LOW,
-        default: AndroidImportance.DEFAULT,
-        high: AndroidImportance.HIGH,
-      };
-
-      await notifee.createChannel({
-        id: channelId,
-        name: channelName,
-        sound: options?.sound || 'default',
-        vibration: options?.vibration !== false,
-        importance: importanceMap[options?.importance || 'default'] || AndroidImportance.DEFAULT,
-      });
-    } catch (error) {
-      throw new NatifyError(
-        NatifyErrorCode.UNKNOWN,
-        'Error al crear canal de notificación',
-        error,
-      );
-    }
-  }
-
-  async deleteChannel(channelId: string): Promise<void> {
-    if (Platform.OS !== 'android') {
-      return; // Solo Android
-    }
-
-    try {
-      await notifee.deleteChannel(channelId);
-    } catch (error) {
-      throw new NatifyError(
-        NatifyErrorCode.UNKNOWN,
-        'Error al eliminar canal de notificación',
-        error,
-      );
-    }
-  }
+  // createChannel y deleteChannel no están disponibles en Firebase Messaging
+  // Usa @natify/push-notification-notifee para gestionar canales
 }
-

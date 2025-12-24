@@ -17,13 +17,11 @@
   },
   "peerDependencies": {
     "@natify/core": "*",
-    "@react-native-firebase/messaging": ">=20.0.0",
-    "@notifee/react-native": ">=7.0.0"
+    "@react-native-firebase/messaging": ">=20.0.0"
   },
   "devDependencies": {
     "@natify/core": "workspace:*",
     "@react-native-firebase/messaging": "^20.0.0",
-    "@notifee/react-native": "^7.8.2",
     "typescript": "*"
   },
   "keywords": [

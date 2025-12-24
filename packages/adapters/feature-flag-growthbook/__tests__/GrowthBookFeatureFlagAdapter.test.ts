@@ -2,6 +2,10 @@ import { GrowthBookFeatureFlagAdapter } from '../src';
 import { NatifyError, NatifyErrorCode } from '@natify/core';
 import { GrowthBook } from '@growthbook/growthbook-react';
 
+// Mock console methods
+const mockConsoleWarn = jest.spyOn(console, 'warn').mockImplementation();
+const mockConsoleError = jest.spyOn(console, 'error').mockImplementation();
+
 // Mock GrowthBook
 const mockLoadFeatures = jest.fn().mockResolvedValue(undefined);
 const mockEvalFeature = jest.fn();
@@ -25,6 +29,8 @@ describe('GrowthBookFeatureFlagAdapter', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockConsoleWarn.mockClear();
+    mockConsoleError.mockClear();
     // Resetear mocks a sus valores por defecto
     mockLoadFeatures.mockReset();
     mockLoadFeatures.mockResolvedValue(undefined);
@@ -40,6 +46,11 @@ describe('GrowthBookFeatureFlagAdapter', () => {
     adapter = new GrowthBookFeatureFlagAdapter({
       clientKey: mockClientKey,
     });
+  });
+
+  afterAll(() => {
+    mockConsoleWarn.mockRestore();
+    mockConsoleError.mockRestore();
   });
 
   describe('constructor', () => {
@@ -180,10 +191,37 @@ describe('GrowthBookFeatureFlagAdapter', () => {
 
       const value = uninitializedAdapter.getValue('test-flag', 'default');
 
-      expect(console.warn).toHaveBeenCalledWith(
+      expect(mockConsoleWarn).toHaveBeenCalledWith(
         expect.stringContaining('Not initialized'),
       );
       expect(value).toBe('default');
+    });
+
+    it('should handle error in getValue catch block', () => {
+      // Make evalFeature throw an error
+      mockEvalFeature.mockImplementationOnce(() => {
+        throw new Error('Evaluation error');
+      });
+
+      const value = adapter.getValue('test-flag', 'default');
+
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        expect.stringContaining('Error getting value'),
+        expect.any(Error),
+      );
+      expect(value).toBe('default');
+    });
+
+    it('should return null when value is null and no default provided', () => {
+      mockEvalFeature.mockReturnValue({
+        on: true,
+        value: null,
+        source: 'remote',
+      });
+
+      const value = adapter.getValue('test-flag');
+
+      expect(value).toBeNull();
     });
   });
 
@@ -223,6 +261,34 @@ describe('GrowthBookFeatureFlagAdapter', () => {
 
       expect(enabled).toBe(false);
     });
+
+    it('should warn if not initialized', () => {
+      const uninitializedAdapter = new GrowthBookFeatureFlagAdapter({
+        clientKey: mockClientKey,
+      });
+
+      const enabled = uninitializedAdapter.isEnabled('test-flag');
+
+      expect(mockConsoleWarn).toHaveBeenCalledWith(
+        expect.stringContaining('Not initialized'),
+      );
+      expect(enabled).toBe(false);
+    });
+
+    it('should handle error in isEnabled catch block', () => {
+      // Make evalFeature throw an error
+      mockEvalFeature.mockImplementationOnce(() => {
+        throw new Error('Evaluation error');
+      });
+
+      const enabled = adapter.isEnabled('test-flag');
+
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        expect.stringContaining('Error checking if flag'),
+        expect.any(Error),
+      );
+      expect(enabled).toBe(false);
+    });
   });
 
   describe('getFeatureFlag', () => {
@@ -257,6 +323,76 @@ describe('GrowthBookFeatureFlagAdapter', () => {
         enabled: false,
         exists: false,
       });
+    });
+
+    it('should warn if not initialized', () => {
+      const uninitializedAdapter = new GrowthBookFeatureFlagAdapter({
+        clientKey: mockClientKey,
+      });
+
+      const result = uninitializedAdapter.getFeatureFlag('test-flag');
+
+      expect(mockConsoleWarn).toHaveBeenCalledWith(
+        expect.stringContaining('Not initialized'),
+      );
+      expect(result).toEqual({
+        value: null,
+        enabled: false,
+        exists: false,
+      });
+    });
+
+    it('should handle error in getFeatureFlag catch block', () => {
+      // Make evalFeature throw an error
+      mockEvalFeature.mockImplementationOnce(() => {
+        throw new Error('Evaluation error');
+      });
+
+      const result = adapter.getFeatureFlag('test-flag');
+
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        expect.stringContaining('Error getting feature flag'),
+        expect.any(Error),
+      );
+      expect(result).toEqual({
+        value: null,
+        enabled: false,
+        exists: false,
+      });
+    });
+
+    it('should return variant when source is experiment and inExperiment is true', () => {
+      mockEvalFeature.mockReturnValue({
+        on: true,
+        value: 'variant-value',
+        source: 'experiment',
+        experimentResult: {
+          inExperiment: true,
+          variationId: 0,
+        },
+      });
+
+      const result = adapter.getFeatureFlag('test-flag');
+
+      expect(result.variant).toBe('0');
+      expect(result.source).toBe('experiment');
+    });
+
+    it('should not return variant when source is experiment but inExperiment is false', () => {
+      mockEvalFeature.mockReturnValue({
+        on: true,
+        value: 'variant-value',
+        source: 'experiment',
+        experimentResult: {
+          inExperiment: false,
+          variationId: 0,
+        },
+      });
+
+      const result = adapter.getFeatureFlag('test-flag');
+
+      expect(result.variant).toBeUndefined();
+      expect(result.source).toBe('experiment');
     });
   });
 
@@ -305,6 +441,32 @@ describe('GrowthBookFeatureFlagAdapter', () => {
         expect.objectContaining(attributes),
       );
     });
+
+    it('should warn if not initialized', () => {
+      const uninitializedAdapter = new GrowthBookFeatureFlagAdapter({
+        clientKey: mockClientKey,
+      });
+
+      uninitializedAdapter.setAttributes({ id: '123' });
+
+      expect(mockConsoleWarn).toHaveBeenCalledWith(
+        expect.stringContaining('Not initialized'),
+      );
+    });
+
+    it('should handle error in setAttributes catch block', () => {
+      // Make setAttributes throw an error
+      mockSetAttributes.mockImplementationOnce(() => {
+        throw new Error('Set attributes error');
+      });
+
+      adapter.setAttributes({ id: '123' });
+
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        expect.stringContaining('Error setting attributes'),
+        expect.any(Error),
+      );
+    });
   });
 
   describe('getAttributes', () => {
@@ -324,6 +486,31 @@ describe('GrowthBookFeatureFlagAdapter', () => {
         id: '123',
         email: 'test@example.com',
       });
+    });
+
+    it('should return empty object if not initialized', () => {
+      const uninitializedAdapter = new GrowthBookFeatureFlagAdapter({
+        clientKey: mockClientKey,
+      });
+
+      const attributes = uninitializedAdapter.getAttributes();
+
+      expect(attributes).toEqual({});
+    });
+
+    it('should handle error in getAttributes catch block', () => {
+      // Make getAttributes throw an error
+      mockGetAttributes.mockImplementationOnce(() => {
+        throw new Error('Get attributes error');
+      });
+
+      const attributes = adapter.getAttributes();
+
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        expect.stringContaining('Error getting attributes'),
+        expect.any(Error),
+      );
+      expect(attributes).toEqual({});
     });
   });
 
@@ -346,6 +533,23 @@ describe('GrowthBookFeatureFlagAdapter', () => {
       await expect(adapter.refresh()).rejects.toThrow(NatifyError);
       await expect(adapter.refresh()).rejects.toThrow('Failed to refresh feature flags');
     });
+
+    it('should warn if not initialized', async () => {
+      const uninitializedAdapter = new GrowthBookFeatureFlagAdapter({
+        clientKey: mockClientKey,
+      });
+      
+      // Clear any calls from constructor
+      mockLoadFeatures.mockClear();
+
+      await uninitializedAdapter.refresh();
+
+      expect(mockConsoleWarn).toHaveBeenCalledWith(
+        expect.stringContaining('Not initialized'),
+      );
+      // loadFeatures should not be called when not initialized
+      expect(mockLoadFeatures).not.toHaveBeenCalled();
+    });
   });
 
   describe('clearAttributes', () => {
@@ -357,6 +561,41 @@ describe('GrowthBookFeatureFlagAdapter', () => {
       adapter.clearAttributes();
 
       expect(mockSetAttributes).toHaveBeenCalledWith({});
+    });
+
+    it('should do nothing if not initialized', () => {
+      const uninitializedAdapter = new GrowthBookFeatureFlagAdapter({
+        clientKey: mockClientKey,
+      });
+
+      uninitializedAdapter.clearAttributes();
+
+      expect(mockSetAttributes).not.toHaveBeenCalled();
+    });
+
+    it('should handle error in clearAttributes catch block', () => {
+      // Make setAttributes throw an error
+      mockSetAttributes.mockImplementationOnce(() => {
+        throw new Error('Clear attributes error');
+      });
+
+      adapter.clearAttributes();
+
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        expect.stringContaining('Error clearing attributes'),
+        expect.any(Error),
+      );
+    });
+  });
+
+  describe('getGrowthBookClient', () => {
+    it('should return GrowthBook client instance', () => {
+      const client = adapter.getGrowthBookClient();
+
+      expect(client).toBeDefined();
+      expect(client.loadFeatures).toBeDefined();
+      expect(client.evalFeature).toBeDefined();
+      expect(client.setAttributes).toBeDefined();
     });
   });
 });

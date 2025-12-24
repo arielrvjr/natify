@@ -48,6 +48,7 @@ describe('NotifeePushAdapter', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockNotifee.onForegroundEvent.mockReturnValue(() => {});
+    mockNotifee.onBackgroundEvent.mockReturnValue(() => {});
     adapter = new NotifeePushAdapter();
   });
 
@@ -69,6 +70,16 @@ describe('NotifeePushAdapter', () => {
       expect(mockNotifee.requestPermission).toHaveBeenCalled();
     });
 
+    it('should return true when permission is provisional (iOS)', async () => {
+      mockNotifee.requestPermission.mockResolvedValue({
+        authorizationStatus: 2, // PROVISIONAL
+      });
+
+      const result = await adapter.requestPermission();
+
+      expect(result).toBe(true);
+    });
+
     it('should return false when permission is denied', async () => {
       mockNotifee.requestPermission.mockResolvedValue({
         authorizationStatus: 0, // DENIED
@@ -77,6 +88,17 @@ describe('NotifeePushAdapter', () => {
       const result = await adapter.requestPermission();
 
       expect(result).toBe(false);
+    });
+
+    it('should handle Android platform', async () => {
+      require('react-native').Platform.OS = 'android';
+      mockNotifee.requestPermission.mockResolvedValue({
+        authorizationStatus: 1, // AUTHORIZED
+      });
+
+      const result = await adapter.requestPermission();
+
+      expect(result).toBe(true);
     });
 
     it('should throw NatifyError when request fails', async () => {
@@ -100,6 +122,28 @@ describe('NotifeePushAdapter', () => {
       expect(mockNotifee.getNotificationSettings).toHaveBeenCalled();
     });
 
+    it('should return true when permission is provisional (iOS)', async () => {
+      require('react-native').Platform.OS = 'ios';
+      mockNotifee.getNotificationSettings.mockResolvedValue({
+        authorizationStatus: 2, // PROVISIONAL
+      });
+
+      const result = await adapter.hasPermission();
+
+      expect(result).toBe(true);
+    });
+
+    it('should return true when permission is provisional on Android', async () => {
+      require('react-native').Platform.OS = 'android';
+      mockNotifee.getNotificationSettings.mockResolvedValue({
+        authorizationStatus: 2, // PROVISIONAL
+      });
+
+      const result = await adapter.hasPermission();
+
+      expect(result).toBe(true);
+    });
+
     it('should return false when permission is denied', async () => {
       mockNotifee.getNotificationSettings.mockResolvedValue({
         authorizationStatus: 0, // DENIED
@@ -108,6 +152,17 @@ describe('NotifeePushAdapter', () => {
       const result = await adapter.hasPermission();
 
       expect(result).toBe(false);
+    });
+
+    it('should handle Android platform', async () => {
+      require('react-native').Platform.OS = 'android';
+      mockNotifee.getNotificationSettings.mockResolvedValue({
+        authorizationStatus: 1, // AUTHORIZED
+      });
+
+      const result = await adapter.hasPermission();
+
+      expect(result).toBe(true);
     });
 
     it('should throw NatifyError when check fails', async () => {
@@ -163,6 +218,51 @@ describe('NotifeePushAdapter', () => {
 
       expect(result).toBe('notification-id');
       expect(mockNotifee.createTriggerNotification).toHaveBeenCalled();
+    });
+
+    it('should display notification with actions', async () => {
+      mockNotifee.displayNotification.mockResolvedValue('notification-id');
+
+      const result = await adapter.displayNotification({
+        title: 'Test',
+        body: 'Test body',
+        actions: [
+          { id: 'action1', title: 'Action 1' },
+          { id: 'action2', title: 'Action 2', icon: 'icon.png' },
+        ],
+      });
+
+      expect(result).toBe('notification-id');
+      expect(mockNotifee.displayNotification).toHaveBeenCalledWith(
+        expect.objectContaining({
+          android: expect.objectContaining({
+            actions: expect.arrayContaining([
+              expect.objectContaining({ title: 'Action 1' }),
+              expect.objectContaining({ title: 'Action 2' }),
+            ]),
+          }),
+        }),
+      );
+    });
+
+    it('should display notification with all properties', async () => {
+      mockNotifee.displayNotification.mockResolvedValue('notification-id');
+
+      const result = await adapter.displayNotification({
+        title: 'Test',
+        body: 'Test body',
+        data: { key: 'value' },
+        channelId: 'custom-channel',
+        priority: PushNotificationPriority.High,
+        largeImageUrl: 'https://example.com/large.jpg',
+        smallImageUrl: 'https://example.com/small.jpg',
+        sound: 'custom-sound',
+        vibration: true,
+        badge: 5,
+      });
+
+      expect(result).toBe('notification-id');
+      expect(mockNotifee.displayNotification).toHaveBeenCalled();
     });
 
     it('should throw NatifyError when displayNotification fails', async () => {
@@ -233,6 +333,17 @@ describe('NotifeePushAdapter', () => {
       expect(mockNotifee.getTriggerNotifications).toHaveBeenCalled();
     });
 
+    it('should return empty string when notification has no id', async () => {
+      mockNotifee.getTriggerNotifications.mockResolvedValue([
+        { notification: {} },
+        { notification: { id: 'id2' } },
+      ]);
+
+      const result = await adapter.getScheduledNotifications();
+
+      expect(result).toEqual(['', 'id2']);
+    });
+
     it('should return empty array when no scheduled notifications', async () => {
       mockNotifee.getTriggerNotifications.mockResolvedValue([]);
 
@@ -259,6 +370,28 @@ describe('NotifeePushAdapter', () => {
 
       unsubscribe();
     });
+
+    it('should call listener when notification is received', () => {
+      const listener = jest.fn();
+      adapter.onNotificationReceived(listener);
+
+      // Simular evento de notificación
+      const eventHandler = mockNotifee.onForegroundEvent.mock.calls[0][0];
+      eventHandler({
+        type: 'PRESS',
+        detail: {
+          notification: {
+            title: 'Test',
+            body: 'Test body',
+            data: {},
+            android: {},
+            ios: {},
+          },
+        },
+      });
+
+      expect(listener).toHaveBeenCalled();
+    });
   });
 
   describe('onNotificationPressed', () => {
@@ -269,6 +402,68 @@ describe('NotifeePushAdapter', () => {
       expect(typeof unsubscribe).toBe('function');
 
       unsubscribe();
+    });
+
+    it('should call listener when notification is pressed', () => {
+      const listener = jest.fn();
+      adapter.onNotificationPressed(listener);
+
+      // Simular evento de presión
+      const eventHandler = mockNotifee.onForegroundEvent.mock.calls[0][0];
+      eventHandler({
+        type: 'PRESS',
+        detail: {
+          notification: {
+            title: 'Test',
+            body: 'Test body',
+            data: {},
+            android: {},
+            ios: {},
+          },
+          pressAction: {
+            id: 'action-id',
+          },
+        },
+      });
+
+      expect(listener).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: 'Test',
+          body: 'Test body',
+          actionId: 'action-id',
+        }),
+      );
+    });
+
+    it('should call listener when notification is pressed in background', () => {
+      const listener = jest.fn();
+      adapter.onNotificationPressed(listener);
+
+      // Simular evento de presión en background
+      const backgroundEventHandler = mockNotifee.onBackgroundEvent.mock.calls[0][0];
+      backgroundEventHandler({
+        type: 'PRESS',
+        detail: {
+          notification: {
+            title: 'Test',
+            body: 'Test body',
+            data: {},
+            android: {},
+            ios: {},
+          },
+          pressAction: {
+            id: 'action-id',
+          },
+        },
+      });
+
+      expect(listener).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: 'Test',
+          body: 'Test body',
+          actionId: 'action-id',
+        }),
+      );
     });
   });
 
@@ -292,6 +487,46 @@ describe('NotifeePushAdapter', () => {
       await adapter.createChannel('channel-id', 'Channel Name');
 
       expect(mockNotifee.createChannel).toHaveBeenCalled();
+    });
+
+    it('should create channel with options', async () => {
+      require('react-native').Platform.OS = 'android';
+
+      mockNotifee.createChannel.mockResolvedValue(undefined);
+
+      await adapter.createChannel('channel-id', 'Channel Name', {
+        sound: 'custom-sound',
+        vibration: true,
+        importance: 'high',
+      });
+
+      expect(mockNotifee.createChannel).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: 'channel-id',
+          name: 'Channel Name',
+          sound: 'custom-sound',
+          vibration: true,
+          importance: 4, // HIGH
+        }),
+      );
+    });
+
+    it('should create channel with default options', async () => {
+      require('react-native').Platform.OS = 'android';
+
+      mockNotifee.createChannel.mockResolvedValue(undefined);
+
+      await adapter.createChannel('channel-id', 'Channel Name', {
+        importance: 'low',
+      });
+
+      expect(mockNotifee.createChannel).toHaveBeenCalledWith(
+        expect.objectContaining({
+          sound: 'default',
+          vibration: true,
+          importance: 2, // LOW
+        }),
+      );
     });
 
     it('should do nothing on iOS', async () => {

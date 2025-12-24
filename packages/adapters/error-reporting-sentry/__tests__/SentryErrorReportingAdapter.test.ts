@@ -1,6 +1,10 @@
 import { SentryErrorReportingAdapter } from '../src';
 import { SeverityLevel, NatifyError, NatifyErrorCode } from '@natify/core';
 
+// Mock console methods
+const mockConsoleWarn = jest.spyOn(console, 'warn').mockImplementation();
+const mockConsoleError = jest.spyOn(console, 'error').mockImplementation();
+
 // Mock Sentry
 const mockInit = jest.fn(); // Por defecto no lanza error
 const mockCaptureException = jest.fn();
@@ -10,10 +14,14 @@ const mockAddBreadcrumb = jest.fn();
 const mockSetTags = jest.fn();
 const mockSetTag = jest.fn();
 const mockSetContext = jest.fn();
+const mockScopeSetLevel = jest.fn();
+const mockScopeSetContext = jest.fn();
+const mockScopeClearBreadcrumbs = jest.fn();
 const mockWithScope = jest.fn((callback) => {
   const scope = {
-    setLevel: jest.fn(),
-    setContext: jest.fn(),
+    setLevel: mockScopeSetLevel,
+    setContext: mockScopeSetContext,
+    clearBreadcrumbs: mockScopeClearBreadcrumbs,
   };
   callback(scope);
 });
@@ -38,12 +46,28 @@ describe('SentryErrorReportingAdapter', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockConsoleWarn.mockClear();
+    mockConsoleError.mockClear();
     // Configurar mockInit para que no lance error por defecto
     mockInit.mockImplementation(() => {});
+    // Reset mocks to default behavior
+    mockWithScope.mockImplementation((callback) => {
+      const scope = {
+        setLevel: mockScopeSetLevel,
+        setContext: mockScopeSetContext,
+        clearBreadcrumbs: mockScopeClearBreadcrumbs,
+      };
+      callback(scope);
+    });
     adapter = new SentryErrorReportingAdapter({
       dsn: mockDsn,
       environment: 'test',
     });
+  });
+
+  afterAll(() => {
+    mockConsoleWarn.mockRestore();
+    mockConsoleError.mockRestore();
   });
 
   describe('constructor', () => {
@@ -159,8 +183,23 @@ describe('SentryErrorReportingAdapter', () => {
 
       uninitializedAdapter.captureException(error);
 
-      expect(console.warn).toHaveBeenCalledWith(
+      expect(mockConsoleWarn).toHaveBeenCalledWith(
         expect.stringContaining('Not initialized'),
+      );
+    });
+
+    it('should handle error in captureException catch block', () => {
+      const error = new Error('Test error');
+      // Make withScope throw an error
+      mockWithScope.mockImplementationOnce(() => {
+        throw new Error('Sentry error');
+      });
+
+      adapter.captureException(error);
+
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        expect.stringContaining('Error capturing exception'),
+        expect.any(Error),
       );
     });
   });
@@ -190,6 +229,32 @@ describe('SentryErrorReportingAdapter', () => {
 
       expect(mockWithScope).toHaveBeenCalled();
       expect(mockCaptureMessage).toHaveBeenCalledWith('Test message');
+    });
+
+    it('should warn if not initialized', () => {
+      const uninitializedAdapter = new SentryErrorReportingAdapter({
+        dsn: mockDsn,
+      });
+
+      uninitializedAdapter.captureMessage('Test message');
+
+      expect(mockConsoleWarn).toHaveBeenCalledWith(
+        expect.stringContaining('Not initialized'),
+      );
+    });
+
+    it('should handle error in captureMessage catch block', () => {
+      // Make withScope throw an error
+      mockWithScope.mockImplementationOnce(() => {
+        throw new Error('Sentry error');
+      });
+
+      adapter.captureMessage('Test message');
+
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        expect.stringContaining('Error capturing message'),
+        expect.any(Error),
+      );
     });
   });
 
@@ -228,6 +293,32 @@ describe('SentryErrorReportingAdapter', () => {
 
       expect(adapter.getUser()).toEqual(user);
     });
+
+    it('should warn if not initialized', () => {
+      const uninitializedAdapter = new SentryErrorReportingAdapter({
+        dsn: mockDsn,
+      });
+
+      uninitializedAdapter.setUser({ id: '123' });
+
+      expect(mockConsoleWarn).toHaveBeenCalledWith(
+        expect.stringContaining('Not initialized'),
+      );
+    });
+
+    it('should handle error in setUser catch block', () => {
+      // Make setUser throw an error
+      mockSetUser.mockImplementationOnce(() => {
+        throw new Error('Sentry error');
+      });
+
+      adapter.setUser({ id: '123' });
+
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        expect.stringContaining('Error setting user'),
+        expect.any(Error),
+      );
+    });
   });
 
   describe('addBreadcrumb', () => {
@@ -252,6 +343,38 @@ describe('SentryErrorReportingAdapter', () => {
         }),
       );
     });
+
+    it('should warn if not initialized', () => {
+      const uninitializedAdapter = new SentryErrorReportingAdapter({
+        dsn: mockDsn,
+      });
+
+      uninitializedAdapter.addBreadcrumb({
+        message: 'Test',
+        category: 'test',
+      });
+
+      expect(mockConsoleWarn).toHaveBeenCalledWith(
+        expect.stringContaining('Not initialized'),
+      );
+    });
+
+    it('should handle error in addBreadcrumb catch block', () => {
+      // Make addBreadcrumb throw an error
+      mockAddBreadcrumb.mockImplementationOnce(() => {
+        throw new Error('Sentry error');
+      });
+
+      adapter.addBreadcrumb({
+        message: 'Test',
+        category: 'test',
+      });
+
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        expect.stringContaining('Error adding breadcrumb'),
+        expect.any(Error),
+      );
+    });
   });
 
   describe('setTags', () => {
@@ -265,6 +388,32 @@ describe('SentryErrorReportingAdapter', () => {
 
       expect(mockSetTags).toHaveBeenCalledWith(tags);
     });
+
+    it('should warn if not initialized', () => {
+      const uninitializedAdapter = new SentryErrorReportingAdapter({
+        dsn: mockDsn,
+      });
+
+      uninitializedAdapter.setTags({ version: '1.0.0' });
+
+      expect(mockConsoleWarn).toHaveBeenCalledWith(
+        expect.stringContaining('Not initialized'),
+      );
+    });
+
+    it('should handle error in setTags catch block', () => {
+      // Make setTags throw an error
+      mockSetTags.mockImplementationOnce(() => {
+        throw new Error('Sentry error');
+      });
+
+      adapter.setTags({ version: '1.0.0' });
+
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        expect.stringContaining('Error setting tags'),
+        expect.any(Error),
+      );
+    });
   });
 
   describe('setTag', () => {
@@ -276,6 +425,32 @@ describe('SentryErrorReportingAdapter', () => {
       adapter.setTag('key', 'value');
 
       expect(mockSetTag).toHaveBeenCalledWith('key', 'value');
+    });
+
+    it('should warn if not initialized', () => {
+      const uninitializedAdapter = new SentryErrorReportingAdapter({
+        dsn: mockDsn,
+      });
+
+      uninitializedAdapter.setTag('key', 'value');
+
+      expect(mockConsoleWarn).toHaveBeenCalledWith(
+        expect.stringContaining('Not initialized'),
+      );
+    });
+
+    it('should handle error in setTag catch block', () => {
+      // Make setTag throw an error
+      mockSetTag.mockImplementationOnce(() => {
+        throw new Error('Sentry error');
+      });
+
+      adapter.setTag('key', 'value');
+
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        expect.stringContaining('Error setting tag'),
+        expect.any(Error),
+      );
     });
   });
 
@@ -289,6 +464,32 @@ describe('SentryErrorReportingAdapter', () => {
       adapter.setContext('app', context);
 
       expect(mockSetContext).toHaveBeenCalledWith('app', context);
+    });
+
+    it('should warn if not initialized', () => {
+      const uninitializedAdapter = new SentryErrorReportingAdapter({
+        dsn: mockDsn,
+      });
+
+      uninitializedAdapter.setContext('app', { version: '1.0.0' });
+
+      expect(mockConsoleWarn).toHaveBeenCalledWith(
+        expect.stringContaining('Not initialized'),
+      );
+    });
+
+    it('should handle error in setContext catch block', () => {
+      // Make setContext throw an error
+      mockSetContext.mockImplementationOnce(() => {
+        throw new Error('Sentry error');
+      });
+
+      adapter.setContext('app', { version: '1.0.0' });
+
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        expect.stringContaining('Error setting context'),
+        expect.any(Error),
+      );
     });
   });
 
@@ -316,6 +517,84 @@ describe('SentryErrorReportingAdapter', () => {
       adapter.setUser(user);
 
       expect(adapter.getUser()).toEqual(user);
+    });
+  });
+
+  describe('clearBreadcrumbs', () => {
+    it('should do nothing if not initialized', () => {
+      const uninitializedAdapter = new SentryErrorReportingAdapter({
+        dsn: mockDsn,
+      });
+
+      uninitializedAdapter.clearBreadcrumbs();
+
+      expect(mockWithScope).not.toHaveBeenCalled();
+    });
+
+    it('should clear breadcrumbs when initialized', async () => {
+      await adapter.init();
+      adapter.clearBreadcrumbs();
+
+      expect(mockWithScope).toHaveBeenCalled();
+      expect(mockScopeClearBreadcrumbs).toHaveBeenCalled();
+    });
+
+    it('should handle error in clearBreadcrumbs catch block', async () => {
+      await adapter.init();
+      // Make withScope throw an error
+      mockWithScope.mockImplementationOnce(() => {
+        throw new Error('Sentry error');
+      });
+
+      adapter.clearBreadcrumbs();
+
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        expect.stringContaining('Error clearing breadcrumbs'),
+        expect.any(Error),
+      );
+    });
+  });
+
+  describe('mapSeverityToSentry', () => {
+    beforeEach(async () => {
+      await adapter.init();
+    });
+
+    it('should map all severity levels correctly', () => {
+      const error = new Error('Test');
+      
+      // Test all levels
+      adapter.captureException(error, undefined, SeverityLevel.FATAL);
+      adapter.captureException(error, undefined, SeverityLevel.ERROR);
+      adapter.captureException(error, undefined, SeverityLevel.WARNING);
+      adapter.captureException(error, undefined, SeverityLevel.INFO);
+      adapter.captureException(error, undefined, SeverityLevel.DEBUG);
+
+      expect(mockScopeSetLevel).toHaveBeenCalledWith('fatal');
+      expect(mockScopeSetLevel).toHaveBeenCalledWith('error');
+      expect(mockScopeSetLevel).toHaveBeenCalledWith('warning');
+      expect(mockScopeSetLevel).toHaveBeenCalledWith('info');
+      expect(mockScopeSetLevel).toHaveBeenCalledWith('debug');
+    });
+
+    it('should default to error for unknown level', () => {
+      const error = new Error('Test');
+      // Use an invalid level (cast to bypass type checking)
+      adapter.captureException(error, undefined, 'unknown' as SeverityLevel);
+
+      // Should default to 'error'
+      expect(mockScopeSetLevel).toHaveBeenCalledWith('error');
+    });
+  });
+
+  describe('getSentryClient', () => {
+    it('should return Sentry client', () => {
+      const client = adapter.getSentryClient();
+
+      expect(client).toBeDefined();
+      expect(client.init).toBeDefined();
+      expect(client.captureException).toBeDefined();
+      expect(client.captureMessage).toBeDefined();
     });
   });
 });

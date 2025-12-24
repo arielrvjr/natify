@@ -27,37 +27,10 @@ const mockMessagingInstance = {
 
 const mockMessaging = Object.assign(jest.fn(() => mockMessagingInstance), { AuthorizationStatus });
 
-const mockNotifee = {
-  displayNotification: jest.fn(),
-  cancelNotification: jest.fn(),
-  cancelAllNotifications: jest.fn(),
-  getTriggerNotifications: jest.fn(),
-  onForegroundEvent: jest.fn(),
-  onBackgroundEvent: jest.fn(),
-  requestPermission: jest.fn(),
-  getNotificationSettings: jest.fn(),
-  createChannel: jest.fn(),
-  deleteChannel: jest.fn(),
-};
-
 jest.mock('@react-native-firebase/messaging', () => ({
   __esModule: true,
   default: mockMessaging,
   AuthorizationStatus,
-}));
-
-jest.mock('@notifee/react-native', () => ({
-  __esModule: true,
-  default: mockNotifee,
-  AndroidImportance: {
-    MIN: 1,
-    LOW: 2,
-    DEFAULT: 3,
-    HIGH: 4,
-  },
-  EventType: {
-    PRESS: 'PRESS',
-  },
 }));
 
 jest.mock('react-native', () => ({
@@ -71,7 +44,7 @@ jest.mock('react-native', () => ({
 }));
 
 import { FirebasePushAdapter } from '../src';
-import { PushNotificationPriority, NatifyError } from '@natify/core';
+import { NatifyError } from '@natify/core';
 
 describe('FirebasePushAdapter', () => {
   let adapter: FirebasePushAdapter;
@@ -82,7 +55,6 @@ describe('FirebasePushAdapter', () => {
     mockOnNotificationOpenedApp.mockReturnValue(() => {});
     mockGetInitialNotification.mockResolvedValue(null);
     mockOnTokenRefresh.mockReturnValue(() => {});
-    mockNotifee.onForegroundEvent.mockReturnValue(() => {});
     adapter = new FirebasePushAdapter();
   });
 
@@ -93,9 +65,8 @@ describe('FirebasePushAdapter', () => {
   });
 
   describe('requestPermission', () => {
-    it('should return true when permission is granted on iOS', async () => {
+    it('should return true when permission is granted', async () => {
       require('react-native').Platform.OS = 'ios';
-      // El código compara con messaging().AuthorizationStatus.AUTHORIZED (que es 1)
       mockRequestPermission.mockResolvedValue(1); // AUTHORIZED
 
       const result = await adapter.requestPermission();
@@ -104,7 +75,7 @@ describe('FirebasePushAdapter', () => {
       expect(mockRequestPermission).toHaveBeenCalled();
     });
 
-    it('should return true when permission is provisional on iOS', async () => {
+    it('should return true when permission is provisional', async () => {
       require('react-native').Platform.OS = 'ios';
       mockRequestPermission.mockResolvedValue(2); // PROVISIONAL
 
@@ -122,20 +93,6 @@ describe('FirebasePushAdapter', () => {
       expect(result).toBe(false);
     });
 
-    it('should check both Firebase and Notifee permissions on Android', async () => {
-      require('react-native').Platform.OS = 'android';
-      mockRequestPermission.mockResolvedValue(1); // AUTHORIZED
-      mockNotifee.requestPermission.mockResolvedValue({
-        authorizationStatus: 1, // AUTHORIZED
-      });
-
-      const result = await adapter.requestPermission();
-
-      expect(result).toBe(true);
-      expect(mockRequestPermission).toHaveBeenCalled();
-      expect(mockNotifee.requestPermission).toHaveBeenCalled();
-    });
-
     it('should throw NatifyError when request fails', async () => {
       require('react-native').Platform.OS = 'ios';
       const error = new Error('Permission request failed');
@@ -147,9 +104,8 @@ describe('FirebasePushAdapter', () => {
   });
 
   describe('hasPermission', () => {
-    it('should return true when permission is granted on iOS', async () => {
+    it('should return true when permission is granted', async () => {
       require('react-native').Platform.OS = 'ios';
-      // El código compara con messaging().AuthorizationStatus.AUTHORIZED (que es 1)
       mockHasPermission.mockResolvedValue(1); // AUTHORIZED
 
       const result = await adapter.hasPermission();
@@ -158,7 +114,7 @@ describe('FirebasePushAdapter', () => {
       expect(mockHasPermission).toHaveBeenCalled();
     });
 
-    it('should return true when permission is provisional on iOS', async () => {
+    it('should return true when permission is provisional', async () => {
       require('react-native').Platform.OS = 'ios';
       mockHasPermission.mockResolvedValue(2); // PROVISIONAL
 
@@ -187,6 +143,7 @@ describe('FirebasePushAdapter', () => {
 
   describe('getToken', () => {
     it('should return token when available', async () => {
+      require('react-native').Platform.OS = 'ios';
       mockGetToken.mockResolvedValue('test-token');
 
       const result = await adapter.getToken();
@@ -204,6 +161,18 @@ describe('FirebasePushAdapter', () => {
       const result = await adapter.getToken();
 
       expect(result).toBeNull();
+    });
+
+    it('should return token with android platform when on Android', async () => {
+      require('react-native').Platform.OS = 'android';
+      mockGetToken.mockResolvedValue('test-token');
+
+      const result = await adapter.getToken();
+
+      expect(result).toEqual({
+        token: 'test-token',
+        platform: 'android',
+      });
     });
 
     it('should throw NatifyError when getToken fails', async () => {
@@ -234,22 +203,7 @@ describe('FirebasePushAdapter', () => {
   });
 
   describe('displayNotification', () => {
-    it('should display notification successfully', async () => {
-      mockNotifee.displayNotification.mockResolvedValue('notification-id');
-
-      const result = await adapter.displayNotification({
-        title: 'Test',
-        body: 'Test body',
-      });
-
-      expect(result).toBe('notification-id');
-      expect(mockNotifee.displayNotification).toHaveBeenCalled();
-    });
-
-    it('should throw NatifyError when displayNotification fails', async () => {
-      const error = new Error('Display notification failed');
-      mockNotifee.displayNotification.mockRejectedValue(error);
-
+    it('should throw error indicating Notifee is needed', async () => {
       await expect(
         adapter.displayNotification({
           title: 'Test',
@@ -261,73 +215,34 @@ describe('FirebasePushAdapter', () => {
           title: 'Test',
           body: 'Test body',
         }),
-      ).rejects.toThrow('Error al mostrar notificación');
+      ).rejects.toThrow('Firebase Messaging no soporta notificaciones locales');
     });
   });
 
   describe('cancelNotification', () => {
-    it('should cancel notification successfully', async () => {
-      mockNotifee.cancelNotification.mockResolvedValue(undefined);
-
-      await adapter.cancelNotification('notification-id');
-
-      expect(mockNotifee.cancelNotification).toHaveBeenCalledWith('notification-id');
-    });
-
-    it('should throw NatifyError when cancelNotification fails', async () => {
-      const error = new Error('Cancel notification failed');
-      mockNotifee.cancelNotification.mockRejectedValue(error);
-
+    it('should throw error indicating Notifee is needed', async () => {
       await expect(adapter.cancelNotification('notification-id')).rejects.toThrow(NatifyError);
-      await expect(adapter.cancelNotification('notification-id')).rejects.toThrow('Error al cancelar notificación');
+      await expect(adapter.cancelNotification('notification-id')).rejects.toThrow(
+        'Firebase Messaging no soporta cancelar notificaciones locales',
+      );
     });
   });
 
   describe('cancelAllNotifications', () => {
-    it('should cancel all notifications successfully', async () => {
-      mockNotifee.cancelAllNotifications.mockResolvedValue(undefined);
-
-      await adapter.cancelAllNotifications();
-
-      expect(mockNotifee.cancelAllNotifications).toHaveBeenCalled();
-    });
-
-    it('should throw NatifyError when cancelAllNotifications fails', async () => {
-      const error = new Error('Cancel all notifications failed');
-      mockNotifee.cancelAllNotifications.mockRejectedValue(error);
-
+    it('should throw error indicating Notifee is needed', async () => {
       await expect(adapter.cancelAllNotifications()).rejects.toThrow(NatifyError);
-      await expect(adapter.cancelAllNotifications()).rejects.toThrow('Error al cancelar todas las notificaciones');
+      await expect(adapter.cancelAllNotifications()).rejects.toThrow(
+        'Firebase Messaging no soporta cancelar notificaciones locales',
+      );
     });
   });
 
   describe('getScheduledNotifications', () => {
-    it('should return scheduled notification IDs', async () => {
-      mockNotifee.getTriggerNotifications.mockResolvedValue([
-        { notification: { id: 'id1' } },
-        { notification: { id: 'id2' } },
-      ]);
-
-      const result = await adapter.getScheduledNotifications();
-
-      expect(result).toEqual(['id1', 'id2']);
-      expect(mockNotifee.getTriggerNotifications).toHaveBeenCalled();
-    });
-
-    it('should return empty array when no scheduled notifications', async () => {
-      mockNotifee.getTriggerNotifications.mockResolvedValue([]);
-
-      const result = await adapter.getScheduledNotifications();
-
-      expect(result).toEqual([]);
-    });
-
-    it('should throw NatifyError when getScheduledNotifications fails', async () => {
-      const error = new Error('Get scheduled notifications failed');
-      mockNotifee.getTriggerNotifications.mockRejectedValue(error);
-
+    it('should throw error indicating Notifee is needed', async () => {
       await expect(adapter.getScheduledNotifications()).rejects.toThrow(NatifyError);
-      await expect(adapter.getScheduledNotifications()).rejects.toThrow('Error al obtener notificaciones programadas');
+      await expect(adapter.getScheduledNotifications()).rejects.toThrow(
+        'Firebase Messaging no soporta notificaciones programadas',
+      );
     });
   });
 
@@ -339,7 +254,36 @@ describe('FirebasePushAdapter', () => {
       expect(typeof unsubscribe).toBe('function');
 
       unsubscribe();
-      // Verificar que el listener se puede remover (no hay forma directa de verificar esto sin eventos)
+    });
+
+    it('should call listener when Firebase message is received', async () => {
+      const listener = jest.fn();
+      adapter.onNotificationReceived(listener);
+
+      // Simular mensaje de Firebase
+      const messageHandler = mockOnMessage.mock.calls[mockOnMessage.mock.calls.length - 1][0];
+      await messageHandler({
+        notification: {
+          title: 'Test',
+          body: 'Test body',
+        },
+        data: {},
+      });
+
+      expect(listener).toHaveBeenCalled();
+    });
+
+    it('should call listener when Firebase message has no notification', async () => {
+      const listener = jest.fn();
+      adapter.onNotificationReceived(listener);
+
+      // Simular mensaje de Firebase sin notification
+      const messageHandler = mockOnMessage.mock.calls[mockOnMessage.mock.calls.length - 1][0];
+      await messageHandler({
+        data: {},
+      });
+
+      expect(listener).toHaveBeenCalled();
     });
   });
 
@@ -352,6 +296,46 @@ describe('FirebasePushAdapter', () => {
 
       unsubscribe();
     });
+
+    it('should call listener when notification is opened from background', () => {
+      const listener = jest.fn();
+      adapter.onNotificationPressed(listener);
+
+      // Simular notificación abierta desde background
+      const backgroundHandler = mockOnNotificationOpenedApp.mock.calls[0][0];
+      backgroundHandler({
+        notification: {
+          title: 'Test',
+          body: 'Test body',
+        },
+        data: {},
+      });
+
+      expect(listener).toHaveBeenCalled();
+    });
+
+    it('should call listener when notification opened the app', async () => {
+      const listener = jest.fn();
+
+      // Configurar el mock antes de crear el adapter
+      mockGetInitialNotification.mockResolvedValue({
+        notification: {
+          title: 'Test',
+          body: 'Test body',
+        },
+        data: {},
+      });
+
+      // Crear nuevo adapter para que getInitialNotification se ejecute
+      const newAdapter = new FirebasePushAdapter();
+      newAdapter.onNotificationPressed(listener);
+
+      // Esperar a que la promesa de getInitialNotification se resuelva
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      // El listener debería haberse llamado
+      expect(listener).toHaveBeenCalled();
+    });
   });
 
   describe('onTokenRefresh', () => {
@@ -363,65 +347,37 @@ describe('FirebasePushAdapter', () => {
 
       unsubscribe();
     });
-  });
 
-  describe('createChannel', () => {
-    it('should create channel on Android', async () => {
-      // Cambiar a Android para este test
-      require('react-native').Platform.OS = 'android';
-
-      mockNotifee.createChannel.mockResolvedValue(undefined);
-
-      await adapter.createChannel('channel-id', 'Channel Name');
-
-      expect(mockNotifee.createChannel).toHaveBeenCalled();
-    });
-
-    it('should do nothing on iOS', async () => {
+    it('should call listener when token is refreshed', () => {
       require('react-native').Platform.OS = 'ios';
+      const listener = jest.fn();
+      const newAdapter = new FirebasePushAdapter();
+      newAdapter.onTokenRefresh(listener);
 
-      await adapter.createChannel('channel-id', 'Channel Name');
+      // Simular refresh de token
+      const tokenHandler = mockOnTokenRefresh.mock.calls[mockOnTokenRefresh.mock.calls.length - 1][0];
+      tokenHandler('new-token');
 
-      expect(mockNotifee.createChannel).not.toHaveBeenCalled();
+      expect(listener).toHaveBeenCalledWith({
+        token: 'new-token',
+        platform: 'ios',
+      });
     });
 
-    it('should throw NatifyError when createChannel fails', async () => {
+    it('should call listener with android platform when on Android', () => {
       require('react-native').Platform.OS = 'android';
-      const error = new Error('Create channel failed');
-      mockNotifee.createChannel.mockRejectedValue(error);
+      const listener = jest.fn();
+      const newAdapter = new FirebasePushAdapter();
+      newAdapter.onTokenRefresh(listener);
 
-      await expect(adapter.createChannel('channel-id', 'Channel Name')).rejects.toThrow(NatifyError);
-      await expect(adapter.createChannel('channel-id', 'Channel Name')).rejects.toThrow('Error al crear canal de notificación');
-    });
-  });
+      // Simular refresh de token
+      const tokenHandler = mockOnTokenRefresh.mock.calls[mockOnTokenRefresh.mock.calls.length - 1][0];
+      tokenHandler('new-token');
 
-  describe('deleteChannel', () => {
-    it('should delete channel on Android', async () => {
-      require('react-native').Platform.OS = 'android';
-
-      mockNotifee.deleteChannel.mockResolvedValue(undefined);
-
-      await adapter.deleteChannel('channel-id');
-
-      expect(mockNotifee.deleteChannel).toHaveBeenCalledWith('channel-id');
-    });
-
-    it('should do nothing on iOS', async () => {
-      require('react-native').Platform.OS = 'ios';
-
-      await adapter.deleteChannel('channel-id');
-
-      expect(mockNotifee.deleteChannel).not.toHaveBeenCalled();
-    });
-
-    it('should throw NatifyError when deleteChannel fails', async () => {
-      require('react-native').Platform.OS = 'android';
-      const error = new Error('Delete channel failed');
-      mockNotifee.deleteChannel.mockRejectedValue(error);
-
-      await expect(adapter.deleteChannel('channel-id')).rejects.toThrow(NatifyError);
-      await expect(adapter.deleteChannel('channel-id')).rejects.toThrow('Error al eliminar canal de notificación');
+      expect(listener).toHaveBeenCalledWith({
+        token: 'new-token',
+        platform: 'android',
+      });
     });
   });
 });
-
