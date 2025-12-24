@@ -21,6 +21,10 @@
   "author": "Ariel Rodríguez",
   "license": "MIT",
   "packageManager": "pnpm@10.24.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arielrvjr/natify.git"
+  },
   "devDependencies": {
     "@natify/core": "workspace:*",
     "react": "*",
