@@ -42,7 +42,7 @@ export function validateAdaptersConfig<C extends RequiredCapability[]>(
 
   if (errors.length > 0) {
     throw new Error(
-      `[Nativefy] Adapter configuration errors:\n${errors.map(e => `  - ${e}`).join('\n')}`,
+      `[Natify] Adapter configuration errors:\n${errors.map(e => `  - ${e}`).join('\n')}`,
     );
   }
 }

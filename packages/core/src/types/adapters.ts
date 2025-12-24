@@ -59,9 +59,9 @@ export type TypedAdapterMap<T extends RequiredCapability[]> = {
  *
  * Representa un mapa de adapters donde las claves son strings
  * y los valores son instancias de Port. Se usa en:
- * - NativefyProvider
+ * - NatifyProvider
  * - AdapterRegistry
- * - NativefyApp
+ * - NatifyApp
  * - Y otros componentes que necesitan trabajar con adapters de forma genérica
  *
  * @example

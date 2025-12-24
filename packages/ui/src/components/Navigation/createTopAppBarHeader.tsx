@@ -22,7 +22,7 @@ export interface NavigationHeaderOptions {
  *
  * @example
  * ```typescript
- * import { createTopAppBarHeader } from '@nativefy/ui';
+ * import { createTopAppBarHeader } from '@natify/ui';
  *
  * .screen({
  *   name: "Settings",

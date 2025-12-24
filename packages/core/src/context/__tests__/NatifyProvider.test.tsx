@@ -1,5 +1,5 @@
 import React from 'react';
-import { NativefyProvider } from '../NativefyProvider';
+import { NatifyProvider } from '../NatifyProvider';
 import { Port } from '../../ports/Port';
 
 // Mock DIProvider
@@ -28,7 +28,7 @@ jest.mock('react', () => {
   };
 });
 
-describe('NativefyProvider', () => {
+describe('NatifyProvider', () => {
   const mockAdapter: Port = {
     capability: 'httpclient' as const,
   };
@@ -41,7 +41,7 @@ describe('NativefyProvider', () => {
   it('should render children', () => {
     const TestComponent = () => <div>Test Content</div>;
     const result = React.createElement(
-      NativefyProvider,
+      NatifyProvider,
       { adapters: { http: mockAdapter }, children: React.createElement(TestComponent) },
     );
 
@@ -49,7 +49,7 @@ describe('NativefyProvider', () => {
   });
 
   it('should be a function component', () => {
-    expect(typeof NativefyProvider).toBe('function');
+    expect(typeof NatifyProvider).toBe('function');
   });
 
   it('should accept adapters prop', () => {
@@ -66,7 +66,7 @@ describe('NativefyProvider', () => {
 
     const TestComponent = () => <div>Test Content</div>;
     const result = React.createElement(
-      NativefyProvider,
+      NatifyProvider,
       { adapters: { http: mockAdapter }, children: React.createElement(TestComponent) },
     );
 

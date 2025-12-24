@@ -1,17 +1,17 @@
-# @nativefy/image-picker-rn
+# @natify/image-picker-rn
 
 Adapter para selección de imágenes usando `react-native-image-picker`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy/image-picker-rn react-native-image-picker
+pnpm add @natify/image-picker-rn react-native-image-picker
 ```
 
 ## Uso
 
 ```typescript
-import { RnImagePickerAdapter } from "@nativefy/image-picker-rn";
+import { RnImagePickerAdapter } from "@natify/image-picker-rn";
 
 const imagePicker = new RnImagePickerAdapter();
 

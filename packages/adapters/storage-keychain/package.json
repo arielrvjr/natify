@@ -1,5 +1,5 @@
 {
-  "name": "@nativefy/storage-keychain",
+  "name": "@natify/storage-keychain",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -22,7 +22,7 @@
   "license": "MIT",
   "packageManager": "pnpm@10.24.0",
   "peerDependencies": {
-    "@nativefy/core": "workspace:*",
+    "@natify/core": "workspace:*",
     "react-native-keychain": "^10.0.0"
   }
 }

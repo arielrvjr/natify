@@ -1,8 +1,8 @@
-# Nativefy Framework - Cursor Rules
+# Natify Framework - Cursor Rules
 
 ## Descripción del Proyecto
 
-**Nativefy Framework** es un framework de arquitectura hexagonal (Ports & Adapters) para React Native que abstrae las dependencias de librerías nativas y proporciona una API unificada y tipada.
+**Natify Framework** es un framework de arquitectura hexagonal (Ports & Adapters) para React Native que abstrae las dependencias de librerías nativas y proporciona una API unificada y tipada.
 
 ### Propósito
 
@@ -20,16 +20,16 @@
 ┌─────────────────────────────────────────────────────────────┐
 │                        APLICACIÓN                            │
 │  ┌─────────────────────────────────────────────────────┐    │
-│  │                    @nativefy/core                    │    │
+│  │                    @natify/core                    │    │
 │  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │    │
 │  │  │   PORTS     │  │   ERRORS    │  │  PROVIDER   │  │    │
-│  │  │ (Interfaces)│  │(NativefyErr)│  │  (Context)  │  │    │
+│  │  │ (Interfaces)│  │(NatifyErr)│  │  (Context)  │  │    │
 │  │  └─────────────┘  └─────────────┘  └─────────────┘  │    │
 │  └─────────────────────────────────────────────────────┘    │
 │                            ▲                                 │
 │                            │ implements                      │
 │  ┌─────────────────────────┴───────────────────────────┐    │
-│  │               @nativefy-adapter/*                    │    │
+│  │               @natify/*                    │    │
 │  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────┐  │    │
 │  │  │http-axios│ │storage-  │ │biometrics│ │store-  │  │    │
 │  │  │          │ │mmkv      │ │-rn       │ │zustand │  │    │
@@ -42,7 +42,7 @@
 
 1. **Core** define las interfaces (Ports)
 2. **Adapters** implementan las interfaces usando librerías específicas
-3. **Apps** consumen los adapters a través del NativefyProvider
+3. **Apps** consumen los adapters a través del NatifyProvider
 4. Los componentes usan `useAdapter<Port>()` para obtener implementaciones
 
 ---
@@ -50,21 +50,21 @@
 ## Estructura del Monorepo
 
 ```
-nativefy-framework/
+natify-framework/
 ├── apps/
 │   └── DemoApp/                 # App de demostración React Native
 ├── packages/
-│   ├── core/                    # @nativefy/core
+│   ├── core/                    # @natify/core
 │   │   └── src/
 │   │       ├── ports/           # Interfaces (contratos)
 │   │       ├── errors/          # Sistema de errores tipados
-│   │       ├── context/         # NativefyProvider y hooks
+│   │       ├── context/         # NatifyProvider y hooks
 │   │       ├── adapters/        # Adapters por defecto (logger)
 │   │       ├── di/              # Inyección de dependencias
 │   │       ├── module/          # Sistema de módulos
 │   │       ├── viewmodel/       # BaseViewModel
-│   │       └── app/             # NativefyApp
-│   └── adapters/                # @nativefy-adapter/*
+│   │       └── app/             # NatifyApp
+│   └── adapters/                # @natify/*
 │       ├── http-axios/          # HttpClientPort → Axios
 │       ├── storage-mmkv/        # StoragePort → MMKV
 │       ├── storage-async/       # StoragePort → AsyncStorage
@@ -209,12 +209,12 @@ mkdir -p packages/adapters/my-adapter/src
 
 ```json
 {
-  "name": "@nativefy-adapter/my-adapter",
+  "name": "@natify/my-adapter",
   "version": "0.0.1",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "peerDependencies": {
-    "@nativefy/core": "*"
+    "@natify/core": "*"
   },
   "dependencies": {
     "libreria-nativa": "^x.x.x"
@@ -226,7 +226,7 @@ mkdir -p packages/adapters/my-adapter/src
 
 ```typescript
 // packages/adapters/my-adapter/src/index.ts
-import { MyNewPort } from "@nativefy/core";
+import { MyNewPort } from "@natify/core";
 import { LibreriaNativa } from "libreria-nativa";
 
 export class MyNewAdapter implements MyNewPort {
@@ -248,7 +248,7 @@ export class MyNewAdapter implements MyNewPort {
 
 - ✅ Implementar TODA la interfaz del Port
 - ✅ Definir `capability` con el mismo valor del Port
-- ✅ Convertir errores nativos a `NativefyError`
+- ✅ Convertir errores nativos a `NatifyError`
 - ✅ Encapsular completamente la librería nativa
 - ❌ NO exponer tipos de la librería nativa
 - ❌ NO lanzar errores no tipados
@@ -257,11 +257,11 @@ export class MyNewAdapter implements MyNewPort {
 
 ## Sistema de Errores
 
-### NativefyError
+### NatifyError
 
 ```typescript
-class NativefyError extends Error {
-  public readonly code: NativefyErrorCode;
+class NatifyError extends Error {
+  public readonly code: NatifyErrorCode;
   public readonly originalError?: unknown;
   public readonly context?: Record<string, any>;
 }
@@ -285,14 +285,14 @@ class NativefyError extends Error {
 ### Uso en Adapters
 
 ```typescript
-import { NativefyError, NativefyErrorCode } from "@nativefy/core";
+import { NatifyError, NatifyErrorCode } from "@natify/core";
 
 // En el adapter
 try {
   await nativeOperation();
 } catch (error) {
-  throw new NativefyError(
-    NativefyErrorCode.NETWORK_ERROR,
+  throw new NatifyError(
+    NatifyErrorCode.NETWORK_ERROR,
     "Falló la operación",
     error,
     { url: "/api/users" }
@@ -303,17 +303,17 @@ try {
 ### Manejo en Componentes
 
 ```typescript
-import { NativefyError, NativefyErrorCode } from "@nativefy/core";
+import { NatifyError, NatifyErrorCode } from "@natify/core";
 
 try {
   await http.get("/users");
 } catch (error) {
-  if (error instanceof NativefyError) {
+  if (error instanceof NatifyError) {
     switch (error.code) {
-      case NativefyErrorCode.UNAUTHORIZED:
+      case NatifyErrorCode.UNAUTHORIZED:
         // Redirigir a login
         break;
-      case NativefyErrorCode.NETWORK_ERROR:
+      case NatifyErrorCode.NETWORK_ERROR:
         // Mostrar "Sin conexión"
         break;
     }
@@ -323,25 +323,25 @@ try {
 
 ---
 
-## NativefyApp (Configuración Simplificada)
+## NatifyApp (Configuración Simplificada)
 
 ### Uso Básico
 
 ```typescript
 // App.tsx
-import { NativefyApp } from "@nativefy/core";
-import { AxiosHttpAdapter } from "@nativefy-adapter/http-axios";
-import { MMKVStorageAdapter } from "@nativefy-adapter/storage-mmkv";
-import { KeychainStorageAdapter } from "@nativefy-adapter/storage-keychain";
-import { RnBiometricAdapter } from "@nativefy-adapter/biometrics-rn";
-import { createReactNavigationAdapter } from "@nativefy-adapter/navigation-react";
+import { NatifyApp } from "@natify/core";
+import { AxiosHttpAdapter } from "@natify/http-axios";
+import { MMKVStorageAdapter } from "@natify/storage-mmkv";
+import { KeychainStorageAdapter } from "@natify/storage-keychain";
+import { RnBiometricAdapter } from "@natify/biometrics-rn";
+import { createReactNavigationAdapter } from "@natify/navigation-react";
 
 import { AuthModule } from "./modules/auth";
 import { ProductsModule } from "./modules/products";
 
 export default function App() {
   return (
-    <NativefyApp
+    <NatifyApp
       adapters={{
         http: new AxiosHttpAdapter("https://api.example.com"),
         storage: new MMKVStorageAdapter(),
@@ -364,7 +364,7 @@ export default function App() {
 
 ```typescript
 // modules/auth/index.ts
-import { createModule } from "@nativefy/core";
+import { createModule } from "@natify/core";
 import { LoginScreen } from "./screens/LoginScreen";
 import { RegisterScreen } from "./screens/RegisterScreen";
 import { LoginUseCase } from "./usecases/LoginUseCase";
@@ -418,7 +418,7 @@ modules/
 
 ```typescript
 // modules/auth/usecases/LoginUseCase.ts
-import { HttpClientPort, StoragePort, NativefyError, NativefyErrorCode } from "@nativefy/core";
+import { HttpClientPort, StoragePort, NatifyError, NatifyErrorCode } from "@natify/core";
 
 export interface LoginCredentials {
   email: string;
@@ -434,7 +434,7 @@ export class LoginUseCase {
   async execute(credentials: LoginCredentials): Promise<User> {
     // Validación de negocio
     if (!credentials.email.includes("@")) {
-      throw new NativefyError(NativefyErrorCode.VALIDATION_ERROR, "Email inválido");
+      throw new NatifyError(NatifyErrorCode.VALIDATION_ERROR, "Email inválido");
     }
 
     // Llamar API
@@ -458,7 +458,7 @@ export class LoginUseCase {
 ### BaseViewModel
 
 ```typescript
-import { useBaseViewModel, useUseCase, useAdapter, NavigationPort } from "@nativefy/core";
+import { useBaseViewModel, useUseCase, useAdapter, NavigationPort } from "@natify/core";
 import { useState, useCallback } from "react";
 import { LoginUseCase } from "../usecases/LoginUseCase";
 
@@ -588,7 +588,7 @@ navigation.goBack();
 | Port | `{Capability}Port` | `HttpClientPort`, `StoragePort` |
 | Adapter | `{Implementación}{Capability}Adapter` | `AxiosHttpAdapter`, `MMKVStorageAdapter` |
 | Capability | `kebab-case` | `"httpclient"`, `"state-management"` |
-| Paquete adapter | `@nativefy-adapter/{capability}-{implementation}` | `@nativefy-adapter/http-axios` |
+| Paquete adapter | `@natify/{capability}-{implementation}` | `@natify/http-axios` |
 
 ### Estructura de Archivos
 
@@ -656,7 +656,7 @@ pnpm turbo run build
 ## Anti-Patrones a Evitar
 
 ❌ **NO** importar librerías nativas directamente en componentes
-❌ **NO** lanzar errores sin convertirlos a `NativefyError`
+❌ **NO** lanzar errores sin convertirlos a `NatifyError`
 ❌ **NO** exponer tipos de librerías nativas fuera del adapter
 ❌ **NO** crear adapters sin implementar toda la interfaz del Port
 ❌ **NO** usar `any` en las interfaces de Ports

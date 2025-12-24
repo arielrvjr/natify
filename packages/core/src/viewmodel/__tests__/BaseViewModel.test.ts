@@ -1,9 +1,9 @@
 import { useBaseViewModel } from '../BaseViewModel';
-import { NativefyError, NativefyErrorCode } from '../../errors';
+import { NatifyError, NatifyErrorCode } from '../../errors';
 
 // Mock React hooks
 let mockState: [boolean, (value: boolean) => void] = [false, jest.fn()];
-let mockErrorState: [NativefyError | null, (value: NativefyError | null) => void] = [
+let mockErrorState: [NatifyError | null, (value: NatifyError | null) => void] = [
   null,
   jest.fn(),
 ];
@@ -80,7 +80,7 @@ describe('useBaseViewModel', () => {
     const [, actions] = useBaseViewModel();
 
     expect(typeof actions.setError).toBe('function');
-    const error = new NativefyError(NativefyErrorCode.UNKNOWN, 'Test error');
+    const error = new NatifyError(NatifyErrorCode.UNKNOWN, 'Test error');
     expect(() => actions.setError(error)).not.toThrow();
   });
 

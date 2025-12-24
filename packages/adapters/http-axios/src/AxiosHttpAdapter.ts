@@ -8,9 +8,10 @@ import {
   HttpClientPort,
   HttpRequestConfig,
   HttpResponse,
-  NativefyErrorCode,
-  NativefyError,
-} from '@nativefy/core';
+  NatifyErrorCode,
+  NatifyError,
+} from '@natify/core';
+import { handleAxiosError } from './utils/errorHandler';
 
 export class AxiosHttpAdapter implements HttpClientPort {
   readonly capability = 'httpclient';
@@ -127,29 +128,7 @@ export class AxiosHttpAdapter implements HttpClientPort {
   }
 
   private handleError(error: unknown): never {
-    if (axios.isAxiosError(error)) {
-      const status = error.response?.status;
-
-      let code = NativefyErrorCode.NETWORK_ERROR;
-
-      // Mapeo automático de códigos HTTP a NativefyErrorCode
-      if (status === 401) code = NativefyErrorCode.UNAUTHORIZED;
-      else if (status === 403) code = NativefyErrorCode.FORBIDDEN;
-      else if (status === 404) code = NativefyErrorCode.NOT_FOUND;
-      else if (status && status >= 500) code = NativefyErrorCode.SERVER_ERROR;
-      else if (error.code === 'ECONNABORTED') code = NativefyErrorCode.TIMEOUT;
-
-      throw new NativefyError(code, error.message, error, {
-        url: error.config?.url,
-        method: error.config?.method,
-      });
-    }
-
-    throw new NativefyError(
-      NativefyErrorCode.UNKNOWN,
-      (error as Error).message || 'Unknown error occurred',
-      error,
-    );
+    return handleAxiosError(error);
   }
 }
 

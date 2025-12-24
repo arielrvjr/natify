@@ -1,7 +1,7 @@
 import { RegisterModuleUseCase } from '../RegisterModuleUseCase';
 import { DIContainer } from '../../../di/Container';
 import { createModule } from '../../createModule';
-import { NativefyError } from '../../../errors';
+import { NatifyError } from '../../../errors';
 import { Port } from '../../../ports/Port';
 
 // Mock adapters
@@ -42,7 +42,7 @@ describe('RegisterModuleUseCase', () => {
         .screen({ name: 'Home', component: () => null })
         .build();
 
-      await expect(useCase.execute(module)).rejects.toThrow(NativefyError);
+      await expect(useCase.execute(module)).rejects.toThrow(NatifyError);
       await expect(useCase.execute(module)).rejects.toThrow('requires missing capabilities');
     });
 

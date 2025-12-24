@@ -1,5 +1,5 @@
 import { AxiosHttpAdapter } from '../src';
-import { NativefyError, NativefyErrorCode } from '@nativefy/core';
+import { NatifyError, NatifyErrorCode } from '@natify/core';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 
 // Mock axios
@@ -151,7 +151,7 @@ describe('AxiosHttpAdapter', () => {
       expect(mockInstance.get).toHaveBeenCalledWith('/users', config);
     });
 
-    it('should throw NativefyError on network error', async () => {
+    it('should throw NatifyError on network error', async () => {
       const mockError = {
         isAxiosError: true,
         message: 'Network Error',
@@ -163,11 +163,11 @@ describe('AxiosHttpAdapter', () => {
       const mockInstance = mockedAxios.create.mock.results[0].value;
       (mockInstance.get as jest.Mock).mockRejectedValue(mockError);
 
-      await expect(adapter.get('/users')).rejects.toThrow(NativefyError);
+      await expect(adapter.get('/users')).rejects.toThrow(NatifyError);
       await expect(adapter.get('/users')).rejects.toThrow('Network Error');
     });
 
-    it('should throw NativefyError with UNAUTHORIZED code on 401', async () => {
+    it('should throw NatifyError with UNAUTHORIZED code on 401', async () => {
       const mockError = {
         isAxiosError: true,
         message: 'Unauthorized',
@@ -181,11 +181,11 @@ describe('AxiosHttpAdapter', () => {
       const mockInstance = mockedAxios.create.mock.results[0].value;
       (mockInstance.get as jest.Mock).mockRejectedValue(mockError);
 
-      await expect(adapter.get('/users')).rejects.toThrow(NativefyError);
+      await expect(adapter.get('/users')).rejects.toThrow(NatifyError);
       await expect(adapter.get('/users')).rejects.toThrow('Unauthorized');
     });
 
-    it('should throw NativefyError with FORBIDDEN code on 403', async () => {
+    it('should throw NatifyError with FORBIDDEN code on 403', async () => {
       const mockError = {
         isAxiosError: true,
         message: 'Forbidden',
@@ -199,10 +199,10 @@ describe('AxiosHttpAdapter', () => {
       const mockInstance = mockedAxios.create.mock.results[0].value;
       (mockInstance.get as jest.Mock).mockRejectedValue(mockError);
 
-      await expect(adapter.get('/users')).rejects.toThrow(NativefyError);
+      await expect(adapter.get('/users')).rejects.toThrow(NatifyError);
     });
 
-    it('should throw NativefyError with NOT_FOUND code on 404', async () => {
+    it('should throw NatifyError with NOT_FOUND code on 404', async () => {
       const mockError = {
         isAxiosError: true,
         message: 'Not Found',
@@ -216,10 +216,10 @@ describe('AxiosHttpAdapter', () => {
       const mockInstance = mockedAxios.create.mock.results[0].value;
       (mockInstance.get as jest.Mock).mockRejectedValue(mockError);
 
-      await expect(adapter.get('/users')).rejects.toThrow(NativefyError);
+      await expect(adapter.get('/users')).rejects.toThrow(NatifyError);
     });
 
-    it('should throw NativefyError with SERVER_ERROR code on 500+', async () => {
+    it('should throw NatifyError with SERVER_ERROR code on 500+', async () => {
       const mockError = {
         isAxiosError: true,
         message: 'Internal Server Error',
@@ -233,10 +233,10 @@ describe('AxiosHttpAdapter', () => {
       const mockInstance = mockedAxios.create.mock.results[0].value;
       (mockInstance.get as jest.Mock).mockRejectedValue(mockError);
 
-      await expect(adapter.get('/users')).rejects.toThrow(NativefyError);
+      await expect(adapter.get('/users')).rejects.toThrow(NatifyError);
     });
 
-    it('should throw NativefyError with TIMEOUT code on timeout', async () => {
+    it('should throw NatifyError with TIMEOUT code on timeout', async () => {
       const mockError = {
         isAxiosError: true,
         message: 'Timeout',
@@ -248,7 +248,7 @@ describe('AxiosHttpAdapter', () => {
       const mockInstance = mockedAxios.create.mock.results[0].value;
       (mockInstance.get as jest.Mock).mockRejectedValue(mockError);
 
-      await expect(adapter.get('/users')).rejects.toThrow(NativefyError);
+      await expect(adapter.get('/users')).rejects.toThrow(NatifyError);
     });
   });
 
@@ -292,7 +292,7 @@ describe('AxiosHttpAdapter', () => {
       expect(mockInstance.post).toHaveBeenCalledWith('/users', body, config);
     });
 
-    it('should throw NativefyError on POST error', async () => {
+    it('should throw NatifyError on POST error', async () => {
       const mockError = {
         isAxiosError: true,
         message: 'Network Error',
@@ -304,7 +304,7 @@ describe('AxiosHttpAdapter', () => {
       const mockInstance = mockedAxios.create.mock.results[0].value;
       (mockInstance.post as jest.Mock).mockRejectedValue(mockError);
 
-      await expect(adapter.post('/users', {})).rejects.toThrow(NativefyError);
+      await expect(adapter.post('/users', {})).rejects.toThrow(NatifyError);
     });
   });
 
@@ -328,7 +328,7 @@ describe('AxiosHttpAdapter', () => {
       expect(result.data).toEqual({ id: 1, name: 'Updated' });
     });
 
-    it('should throw NativefyError on PUT error', async () => {
+    it('should throw NatifyError on PUT error', async () => {
       const mockError = {
         isAxiosError: true,
         message: 'Network Error',
@@ -340,7 +340,7 @@ describe('AxiosHttpAdapter', () => {
       const mockInstance = mockedAxios.create.mock.results[0].value;
       (mockInstance.put as jest.Mock).mockRejectedValue(mockError);
 
-      await expect(adapter.put('/users/1', {})).rejects.toThrow(NativefyError);
+      await expect(adapter.put('/users/1', {})).rejects.toThrow(NatifyError);
     });
   });
 
@@ -364,7 +364,7 @@ describe('AxiosHttpAdapter', () => {
       expect(result.data).toEqual({ id: 1, name: 'Patched' });
     });
 
-    it('should throw NativefyError on PATCH error', async () => {
+    it('should throw NatifyError on PATCH error', async () => {
       const mockError = {
         isAxiosError: true,
         message: 'Network Error',
@@ -376,7 +376,7 @@ describe('AxiosHttpAdapter', () => {
       const mockInstance = mockedAxios.create.mock.results[0].value;
       (mockInstance.patch as jest.Mock).mockRejectedValue(mockError);
 
-      await expect(adapter.patch('/users/1', {})).rejects.toThrow(NativefyError);
+      await expect(adapter.patch('/users/1', {})).rejects.toThrow(NatifyError);
     });
   });
 
@@ -417,7 +417,7 @@ describe('AxiosHttpAdapter', () => {
       expect(mockInstance.delete).toHaveBeenCalledWith('/users/1', config);
     });
 
-    it('should throw NativefyError on DELETE error', async () => {
+    it('should throw NatifyError on DELETE error', async () => {
       const mockError = {
         isAxiosError: true,
         message: 'Network Error',
@@ -429,16 +429,16 @@ describe('AxiosHttpAdapter', () => {
       const mockInstance = mockedAxios.create.mock.results[0].value;
       (mockInstance.delete as jest.Mock).mockRejectedValue(mockError);
 
-      await expect(adapter.delete('/users/1')).rejects.toThrow(NativefyError);
+      await expect(adapter.delete('/users/1')).rejects.toThrow(NatifyError);
     });
 
-    it('should throw NativefyError for non-AxiosError', async () => {
+    it('should throw NatifyError for non-AxiosError', async () => {
       const mockError = new Error('Generic error');
 
       const mockInstance = mockedAxios.create.mock.results[0].value;
       (mockInstance.get as jest.Mock).mockRejectedValue(mockError);
 
-      await expect(adapter.get('/users')).rejects.toThrow(NativefyError);
+      await expect(adapter.get('/users')).rejects.toThrow(NatifyError);
       await expect(adapter.get('/users')).rejects.toThrow('Generic error');
     });
   });

@@ -1,11 +1,11 @@
-# @nativefy/core
+# @natify/core
 
-Núcleo del framework Nativefy. Proporciona la arquitectura hexagonal, sistema de módulos, inyección de dependencias y herramientas para construir aplicaciones React Native desacopladas.
+Núcleo del framework Natify. Proporciona la arquitectura hexagonal, sistema de módulos, inyección de dependencias y herramientas para construir aplicaciones React Native desacopladas.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy/core
+pnpm add @natify/core
 ```
 
 ## Características
@@ -22,7 +22,7 @@ pnpm add @nativefy/core
 
 ## Arquitectura de Capas (Recomendada)
 
-Nativefy recomienda seguir Clean Architecture con separación de capas, pero **es flexible y puedes usarlo sin ViewModels** si prefieres un enfoque más simple.
+Natify recomienda seguir Clean Architecture con separación de capas, pero **es flexible y puedes usarlo sin ViewModels** si prefieres un enfoque más simple.
 
 ### Arquitectura Recomendada
 
@@ -82,7 +82,7 @@ function LoginScreen() {
 
 ### Uso sin ViewModels (También válido)
 
-Puedes usar Nativefy directamente en componentes si prefieres un enfoque más simple:
+Puedes usar Natify directamente en componentes si prefieres un enfoque más simple:
 
 ```typescript
 // Componente que usa UseCase directamente
@@ -119,10 +119,10 @@ Para prototipos rápidos o apps simples, puedes usar UseCases directamente en co
 ### 1. Configurar Adapters
 
 ```typescript
-import { NativefyApp, ConsoleLoggerAdapter } from "@nativefy/core";
-import { AxiosHttpAdapter } from "@nativefy/http-axios";
-import { MMKVStorageAdapter } from "@nativefy/storage-mmkv";
-import { createReactNavigationAdapter } from "@nativefy/navigation-react";
+import { NatifyApp, ConsoleLoggerAdapter } from "@natify/core";
+import { AxiosHttpAdapter } from "@natify/http-axios";
+import { MMKVStorageAdapter } from "@natify/storage-mmkv";
+import { createReactNavigationAdapter } from "@natify/navigation-react";
 
 const adapters = {
   http: new AxiosHttpAdapter("https://api.example.com"),
@@ -136,7 +136,7 @@ const adapters = {
 ### 2. Crear Módulos
 
 ```typescript
-import { createModule } from "@nativefy/core";
+import { createModule } from "@natify/core";
 
 export const AuthModule = createModule("auth", "Authentication")
   .requires("http", "storage", "navigation")
@@ -149,11 +149,11 @@ export const AuthModule = createModule("auth", "Authentication")
 ### 3. Configurar App
 
 ```typescript
-import { NativefyApp } from "@nativefy/core";
+import { NatifyApp } from "@natify/core";
 
 export default function App() {
   return (
-    <NativefyApp
+    <NatifyApp
       adapters={adapters}
       modules={[AuthModule, ProductsModule]}
       initialModule="auth"
@@ -171,7 +171,7 @@ export default function App() {
 Adapter de logging que usa `console` para escribir logs. Se usa automáticamente si no proporcionas un logger en la configuración.
 
 ```typescript
-import { ConsoleLoggerAdapter } from "@nativefy/core";
+import { ConsoleLoggerAdapter } from "@natify/core";
 
 const logger = new ConsoleLoggerAdapter();
 
@@ -197,9 +197,9 @@ const adapters = {
 Adapter de analytics que permite combinar múltiples proveedores de analytics en uno solo. Útil cuando necesitas enviar eventos a múltiples servicios simultáneamente.
 
 ```typescript
-import { CompositeAnalyticsAdapter } from "@nativefy/core";
-import { FirebaseAnalyticsAdapter } from "@nativefy/analytics-firebase";
-import { MixpanelAnalyticsAdapter } from "@nativefy/analytics-mixpanel";
+import { CompositeAnalyticsAdapter } from "@natify/core";
+import { FirebaseAnalyticsAdapter } from "@natify/analytics-firebase";
+import { MixpanelAnalyticsAdapter } from "@natify/analytics-mixpanel";
 
 // Crear adapters individuales
 const firebase = new FirebaseAnalyticsAdapter();
@@ -236,7 +236,7 @@ Usa `useAdapter` cuando necesites acceso directo a un adapter del framework, tí
 - **Operaciones simples** sin lógica de negocio
 
 ```typescript
-import { useAdapter, NavigationPort, LoggerPort } from "@nativefy/core";
+import { useAdapter, NavigationPort, LoggerPort } from "@natify/core";
 
 function MyComponent() {
   const navigation = useAdapter<NavigationPort>("navigation");
@@ -258,7 +258,7 @@ Usa `useUseCase` cuando la operación involucra lógica de negocio, como:
 - **Validaciones complejas**
 
 ```typescript
-import { useUseCase } from "@nativefy/core";
+import { useUseCase } from "@natify/core";
 import { LoginUseCase } from "../usecases/LoginUseCase";
 
 function LoginScreen() {
@@ -288,7 +288,7 @@ El ActionBus permite que los módulos se comuniquen sin acoplarse directamente.
 ### Registrar Handler (en el módulo que provee la acción)
 
 ```typescript
-import { actionBus } from "@nativefy/core";
+import { actionBus } from "@natify/core";
 
 // En AuthModule
 export const AuthModule = createModule("auth", "Authentication")
@@ -303,7 +303,7 @@ export const AuthModule = createModule("auth", "Authentication")
 ### Despachar Acción (desde cualquier módulo)
 
 ```typescript
-import { useActionDispatch } from "@nativefy/core";
+import { useActionDispatch } from "@natify/core";
 
 function ProfileScreen() {
   const dispatch = useActionDispatch();
@@ -319,7 +319,7 @@ function ProfileScreen() {
 ## Hot Reload de Módulos
 
 ```typescript
-import { useDynamicModules } from "@nativefy/core";
+import { useDynamicModules } from "@natify/core";
 import { PremiumModule } from "./modules/premium";
 
 function SettingsScreen() {
@@ -340,7 +340,7 @@ function SettingsScreen() {
 ## Hooks de Navegación
 
 ```typescript
-import { useNavigationParams, useCurrentRoute, useAdapter, NavigationPort } from "@nativefy/core";
+import { useNavigationParams, useCurrentRoute, useAdapter, NavigationPort } from "@natify/core";
 
 function ProductDetail() {
   // Obtener parámetros tipados
@@ -369,7 +369,7 @@ function ProductDetail() {
 Hook base para ViewModels con manejo de loading y errores:
 
 ```typescript
-import { useBaseViewModel, useUseCase } from "@nativefy/core";
+import { useBaseViewModel, useUseCase } from "@natify/core";
 
 export function useLoginViewModel() {
   const [state, { execute, clearError }] = useBaseViewModel();
@@ -421,14 +421,14 @@ Cada Port define un contrato que los adapters deben cumplir, permitiendo interca
 
 ## Sistema de Errores
 
-Nativefy proporciona un sistema de errores tipado y consistente:
+Natify proporciona un sistema de errores tipado y consistente:
 
 ```typescript
-import { NativefyError, NativefyErrorCode } from "@nativefy/core";
+import { NatifyError, NatifyErrorCode } from "@natify/core";
 
 // Crear un error tipado
-throw new NativefyError(
-  NativefyErrorCode.NETWORK_ERROR,
+throw new NatifyError(
+  NatifyErrorCode.NETWORK_ERROR,
   "No se pudo conectar al servidor",
   originalError,
   { url: "/api/users", retries: 3 }
@@ -438,12 +438,12 @@ throw new NativefyError(
 try {
   await http.get("/users");
 } catch (error) {
-  if (error instanceof NativefyError) {
+  if (error instanceof NatifyError) {
     switch (error.code) {
-      case NativefyErrorCode.UNAUTHORIZED:
+      case NatifyErrorCode.UNAUTHORIZED:
         // Redirigir a login
         break;
-      case NativefyErrorCode.NETWORK_ERROR:
+      case NatifyErrorCode.NETWORK_ERROR:
         // Mostrar mensaje de sin conexión
         break;
     }
@@ -484,7 +484,7 @@ export {
 }
 
 // Context
-export { NativefyProvider, useAdapter }
+export { NatifyProvider, useAdapter }
 
 // Dependency Injection
 export { DIContainer, container, useUseCase }
@@ -502,10 +502,10 @@ export { useNavigationParams, useCurrentRoute }
 export { actionBus, useActionDispatch, useActionHandler }
 
 // App
-export { NativefyApp, DefaultSplash }
+export { NatifyApp, DefaultSplash }
 
 // Errors
-export { NativefyError, NativefyErrorCode }
+export { NatifyError, NatifyErrorCode }
 
 // Adapters (incluidos en el core)
 export { ConsoleLoggerAdapter, CompositeAnalyticsAdapter }
@@ -515,7 +515,7 @@ export { ConsoleLoggerAdapter, CompositeAnalyticsAdapter }
 
 ## Testing
 
-Nativefy facilita el testing mediante inyección de dependencias:
+Natify facilita el testing mediante inyección de dependencias:
 
 ```typescript
 // Mock de un adapter

@@ -5,7 +5,7 @@ import {
   useBaseViewModel,
   useAdapter,
   NavigationPort,
-} from "@nativefy/core";
+} from "@natify/core";
 
 interface RegisterFormValues {
   name: string;

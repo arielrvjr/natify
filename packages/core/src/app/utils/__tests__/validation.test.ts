@@ -26,7 +26,7 @@ describe('validateNavigationAdapter', () => {
     const adapters: AdapterMap = {};
 
     expect(() => validateNavigationAdapter(adapters)).toThrow(
-      '[NativefyApp] Navigation adapter is required',
+      '[NatifyApp] Navigation adapter is required',
     );
   });
 
@@ -40,7 +40,7 @@ describe('validateNavigationAdapter', () => {
     };
 
     expect(() => validateNavigationAdapter(adapters)).toThrow(
-      '[NativefyApp] Navigation adapter must provide NavigationContainer',
+      '[NatifyApp] Navigation adapter must provide NavigationContainer',
     );
   });
 
@@ -54,7 +54,7 @@ describe('validateNavigationAdapter', () => {
     };
 
     expect(() => validateNavigationAdapter(adapters)).toThrow(
-      '[NativefyApp] Navigation adapter must provide NavigationContainer',
+      '[NatifyApp] Navigation adapter must provide NavigationContainer',
     );
   });
 });

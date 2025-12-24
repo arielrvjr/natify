@@ -75,7 +75,7 @@ export const ModuleProvider: React.FC<ModuleProviderProps> = ({
             loadedModules.push(registered);
           } catch (err) {
             logger.error(
-              `[Nativefy] Failed to load module "${moduleDef.id}":`,
+              `[Natify] Failed to load module "${moduleDef.id}":`,
               err as unknown as Error,
             );
             throw err;

@@ -1,11 +1,11 @@
-# @nativefy/geolocation-rn
+# @natify/geolocation-rn
 
-Adapter de geolocalización para Nativefy Framework usando `@react-native-community/geolocation`.
+Adapter de geolocalización para Natify Framework usando `@react-native-community/geolocation`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy/geolocation-rn @react-native-community/geolocation
+pnpm add @natify/geolocation-rn @react-native-community/geolocation
 ```
 
 ### iOS
@@ -41,9 +41,9 @@ Agrega el permiso en `android/app/src/main/AndroidManifest.xml`:
 ### Configuración del Provider
 
 ```typescript
-import { NativefyProvider } from "@nativefy/core";
-import { RnGeolocationAdapter } from "@nativefy/geolocation-rn";
-import { RnPermissionsAdapter } from "@nativefy/permissions-rn";
+import { NatifyProvider } from "@natify/core";
+import { RnGeolocationAdapter } from "@natify/geolocation-rn";
+import { RnPermissionsAdapter } from "@natify/permissions-rn";
 
 const config = {
   geolocation: new RnGeolocationAdapter(),
@@ -53,9 +53,9 @@ const config = {
 
 function App() {
   return (
-    <NativefyProvider config={config}>
+    <NatifyProvider config={config}>
       <MyApp />
-    </NativefyProvider>
+    </NatifyProvider>
   );
 }
 ```
@@ -65,7 +65,7 @@ function App() {
 ### Uso Básico
 
 ```typescript
-import { useAdapter, GeolocationPort } from "@nativefy/core";
+import { useAdapter, GeolocationPort } from "@natify/core";
 
 function MyComponent() {
   const geolocation = useAdapter<GeolocationPort>("geolocation");
@@ -106,7 +106,7 @@ const location = await locationService.getCurrentPosition({
 ### Con Verificación de Permisos
 
 ```typescript
-import { useAdapter, GeolocationPort, PermissionPort, PermissionStatus } from "@nativefy/core";
+import { useAdapter, GeolocationPort, PermissionPort, PermissionStatus } from "@natify/core";
 
 function LocationButton() {
   const geolocation = useAdapter<GeolocationPort>("geolocation");
@@ -405,7 +405,7 @@ function GeofenceMonitor({ center, radius }: { center: Coordinates; radius: numb
 ### UseCase de Ubicación
 
 ```typescript
-import { GeolocationPort } from "@nativefy/core";
+import { GeolocationPort } from "@natify/core";
 
 export class GetNearbyPlacesUseCase {
   constructor(private readonly geolocation: GeolocationPort) {}
@@ -503,7 +503,7 @@ interface Coordinates {
 ## Integración con Módulos
 
 ```typescript
-import { createModule } from "@nativefy/core";
+import { createModule } from "@natify/core";
 import { GetNearbyPlacesUseCase } from "./usecases/GetNearbyPlacesUseCase";
 
 export const PlacesModule = createModule("places", "Places")

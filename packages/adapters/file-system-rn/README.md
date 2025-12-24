@@ -1,11 +1,11 @@
-# @nativefy/file-system-rn
+# @natify/file-system-rn
 
-Adapter de sistema de archivos para Nativefy Framework usando `react-native-blob-util`.
+Adapter de sistema de archivos para Natify Framework usando `react-native-blob-util`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy/file-system-rn react-native-blob-util
+pnpm add @natify/file-system-rn react-native-blob-util
 ```
 
 ### iOS
@@ -23,8 +23,8 @@ No requiere configuración adicional.
 ### Configuración del Provider
 
 ```typescript
-import { NativefyProvider } from "@nativefy/core";
-import { RnFileSystemAdapter } from "@nativefy/file-system-rn";
+import { NatifyProvider } from "@natify/core";
+import { RnFileSystemAdapter } from "@natify/file-system-rn";
 
 const config = {
   filesystem: new RnFileSystemAdapter(),
@@ -33,9 +33,9 @@ const config = {
 
 function App() {
   return (
-    <NativefyProvider config={config}>
+    <NatifyProvider config={config}>
       <MyApp />
-    </NativefyProvider>
+    </NatifyProvider>
   );
 }
 ```
@@ -45,7 +45,7 @@ function App() {
 ### Leer Archivo
 
 ```typescript
-import { useAdapter, FileSystemPort } from "@nativefy/core";
+import { useAdapter, FileSystemPort } from "@natify/core";
 
 function MyComponent() {
   const fileSystem = useAdapter<FileSystemPort>("filesystem");
@@ -266,7 +266,7 @@ const downloadPDF = async (url: string, filename: string) => {
 ### Subir Imagen desde Galería
 
 ```typescript
-import { useAdapter, FileSystemPort, ImagePickerPort } from "@nativefy/core";
+import { useAdapter, FileSystemPort, ImagePickerPort } from "@natify/core";
 
 function ImageUploader() {
   const fileSystem = useAdapter<FileSystemPort>("filesystem");
@@ -400,5 +400,5 @@ interface FileInfo {
 - **Encoding**: Usa `'utf8'` para texto y `'base64'` para binarios (imágenes, PDFs, etc.)
 - **Rutas**: Usa `getDocumentsPath()`, `getCachePath()`, o `getTempPath()` para obtener rutas del sistema
 - **Progreso**: Los callbacks de progreso se ejecutan en el hilo principal, ideal para actualizar UI
-- **Errores**: Todos los errores se convierten a `NativefyError` con códigos apropiados
+- **Errores**: Todos los errores se convierten a `NatifyError` con códigos apropiados
 

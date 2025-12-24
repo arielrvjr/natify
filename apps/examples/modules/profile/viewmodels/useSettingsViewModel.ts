@@ -9,8 +9,8 @@ import {
   PermissionPort,
   PermissionStatus,
   ImagePickerPort,
-} from "@nativefy/core";
-import { useTheme } from "@nativefy/ui";
+} from "@natify/core";
+import { useTheme } from "@natify/ui";
 import { GetAppPreferencesUseCase } from "../../shared/usecases/GetAppPreferencesUseCase";
 import { UpdateAppPreferencesUseCase } from "../../shared/usecases/UpdateAppPreferencesUseCase";
 import { UpdateDarkModeUseCase } from "../../shared/usecases/UpdateDarkModeUseCase";

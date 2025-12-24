@@ -5,7 +5,7 @@ import {
   useAdapter,
   NavigationPort,
   useNavigationParams,
-} from "@nativefy/core";
+} from "@natify/core";
 import { GetProductDetailUseCase } from "../usecases/GetProductDetailUseCase";
 import { Product } from "../usecases/GetProductsUseCase";
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
-import { Container, Text, Input, Button, Column, Spacer } from '@nativefy/ui';
+import { Container, Text, Input, Button, Column, Spacer } from '@natify/ui';
 import { useRegisterViewModel } from '../viewmodels/useRegisterViewModel';
 
 /**

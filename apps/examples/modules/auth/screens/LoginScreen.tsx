@@ -1,8 +1,8 @@
 import React from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Text, Input, Button, Column, Spacer, Container, useTheme } from '@nativefy/ui';
-import { DefaultSplash } from '@nativefy/core';
+import { Text, Input, Button, Column, Spacer, Container, useTheme } from '@natify/ui';
+import { DefaultSplash } from '@natify/core';
 import { useLoginViewModel } from '../viewmodels/useLoginViewModel';
 
 export function LoginScreen() {

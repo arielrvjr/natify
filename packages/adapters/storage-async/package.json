@@ -1,5 +1,5 @@
 {
-  "name": "@nativefy/storage-async",
+  "name": "@natify/storage-async",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -24,7 +24,7 @@
   "license": "MIT",
   "packageManager": "pnpm@10.24.0",
   "peerDependencies": {
-    "@nativefy/core": "workspace:*",
+    "@natify/core": "workspace:*",
     "@react-native-async-storage/async-storage": "^1.19.0"
   }
 }

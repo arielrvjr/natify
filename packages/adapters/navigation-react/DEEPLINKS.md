@@ -7,7 +7,7 @@ Este documento explica cómo configurar y usar deeplinks con el adapter de naveg
 ### 1. Crear el adapter con deeplinks
 
 ```typescript
-import { createReactNavigationAdapter } from '@nativefy/navigation-react';
+import { createReactNavigationAdapter } from '@natify/navigation-react';
 
 const navigationAdapter = createReactNavigationAdapter({
   prefixes: [
@@ -18,12 +18,12 @@ const navigationAdapter = createReactNavigationAdapter({
 });
 ```
 
-### 2. Usar en NativefyApp
+### 2. Usar en NatifyApp
 
 El adapter automáticamente configura el `NavigationContainer` con linking:
 
 ```typescript
-<NativefyApp
+<NatifyApp
   adapters={{ navigation: navigationAdapter }}
   modules={[AuthModule, ProductsModule]}
 />
@@ -52,7 +52,7 @@ El adapter genera automáticamente la configuración de linking basada en tus m�
 Cada pantalla puede definir su propia configuración de deeplink al registrarse en el módulo:
 
 ```typescript
-import { createModule } from "@nativefy/core";
+import { createModule } from "@natify/core";
 
 export const ProductsModule = createModule("products", "Products")
   .screen({

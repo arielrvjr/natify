@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { NativefyError } from '../errors';
-import { toNativefyError } from './utils/errorHandling';
+import { NatifyError } from '../errors';
+import { toNatifyError } from './utils/errorHandling';
 
 /**
  * Estado base de un ViewModel
@@ -14,7 +14,7 @@ export interface BaseViewModelState {
   /**
    * Error de la última operación (null si no hay error)
    */
-  error: NativefyError | null;
+  error: NatifyError | null;
 }
 
 /**
@@ -29,7 +29,7 @@ export interface BaseViewModelActions {
   /**
    * Establece un error
    */
-  setError: (error: NativefyError | null) => void;
+  setError: (error: NatifyError | null) => void;
 
   /**
    * Limpia el error actual
@@ -45,7 +45,7 @@ export interface BaseViewModelActions {
   /**
    * Ejecuta una función async y lanza el error si falla
    * @returns El resultado de la función
-   * @throws NativefyError si la operación falla
+   * @throws NatifyError si la operación falla
    */
   executeOrThrow: <T>(fn: () => Promise<T>) => Promise<T>;
 }
@@ -77,7 +77,7 @@ export interface BaseViewModelActions {
  */
 export function useBaseViewModel(): [BaseViewModelState, BaseViewModelActions] {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<NativefyError | null>(null);
+  const [error, setError] = useState<NatifyError | null>(null);
 
   // Ref para evitar updates en componentes desmontados
   const isMounted = useRef(true);
@@ -95,7 +95,7 @@ export function useBaseViewModel(): [BaseViewModelState, BaseViewModelActions] {
     }
   }, []);
 
-  const setErrorSafe = useCallback((err: NativefyError | null) => {
+  const setErrorSafe = useCallback((err: NatifyError | null) => {
     if (isMounted.current) {
       setError(err);
     }
@@ -126,7 +126,7 @@ export function useBaseViewModel(): [BaseViewModelState, BaseViewModelActions] {
     } catch (err) {
       if (isMounted.current) {
         setIsLoading(false);
-        setError(toNativefyError(err));
+        setError(toNatifyError(err));
       }
       return undefined;
     }
@@ -151,7 +151,7 @@ export function useBaseViewModel(): [BaseViewModelState, BaseViewModelActions] {
     } catch (err) {
       if (isMounted.current) {
         setIsLoading(false);
-        setError(toNativefyError(err));
+        setError(toNatifyError(err));
       }
       throw err;
     }

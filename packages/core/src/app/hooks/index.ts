@@ -1,1 +1,1 @@
-export * from './useNativefyAppHandlers';
+export * from './useNatifyAppHandlers';

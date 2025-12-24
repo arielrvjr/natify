@@ -1,10 +1,11 @@
 import { createMMKV, MMKV } from 'react-native-mmkv';
-import { StoragePort } from '@nativefy/core';
+import { StoragePort } from '@natify/core';
+import { setMMKVValue } from './utils/setters';
 
 export class MMKVStorageAdapter implements StoragePort {
   readonly capability = 'storage';
   private storage: MMKV;
-  constructor(instanceId = 'nativefy-storage') {
+  constructor(instanceId = 'natify-storage') {
     this.storage = createMMKV({ id: instanceId });
   }
 
@@ -20,15 +21,7 @@ export class MMKVStorageAdapter implements StoragePort {
   }
 
   async setItem<T = string>(key: string, value: T): Promise<void> {
-    if (typeof value === 'object') {
-      this.storage.set(key, JSON.stringify(value));
-    } else if (typeof value === 'string') {
-      this.storage.set(key, value);
-    } else if (typeof value === 'number') {
-      this.storage.set(key, value);
-    } else if (typeof value === 'boolean') {
-      this.storage.set(key, value);
-    }
+    setMMKVValue(this.storage, key, value);
     return Promise.resolve();
   }
 

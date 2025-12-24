@@ -1,5 +1,5 @@
 {
-  "name": "@nativefy/biometrics-rn",
+  "name": "@natify/biometrics-rn",
   "version": "0.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -17,12 +17,12 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\""
   },
   "devDependencies": {
-    "@nativefy/core": "workspace:*",
+    "@natify/core": "workspace:*",
     "typescript": "*",
     "react-native-biometrics": "^3.0.1"
   },
   "peerDependencies": {
-    "@nativefy/core": "*",
+    "@natify/core": "*",
     "react-native-biometrics": "^3.0.1"
   }
 }

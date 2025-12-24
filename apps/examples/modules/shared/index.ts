@@ -1,4 +1,4 @@
-import { createModule } from '@nativefy/core';
+import { createModule } from '@natify/core';
 import { GetAppPreferencesUseCase } from './usecases/GetAppPreferencesUseCase';
 import { UpdateAppPreferencesUseCase } from './usecases/UpdateAppPreferencesUseCase';
 import { UpdateDarkModeUseCase } from './usecases/UpdateDarkModeUseCase';

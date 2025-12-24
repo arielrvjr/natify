@@ -24,7 +24,7 @@ Qué está pasando actualmente.
 Si aplica, agrega screenshots.
 
 ## Entorno
-- Versión de Nativefy: [ej: 0.0.1]
+- Versión de Natify: [ej: 0.0.1]
 - Versión de React Native: [ej: 0.82.1]
 - Versión de Node: [ej: 18.17.0]
 - OS: [ej: iOS 17, Android 13]

@@ -1,11 +1,11 @@
-# @nativefy/store-zustand
+# @natify/store-zustand
 
-Adapter de gestión de estado para Nativefy Framework usando `zustand`.
+Adapter de gestión de estado para Natify Framework usando `zustand`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy/store-zustand zustand
+pnpm add @natify/store-zustand zustand
 ```
 
 ## Por Qué Zustand
@@ -20,8 +20,8 @@ pnpm add @nativefy/store-zustand zustand
 ### Configuración del Provider
 
 ```typescript
-import { NativefyProvider } from "@nativefy/core";
-import { ZustandStoreAdapter } from "@nativefy/store-zustand";
+import { NatifyProvider } from "@natify/core";
+import { ZustandStoreAdapter } from "@natify/store-zustand";
 
 const config = {
   stateManager: new ZustandStoreAdapter(),
@@ -30,9 +30,9 @@ const config = {
 
 function App() {
   return (
-    <NativefyProvider config={config}>
+    <NatifyProvider config={config}>
       <MyApp />
-    </NativefyProvider>
+    </NatifyProvider>
   );
 }
 ```
@@ -40,7 +40,7 @@ function App() {
 ### Crear una Store
 
 ```typescript
-import { useAdapter, StateManagerPort } from "@nativefy/core";
+import { useAdapter, StateManagerPort } from "@natify/core";
 
 // Definir el tipo del estado
 interface AuthState {

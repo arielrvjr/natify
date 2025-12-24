@@ -8,7 +8,7 @@ module.exports = {
   coverageDirectory: '<rootDir>/../../coverage/core',
   coverageReporters: ['text', 'lcov', 'html', 'json-summary'],
   moduleNameMapper: {
-    '^@nativefy/core$': '<rootDir>/src',
+    '^@natify/core$': '<rootDir>/src',
   },
   setupFilesAfterEnv: ['<rootDir>/../../jest.setup.js'],
 };

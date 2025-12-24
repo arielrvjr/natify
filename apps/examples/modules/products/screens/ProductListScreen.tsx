@@ -10,7 +10,7 @@ import {
   Column,
   Loading,
   EmptyState,
-} from '@nativefy/ui';
+} from '@natify/ui';
 import { useProductListViewModel } from '../viewmodels/useProductListViewModel';
 import { Product } from '../usecases/GetProductsUseCase';
 

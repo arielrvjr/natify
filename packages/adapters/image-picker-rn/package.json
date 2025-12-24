@@ -1,5 +1,5 @@
 {
-  "name": "@nativefy/image-picker-rn",
+  "name": "@natify/image-picker-rn",
   "version": "0.0.1",
   "description": "Image Picker adapter using react-native-image-picker",
   "main": "dist/index.js",
@@ -22,14 +22,14 @@
   "license": "MIT",
   "packageManager": "pnpm@10.24.0",
   "devDependencies": {
-    "@nativefy/core": "workspace:*",
+    "@natify/core": "workspace:*",
     "react": "*",
     "react-native": "*",
     "typescript": "*",
     "react-native-image-picker": "^7.1.2"
   },
   "peerDependencies": {
-    "@nativefy/core": "*",
+    "@natify/core": "*",
     "react": "*",
     "react-native": "*",
     "react-native-image-picker": "^7.1.2"

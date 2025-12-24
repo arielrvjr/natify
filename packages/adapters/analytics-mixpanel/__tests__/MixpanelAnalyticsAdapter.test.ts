@@ -1,5 +1,5 @@
 import { MixpanelAnalyticsAdapter } from '../src';
-import { NativefyError } from '@nativefy/core';
+import { NatifyError } from '@natify/core';
 
 // Crear un objeto mock único para getPeople que se reutilice
 const mockPeople = {
@@ -101,13 +101,13 @@ describe('MixpanelAnalyticsAdapter', () => {
       expect(mockMixpanel.init).toHaveBeenCalledTimes(1);
     });
 
-    it('should throw NativefyError on initialization failure', async () => {
+    it('should throw NatifyError on initialization failure', async () => {
       const error = new Error('Init failed');
       mockMixpanel.init.mockRejectedValueOnce(error);
 
       const result = await adapter.init().catch((e) => e);
       
-      expect(result).toBeInstanceOf(NativefyError);
+      expect(result).toBeInstanceOf(NatifyError);
       expect(result.message).toContain('Failed to initialize Mixpanel');
     });
   });

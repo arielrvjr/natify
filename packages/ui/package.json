@@ -1,7 +1,7 @@
 {
-  "name": "@nativefy/ui",
+  "name": "@natify/ui",
   "version": "0.0.1",
-  "description": "Componentes UI para Nativefy Framework",
+  "description": "Componentes UI para Natify Framework",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -32,7 +32,7 @@
     "react-native",
     "ui",
     "components",
-    "nativefy"
+    "natify"
   ],
   "license": "MIT"
 }

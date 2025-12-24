@@ -11,7 +11,7 @@ import {
   Divider,
   Button,
   Icon,
-} from '@nativefy/ui';
+} from '@natify/ui';
 import { useSettingsViewModel } from '../viewmodels/useSettingsViewModel';
 
 export function SettingsScreen() {

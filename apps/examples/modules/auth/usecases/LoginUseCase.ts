@@ -1,9 +1,9 @@
 import {
   HttpClientPort,
   StoragePort,
-  NativefyError,
-  NativefyErrorCode,
-} from "@nativefy/core";
+  NatifyError,
+  NatifyErrorCode,
+} from "@natify/core";
 
 export interface LoginCredentials {
   email: string;
@@ -33,15 +33,15 @@ export class LoginUseCase {
   async execute(credentials: LoginCredentials): Promise<User> {
     // Validación de negocio
     if (!credentials.email || !credentials.email.includes("@")) {
-      throw new NativefyError(
-        NativefyErrorCode.VALIDATION_ERROR,
+      throw new NatifyError(
+        NatifyErrorCode.VALIDATION_ERROR,
         "Por favor ingresa un email válido"
       );
     }
 
     if (!credentials.password || credentials.password.length < 4) {
-      throw new NativefyError(
-        NativefyErrorCode.VALIDATION_ERROR,
+      throw new NatifyError(
+        NatifyErrorCode.VALIDATION_ERROR,
         "La contraseña debe tener al menos 4 caracteres"
       );
     }

@@ -10,7 +10,7 @@ export * from './errors';
 // Dependency Injection
 export * from './di';
 
-// Context (NativefyProvider for Level 1)
+// Context (NatifyProvider for Level 1)
 export * from './context';
 
 // Module System

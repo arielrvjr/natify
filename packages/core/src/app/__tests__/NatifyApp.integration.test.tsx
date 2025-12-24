@@ -1,13 +1,13 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
-import { NativefyApp } from '../../app/NativefyApp';
+import { NatifyApp } from '../../app/NatifyApp';
 import { ModuleDefinition } from '../../module/types';
 import { AdapterMap } from '../../types/adapters';
 import { Port } from '../../ports/Port';
 
-// Mock NativefyProvider
-jest.mock('../../context/NativefyProvider', () => ({
-  NativefyProvider: ({ children }: { children: React.ReactNode }) => children,
+// Mock NatifyProvider
+jest.mock('../../context/NatifyProvider', () => ({
+  NatifyProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 // Mock ModuleProvider
@@ -25,7 +25,7 @@ jest.mock('react-native', () => ({
   },
 }));
 
-describe('NativefyApp Integration', () => {
+describe('NatifyApp Integration', () => {
   const mockNavigationAdapter = {
     capability: 'navigation' as const,
     NavigationContainer: ({ children }: { children: React.ReactNode }) => <>{children}</>,
@@ -59,7 +59,7 @@ describe('NativefyApp Integration', () => {
   });
 
   it('should render with valid navigation adapter', () => {
-    const { UNSAFE_root } = render(<NativefyApp adapters={mockAdapters} modules={mockModules} />);
+    const { UNSAFE_root } = render(<NatifyApp adapters={mockAdapters} modules={mockModules} />);
 
     expect(UNSAFE_root).toBeTruthy();
   });
@@ -67,7 +67,7 @@ describe('NativefyApp Integration', () => {
   it('should render custom splash screen', () => {
     const CustomSplash = () => <></>;
     const { UNSAFE_root } = render(
-      <NativefyApp adapters={mockAdapters} modules={mockModules} splashScreen={<CustomSplash />} />,
+      <NatifyApp adapters={mockAdapters} modules={mockModules} splashScreen={<CustomSplash />} />,
     );
 
     expect(UNSAFE_root).toBeTruthy();
@@ -76,7 +76,7 @@ describe('NativefyApp Integration', () => {
   it('should call onReady when modules load', () => {
     const onReady = jest.fn();
     const { UNSAFE_root } = render(
-      <NativefyApp adapters={mockAdapters} modules={mockModules} onReady={onReady} />,
+      <NatifyApp adapters={mockAdapters} modules={mockModules} onReady={onReady} />,
     );
 
     expect(UNSAFE_root).toBeTruthy();
@@ -85,7 +85,7 @@ describe('NativefyApp Integration', () => {
   it('should call onError when error occurs', () => {
     const onError = jest.fn();
     const { UNSAFE_root } = render(
-      <NativefyApp adapters={mockAdapters} modules={mockModules} onError={onError} />,
+      <NatifyApp adapters={mockAdapters} modules={mockModules} onError={onError} />,
     );
 
     expect(UNSAFE_root).toBeTruthy();

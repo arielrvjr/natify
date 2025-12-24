@@ -53,14 +53,14 @@ export function validateNavigationAdapter(adapters: AdapterMap): NavigationAdapt
 
   if (!navigationAdapter) {
     throw new Error(
-      '[NativefyApp] Navigation adapter is required. Add a navigation adapter to your config.',
+      '[NatifyApp] Navigation adapter is required. Add a navigation adapter to your config.',
     );
   }
 
   if (!navigationAdapter.NavigationContainer || !navigationAdapter.AppNavigator) {
     throw new Error(
-      '[NativefyApp] Navigation adapter must provide NavigationContainer and AppNavigator components. ' +
-        'Make sure you are using createReactNavigationAdapter() from @nativefy/navigation-react.',
+      '[NatifyApp] Navigation adapter must provide NavigationContainer and AppNavigator components. ' +
+        'Make sure you are using createReactNavigationAdapter() from @natify/navigation-react.',
     );
   }
 

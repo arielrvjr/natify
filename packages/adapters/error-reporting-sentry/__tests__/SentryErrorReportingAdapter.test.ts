@@ -1,5 +1,5 @@
 import { SentryErrorReportingAdapter } from '../src';
-import { SeverityLevel, NativefyError, NativefyErrorCode } from '@nativefy/core';
+import { SeverityLevel, NatifyError, NatifyErrorCode } from '@natify/core';
 
 // Mock Sentry
 const mockInit = jest.fn(); // Por defecto no lanza error
@@ -110,12 +110,12 @@ describe('SentryErrorReportingAdapter', () => {
       expect(mockInit).toHaveBeenCalledTimes(1);
     });
 
-    it('should throw NativefyError on initialization failure', async () => {
+    it('should throw NatifyError on initialization failure', async () => {
       mockInit.mockImplementation(() => {
         throw new Error('Init failed');
       });
 
-      await expect(adapter.init()).rejects.toThrow(NativefyError);
+      await expect(adapter.init()).rejects.toThrow(NatifyError);
       await expect(adapter.init()).rejects.toThrow('Failed to initialize Sentry');
     });
   });

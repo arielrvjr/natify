@@ -1,42 +1,42 @@
-import { toNativefyError } from '../errorHandling';
-import { NativefyError, NativefyErrorCode } from '../../../errors';
+import { toNatifyError } from '../errorHandling';
+import { NatifyError, NatifyErrorCode } from '../../../errors';
 
-describe('toNativefyError', () => {
-  it('should return NativefyError as-is', () => {
-    const nativefyError = new NativefyError(NativefyErrorCode.UNKNOWN, 'Test error');
-    const result = toNativefyError(nativefyError);
+describe('toNatifyError', () => {
+  it('should return NatifyError as-is', () => {
+    const natifyError = new NatifyError(NatifyErrorCode.UNKNOWN, 'Test error');
+    const result = toNatifyError(natifyError);
 
-    expect(result).toBe(nativefyError);
-    expect(result).toBeInstanceOf(NativefyError);
+    expect(result).toBe(natifyError);
+    expect(result).toBeInstanceOf(NatifyError);
   });
 
-  it('should convert Error to NativefyError', () => {
+  it('should convert Error to NatifyError', () => {
     const error = new Error('Test error');
-    const result = toNativefyError(error);
+    const result = toNatifyError(error);
 
-    expect(result).toBeInstanceOf(NativefyError);
+    expect(result).toBeInstanceOf(NatifyError);
     expect(result.message).toBe('Test error');
-    expect(result.code).toBe(NativefyErrorCode.UNKNOWN);
+    expect(result.code).toBe(NatifyErrorCode.UNKNOWN);
     expect(result.originalError).toBe(error);
   });
 
-  it('should convert unknown error to NativefyError', () => {
+  it('should convert unknown error to NatifyError', () => {
     const unknownError = 'String error';
-    const result = toNativefyError(unknownError);
+    const result = toNatifyError(unknownError);
 
-    expect(result).toBeInstanceOf(NativefyError);
+    expect(result).toBeInstanceOf(NatifyError);
     expect(result.message).toBe('Unknown error');
-    expect(result.code).toBe(NativefyErrorCode.UNKNOWN);
+    expect(result.code).toBe(NatifyErrorCode.UNKNOWN);
     expect(result.originalError).toBe(unknownError);
   });
 
   it('should handle null/undefined errors', () => {
-    const result1 = toNativefyError(null);
-    const result2 = toNativefyError(undefined);
+    const result1 = toNatifyError(null);
+    const result2 = toNatifyError(undefined);
 
-    expect(result1).toBeInstanceOf(NativefyError);
+    expect(result1).toBeInstanceOf(NatifyError);
     expect(result1.message).toBe('Unknown error');
-    expect(result2).toBeInstanceOf(NativefyError);
+    expect(result2).toBeInstanceOf(NatifyError);
     expect(result2.message).toBe('Unknown error');
   });
 });

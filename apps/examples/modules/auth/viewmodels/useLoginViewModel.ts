@@ -6,8 +6,8 @@ import {
   useUseCase,
   useAdapter,
   NavigationPort,
-} from "@nativefy/core";
-import { useTheme } from "@nativefy/ui";
+} from "@natify/core";
+import { useTheme } from "@natify/ui";
 import { LoginUseCase } from "../usecases/LoginUseCase";
 import { CheckAuthUseCase } from "../usecases/CheckAuthUseCase";
 import { GetAppPreferencesUseCase } from "../../shared/usecases/GetAppPreferencesUseCase";

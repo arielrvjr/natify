@@ -1,4 +1,4 @@
-import { StoragePort } from "@nativefy/core";
+import { StoragePort } from "@natify/core";
 import { User } from "../../auth/usecases/LoginUseCase";
 
 /**

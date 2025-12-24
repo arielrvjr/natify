@@ -1,5 +1,5 @@
 import { GrowthBookFeatureFlagAdapter } from '../src';
-import { NativefyError, NativefyErrorCode } from '@nativefy/core';
+import { NatifyError, NatifyErrorCode } from '@natify/core';
 import { GrowthBook } from '@growthbook/growthbook-react';
 
 // Mock GrowthBook
@@ -121,7 +121,7 @@ describe('GrowthBookFeatureFlagAdapter', () => {
       expect(mockSetAttributes).toHaveBeenCalled();
     });
 
-    it('should throw NativefyError on initialization failure', async () => {
+    it('should throw NatifyError on initialization failure', async () => {
       // Crear un nuevo adapter para este test específico
       const testAdapter = new GrowthBookFeatureFlagAdapter({
         clientKey: mockClientKey,
@@ -131,7 +131,7 @@ describe('GrowthBookFeatureFlagAdapter', () => {
       mockLoadFeatures.mockReset();
       mockLoadFeatures.mockRejectedValue(new Error('Network error'));
 
-      await expect(testAdapter.init()).rejects.toThrow(NativefyError);
+      await expect(testAdapter.init()).rejects.toThrow(NatifyError);
       await expect(testAdapter.init()).rejects.toThrow('Failed to initialize GrowthBook');
     });
   });
@@ -338,12 +338,12 @@ describe('GrowthBookFeatureFlagAdapter', () => {
       expect(mockLoadFeatures).toHaveBeenCalled();
     });
 
-    it('should throw NativefyError on refresh failure', async () => {
+    it('should throw NatifyError on refresh failure', async () => {
       // Resetear y configurar el mock para que falle
       mockLoadFeatures.mockReset();
       mockLoadFeatures.mockRejectedValue(new Error('Network error'));
 
-      await expect(adapter.refresh()).rejects.toThrow(NativefyError);
+      await expect(adapter.refresh()).rejects.toThrow(NatifyError);
       await expect(adapter.refresh()).rejects.toThrow('Failed to refresh feature flags');
     });
   });

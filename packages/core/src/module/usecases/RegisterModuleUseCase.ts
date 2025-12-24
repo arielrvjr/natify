@@ -1,7 +1,7 @@
 import { ModuleDefinition, RegisteredModule } from '../types';
 import { AdapterMap } from '../../types/adapters';
 import { DIContainer } from '../../di/Container';
-import { NativefyError, NativefyErrorCode } from '../../errors';
+import { NatifyError, NatifyErrorCode } from '../../errors';
 import { Port } from '../../ports/Port';
 
 /**
@@ -19,8 +19,8 @@ export class RegisterModuleUseCase {
   async execute(module: ModuleDefinition): Promise<RegisteredModule> {
     // Validar que el módulo no esté ya registrado
     if (this.diContainer.has(`module:${module.id}`)) {
-      throw new NativefyError(
-        NativefyErrorCode.VALIDATION_ERROR,
+      throw new NatifyError(
+        NatifyErrorCode.VALIDATION_ERROR,
         `Module "${module.id}" is already registered`,
         undefined,
         { moduleId: module.id },
@@ -34,8 +34,8 @@ export class RegisterModuleUseCase {
     const requiredCapabilities = module.requires as string[];
     const missingCapabilities = this.validateCapabilities(requiredCapabilities, availableAdapters);
     if (missingCapabilities.length > 0) {
-      throw new NativefyError(
-        NativefyErrorCode.VALIDATION_ERROR,
+      throw new NatifyError(
+        NatifyErrorCode.VALIDATION_ERROR,
         `Module "${module.id}" requires missing capabilities: ${missingCapabilities.join(', ')}`,
         undefined,
         { moduleId: module.id, missing: missingCapabilities },
@@ -44,8 +44,8 @@ export class RegisterModuleUseCase {
 
     // Validar que el módulo tenga al menos una pantalla o un UseCase
     if (module.screens.length === 0 && module.useCases.length === 0) {
-      throw new NativefyError(
-        NativefyErrorCode.VALIDATION_ERROR,
+      throw new NatifyError(
+        NatifyErrorCode.VALIDATION_ERROR,
         `Module "${module.id}" must have at least one screen or one UseCase`,
         undefined,
         { moduleId: module.id },

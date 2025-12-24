@@ -1,4 +1,4 @@
-# @nativefy/ui
+# @natify/ui
 
 Librería de componentes UI para React Native con un **Design System** completo basado en tokens semánticos y soporte nativo para temas claro/oscuro.
 
@@ -75,7 +75,7 @@ spacing: {
 ## Instalación
 
 ```bash
-pnpm add @nativefy/ui
+pnpm add @natify/ui
 ```
 
 ## Configuración
@@ -83,7 +83,7 @@ pnpm add @nativefy/ui
 Envuelve tu app con `ThemeProvider`:
 
 ```tsx
-import { ThemeProvider } from "@nativefy/ui";
+import { ThemeProvider } from "@natify/ui";
 
 export default function App() {
   return (
@@ -164,7 +164,7 @@ export default function App() {
 El componente `Text` usa las variantes tipográficas del design system:
 
 ```tsx
-import { Text } from "@nativefy/ui";
+import { Text } from "@natify/ui";
 
 <Text variant="title">Título Principal</Text>
 <Text variant="subtitle">Subtítulo</Text>
@@ -185,7 +185,7 @@ import { Text } from "@nativefy/ui";
 Botones con variantes que usan los tokens de `action`:
 
 ```tsx
-import { Button } from "@nativefy/ui";
+import { Button } from "@natify/ui";
 
 // Variante primaria (usa action.primary)
 <Button title="Primario" variant="primary" onPress={() => {}} />
@@ -204,7 +204,7 @@ import { Button } from "@nativefy/ui";
 ### Input
 
 ```tsx
-import { Input } from "@nativefy/ui";
+import { Input } from "@natify/ui";
 
 <Input
   label="Email"
@@ -219,7 +219,7 @@ import { Input } from "@nativefy/ui";
 Las Cards usan `surface.secondary` para crear jerarquía visual:
 
 ```tsx
-import { Card, Text } from "@nativefy/ui";
+import { Card, Text } from "@natify/ui";
 
 <Card padding="lg" onPress={() => {}}>
   <Text variant="subtitle">Título de la tarjeta</Text>
@@ -232,7 +232,7 @@ import { Card, Text } from "@nativefy/ui";
 ### Layout
 
 ```tsx
-import { Container, Row, Column, Spacer } from "@nativefy/ui";
+import { Container, Row, Column, Spacer } from "@natify/ui";
 
 <Container padding>
   <Row justify="between" align="center">
@@ -252,7 +252,7 @@ import { Container, Row, Column, Spacer } from "@nativefy/ui";
 ### Toast
 
 ```tsx
-import { ToastProvider, useToast, Button } from "@nativefy/ui";
+import { ToastProvider, useToast, Button } from "@natify/ui";
 
 // En el root
 <ToastProvider>
@@ -275,7 +275,7 @@ function MyComponent() {
 ### Modal
 
 ```tsx
-import { Modal, ConfirmModal, Button, Text } from "@nativefy/ui";
+import { Modal, ConfirmModal, Button, Text } from "@natify/ui";
 
 const [visible, setVisible] = useState(false);
 
@@ -293,7 +293,7 @@ const [visible, setVisible] = useState(false);
 Barra superior con título, subtítulo, botón de retroceso y acciones:
 
 ```tsx
-import { TopAppBar } from "@nativefy/ui";
+import { TopAppBar } from "@natify/ui";
 
 function MyScreen() {
   return (
@@ -327,7 +327,7 @@ function MyScreen() {
 Barra de navegación inferior con tabs, iconos y badges:
 
 ```tsx
-import { BottomBar } from "@nativefy/ui";
+import { BottomBar } from "@natify/ui";
 import { useState } from "react";
 
 function AppWithTabs() {
@@ -387,7 +387,7 @@ function AppWithTabs() {
 ### Form Controls
 
 ```tsx
-import { Checkbox, Switch, RadioGroup } from "@nativefy/ui";
+import { Checkbox, Switch, RadioGroup } from "@natify/ui";
 
 <Checkbox
   checked={agreed}
@@ -415,7 +415,7 @@ import { Checkbox, Switch, RadioGroup } from "@nativefy/ui";
 ### Avatar & Badge
 
 ```tsx
-import { Avatar, Badge, BadgeWrapper } from "@nativefy/ui";
+import { Avatar, Badge, BadgeWrapper } from "@natify/ui";
 
 <Avatar name="John Doe" size="lg" />
 <Avatar source={{ uri: "https://..." }} size="md" />
@@ -436,7 +436,7 @@ import { Avatar, Badge, BadgeWrapper } from "@nativefy/ui";
 Puedes extender los temas por defecto o crear uno completamente personalizado:
 
 ```tsx
-import { ThemeProvider, lightTheme, Theme } from "@nativefy/ui";
+import { ThemeProvider, lightTheme, Theme } from "@natify/ui";
 
 const customTheme: Theme = {
   ...lightTheme,
@@ -486,7 +486,7 @@ const customTheme: Theme = {
 Accede al tema completo y sus utilidades:
 
 ```tsx
-import { useTheme } from "@nativefy/ui";
+import { useTheme } from "@natify/ui";
 
 function MyComponent() {
   const { theme, isDark, toggleTheme } = useTheme();
@@ -511,7 +511,7 @@ function MyComponent() {
 Crea estilos tipados que se actualizan automáticamente con el tema:
 
 ```tsx
-import { useThemedStyles } from "@nativefy/ui";
+import { useThemedStyles } from "@natify/ui";
 
 function MyComponent() {
   const styles = useThemedStyles((theme) => ({

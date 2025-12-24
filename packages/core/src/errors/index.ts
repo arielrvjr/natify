@@ -1,6 +1,6 @@
 // packages/core/src/errors/index.ts
 
-export enum NativefyErrorCode {
+export enum NatifyErrorCode {
   // Red
   NETWORK_ERROR = 'NETWORK_ERROR',
   TIMEOUT = 'TIMEOUT',
@@ -18,13 +18,13 @@ export enum NativefyErrorCode {
   VALIDATION_ERROR = 'VALIDATION_ERROR',
 }
 
-export class NativefyError extends Error {
-  public readonly code: NativefyErrorCode;
+export class NatifyError extends Error {
+  public readonly code: NatifyErrorCode;
   public readonly originalError?: unknown;
   public readonly context?: Record<string, any>;
 
   constructor(
-    code: NativefyErrorCode,
+    code: NatifyErrorCode,
     message: string,
     originalError?: unknown,
     context?: Record<string, any>,
@@ -35,6 +35,6 @@ export class NativefyError extends Error {
     this.context = context;
 
     // Necesario para que instanceof funcione en ES5/ES6
-    Object.setPrototypeOf(this, NativefyError.prototype);
+    Object.setPrototypeOf(this, NatifyError.prototype);
   }
 }

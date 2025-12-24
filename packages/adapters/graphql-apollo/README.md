@@ -1,11 +1,11 @@
-# @nativefy/graphql-apollo
+# @natify/graphql-apollo
 
-Adapter de GraphQL para Nativefy Framework usando `@apollo/client`.
+Adapter de GraphQL para Natify Framework usando `@apollo/client`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy/graphql-apollo @apollo/client graphql
+pnpm add @natify/graphql-apollo @apollo/client graphql
 ```
 
 ### iOS
@@ -23,8 +23,8 @@ No requiere configuración adicional.
 ### Configuración Básica
 
 ```typescript
-import { NativefyProvider } from "@nativefy/core";
-import { ApolloGraphQLAdapter } from "@nativefy/graphql-apollo";
+import { NatifyProvider } from "@natify/core";
+import { ApolloGraphQLAdapter } from "@natify/graphql-apollo";
 
 const graphqlAdapter = new ApolloGraphQLAdapter({
   uri: "https://api.example.com/graphql",
@@ -37,9 +37,9 @@ const config = {
 
 function App() {
   return (
-    <NativefyProvider config={config}>
+    <NatifyProvider config={config}>
       <MyApp />
-    </NativefyProvider>
+    </NatifyProvider>
   );
 }
 ```
@@ -72,7 +72,7 @@ const graphqlAdapter = new ApolloGraphQLAdapter({
 ### Establecer Token Después del Login
 
 ```typescript
-import { useAdapter, GraphQLPort, StoragePort } from "@nativefy/core";
+import { useAdapter, GraphQLPort, StoragePort } from "@natify/core";
 
 function useAuth() {
   const graphql = useAdapter<GraphQLPort>("graphql");
@@ -107,7 +107,7 @@ function useAuth() {
 
 ```typescript
 import { useEffect } from "react";
-import { useAdapter, GraphQLPort, StoragePort } from "@nativefy/core";
+import { useAdapter, GraphQLPort, StoragePort } from "@natify/core";
 
 function AppInitializer() {
   const graphql = useAdapter<GraphQLPort>("graphql");
@@ -133,7 +133,7 @@ function AppInitializer() {
 ### Query Simple
 
 ```typescript
-import { useAdapter, GraphQLPort } from "@nativefy/core";
+import { useAdapter, GraphQLPort } from "@natify/core";
 
 const GET_USERS = `
   query GetUsers {
@@ -268,7 +268,7 @@ const updateProfile = async (input: UpdateProfileInput) => {
 
     return result.data.updateProfile;
   } catch (error) {
-    if (error instanceof NativefyError) {
+    if (error instanceof NatifyError) {
       // Manejar errores de red o validación
       console.error("Error:", error.message);
     }
@@ -336,7 +336,7 @@ function ChatScreen({ chatId }: { chatId: string }) {
 ## UseCase con GraphQL
 
 ```typescript
-import { GraphQLPort } from "@nativefy/core";
+import { GraphQLPort } from "@natify/core";
 
 const GET_PRODUCTS = `
   query GetProducts($category: String) {
@@ -501,14 +501,14 @@ interface GraphQLResult<T> {
 
 - **Token de Autenticación**: Se inyecta automáticamente en todas las peticiones cuando se establece con `setAuthToken()`
 - **Caché**: Apollo Client maneja el caché automáticamente. Usa `clearCache()` después de logout
-- **Errores**: Todos los errores se convierten a `NativefyError` con códigos apropiados
+- **Errores**: Todos los errores se convierten a `NatifyError` con códigos apropiados
 - **Subscriptions**: Requieren un servidor GraphQL que soporte WebSockets o Server-Sent Events
 - **TypeScript**: Las queries/mutations pueden ser tipadas usando generics
 
 ## Integración con Módulos
 
 ```typescript
-import { createModule } from "@nativefy/core";
+import { createModule } from "@natify/core";
 import { GetProductsUseCase } from "./usecases/GetProductsUseCase";
 
 export const ProductsModule = createModule("products", "Products")

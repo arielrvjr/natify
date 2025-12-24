@@ -1,1 +1,1 @@
-export * from './NativefyApp';
+export * from './NatifyApp';

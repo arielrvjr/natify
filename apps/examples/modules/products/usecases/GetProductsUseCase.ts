@@ -1,4 +1,4 @@
-import { HttpClientPort, StoragePort } from '@nativefy/core';
+import { HttpClientPort, StoragePort } from '@natify/core';
 
 export interface Product {
   id: number;

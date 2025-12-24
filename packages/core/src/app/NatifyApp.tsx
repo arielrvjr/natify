@@ -1,16 +1,16 @@
 import React, { ReactNode, ComponentType } from 'react';
-import { NativefyProvider } from '../context/NativefyProvider';
+import { NatifyProvider } from '../context/NatifyProvider';
 import { ModuleProvider } from '../module/ModuleProvider';
 import { AdapterMap } from '../types/adapters';
 import { ModuleDefinition, RegisteredModule } from '../module/types';
 import { SplashScreen, ErrorScreen as DefaultErrorScreen, ErrorScreenProps } from '../components';
 import { validateNavigationAdapter } from './utils/validation';
-import { useNativefyAppHandlers } from './hooks/useNativefyAppHandlers';
+import { useNatifyAppHandlers } from './hooks/useNatifyAppHandlers';
 
 /**
- * Props del componente NativefyApp
+ * Props del componente NatifyApp
  */
-export interface NativefyAppProps {
+export interface NatifyAppProps {
   /**
    * Configuración de adapters
    */
@@ -50,16 +50,16 @@ export interface NativefyAppProps {
 }
 
 /**
- * Componente principal de Nativefy
+ * Main Natify component
  *
- * Encapsula toda la configuración necesaria:
- * - NativefyProvider (DI + registro de adapters)
- * - ModuleProvider (sistema de módulos)
+ * Encapsulates all necessary configuration:
+ * - NatifyProvider (DI + adapter registration)
+ * - ModuleProvider (module system)
  * - NavigationContainer + AppNavigator
  *
  * @example
  * ```tsx
- * import { createReactNavigationAdapter } from '@nativefy/navigation-react';
+ * import { createReactNavigationAdapter } from '@natify/navigation-react';
  *
  * export default function App() {
  *   const navigationAdapter = createReactNavigationAdapter({
@@ -71,7 +71,7 @@ export interface NativefyAppProps {
  *   });
  *
  *   return (
- *     <NativefyApp
+ *     <NatifyApp
  *       adapters={{
  *         http: new AxiosHttpAdapter('https://api.example.com'),
  *         storage: new MMKVStorageAdapter(),
@@ -85,7 +85,7 @@ export interface NativefyAppProps {
  * ```
  */
 
-export const NativefyApp: React.FC<NativefyAppProps> = ({
+export const NatifyApp: React.FC<NatifyAppProps> = ({
   adapters,
   modules,
   initialModule,
@@ -101,7 +101,7 @@ export const NativefyApp: React.FC<NativefyAppProps> = ({
 
   // Manejar estado y handlers
   const [{ isReady, error }, { handleModulesLoaded, handleError, handleRetry }] =
-    useNativefyAppHandlers(onReady, onError, adapters);
+    useNatifyAppHandlers(onReady, onError, adapters);
 
   // Pantalla de error
   if (error) {
@@ -115,7 +115,7 @@ export const NativefyApp: React.FC<NativefyAppProps> = ({
   }
 
   return (
-    <NativefyProvider adapters={adapters}>
+    <NatifyProvider adapters={adapters}>
       <ModuleProvider modules={modules} onModulesLoaded={handleModulesLoaded} onError={handleError}>
         <NavigationContainer theme={theme} deeplinkConfig={deeplinkConfig}>
           {!isReady ? (
@@ -129,6 +129,6 @@ export const NativefyApp: React.FC<NativefyAppProps> = ({
           )}
         </NavigationContainer>
       </ModuleProvider>
-    </NativefyProvider>
+    </NatifyProvider>
   );
 };

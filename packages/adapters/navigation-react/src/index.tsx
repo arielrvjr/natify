@@ -20,7 +20,7 @@ import {
   NavigationListener,
   ModuleDefinition,
   useModules,
-} from '@nativefy/core';
+} from '@natify/core';
 
 const Stack = createNativeStackNavigator();
 
@@ -320,8 +320,8 @@ function createNavigationContainerWrapper(
  *   },
  * });
  *
- * // En NativefyApp
- * <NativefyApp
+ * // En NatifyApp
+ * <NatifyApp
  *   adapters={{ navigation: navigationAdapter }}
  *   modules={[...]}
  * />

@@ -1,48 +1,14 @@
-const mockCheck = jest.fn();
-const mockRequest = jest.fn();
-const mockOpenSettings = jest.fn();
+// Import setup first to ensure mocks are in place
+import './setup';
 
-jest.mock('react-native-permissions', () => ({
-  check: mockCheck,
-  request: mockRequest,
-  openSettings: mockOpenSettings,
-  PERMISSIONS: {
-    IOS: {
-      CAMERA: 'ios.permission.CAMERA',
-      PHOTO_LIBRARY: 'ios.permission.PHOTO_LIBRARY',
-      LOCATION_WHEN_IN_USE: 'ios.permission.LOCATION_WHEN_IN_USE',
-      REMINDERS: 'ios.permission.REMINDERS',
-      MICROPHONE: 'ios.permission.MICROPHONE',
-      FACE_ID: 'ios.permission.FACE_ID',
-    },
-    ANDROID: {
-      CAMERA: 'android.permission.CAMERA',
-      READ_EXTERNAL_STORAGE: 'android.permission.READ_EXTERNAL_STORAGE',
-      ACCESS_FINE_LOCATION: 'android.permission.ACCESS_FINE_LOCATION',
-      RECORD_AUDIO: 'android.permission.RECORD_AUDIO',
-    },
-  },
-  RESULTS: {
-    GRANTED: 'granted',
-    DENIED: 'denied',
-    BLOCKED: 'blocked',
-    UNAVAILABLE: 'unavailable',
-    LIMITED: 'limited',
-  },
-}));
-
-jest.mock('react-native', () => ({
-  Platform: {
-    OS: 'ios',
-  },
-  StyleSheet: {
-    create: jest.fn((styles) => styles),
-    flatten: jest.fn((style) => style),
-  },
-}));
-
+import { check, request, openSettings } from 'react-native-permissions';
 import { RnPermissionsAdapter } from '../src';
-import { PermissionStatus, NativefyError } from '@nativefy/core';
+import { PermissionStatus, NatifyError } from '@natify/core';
+
+// Get the mocked functions
+const mockCheck = check as jest.MockedFunction<typeof check>;
+const mockRequest = request as jest.MockedFunction<typeof request>;
+const mockOpenSettings = openSettings as jest.MockedFunction<typeof openSettings>;
 
 describe('RnPermissionsAdapter', () => {
   let adapter: RnPermissionsAdapter;
@@ -100,11 +66,11 @@ describe('RnPermissionsAdapter', () => {
       expect(result).toBe(PermissionStatus.GRANTED);
     });
 
-    it('should throw NativefyError when check fails', async () => {
+    it('should throw NatifyError when check fails', async () => {
       const error = new Error('Check failed');
       mockCheck.mockRejectedValue(error);
 
-      await expect(adapter.check('camera')).rejects.toThrow(NativefyError);
+      await expect(adapter.check('camera')).rejects.toThrow(NatifyError);
       await expect(adapter.check('camera')).rejects.toThrow('Error al verificar permiso: camera');
     });
   });
@@ -135,11 +101,11 @@ describe('RnPermissionsAdapter', () => {
       expect(result).toBe(PermissionStatus.BLOCKED);
     });
 
-    it('should throw NativefyError when request fails', async () => {
+    it('should throw NatifyError when request fails', async () => {
       const error = new Error('Request failed');
       mockRequest.mockRejectedValue(error);
 
-      await expect(adapter.request('camera')).rejects.toThrow(NativefyError);
+      await expect(adapter.request('camera')).rejects.toThrow(NatifyError);
       await expect(adapter.request('camera')).rejects.toThrow('Error al solicitar permiso: camera');
     });
   });
@@ -153,11 +119,11 @@ describe('RnPermissionsAdapter', () => {
       expect(mockOpenSettings).toHaveBeenCalled();
     });
 
-    it('should throw NativefyError when openSettings fails', async () => {
+    it('should throw NatifyError when openSettings fails', async () => {
       const error = new Error('Open settings failed');
       mockOpenSettings.mockRejectedValue(error);
 
-      await expect(adapter.openSettings()).rejects.toThrow(NativefyError);
+      await expect(adapter.openSettings()).rejects.toThrow(NatifyError);
       await expect(adapter.openSettings()).rejects.toThrow('Error al abrir configuración del sistema');
     });
   });
@@ -213,7 +179,7 @@ describe('RnPermissionsAdapter', () => {
 
     it('should throw error for unsupported permission type', async () => {
       // El error se lanza en mapToNativePermission y se captura en check
-      await expect(adapter.check('unsupported' as any)).rejects.toThrow(NativefyError);
+      await expect(adapter.check('unsupported' as any)).rejects.toThrow(NatifyError);
       await expect(adapter.check('unsupported' as any)).rejects.toThrow(
         'Error al verificar permiso: unsupported',
       );

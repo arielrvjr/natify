@@ -1,4 +1,4 @@
-import { createModule, actionBus, LoggerPort } from "@nativefy/core";
+import { createModule, actionBus, LoggerPort } from "@natify/core";
 
 // Screens
 import { LoginScreen } from "./screens/LoginScreen";

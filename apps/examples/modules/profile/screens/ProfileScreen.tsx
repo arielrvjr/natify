@@ -13,7 +13,7 @@ import {
   Loading,
   Divider,
   Icon,
-} from '@nativefy/ui';
+} from '@natify/ui';
 import { useProfileViewModel } from '../viewmodels/useProfileViewModel';
 
 export function ProfileScreen() {

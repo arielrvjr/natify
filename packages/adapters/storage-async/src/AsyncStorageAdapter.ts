@@ -1,5 +1,6 @@
-import { StoragePort } from '@nativefy/core';
+import { StoragePort } from '@natify/core';
 import AsyncStorage, { AsyncStorageStatic } from '@react-native-async-storage/async-storage';
+import { serializeValue } from './utils/serializers';
 
 export class AsyncStorageAdapter implements StoragePort {
   readonly capability = 'storage';
@@ -26,15 +27,7 @@ export class AsyncStorageAdapter implements StoragePort {
   }
 
   async setItem<T = string>(key: string, value: T): Promise<void> {
-    if (typeof value === 'object') {
-      this.storage.setItem(key, JSON.stringify(value));
-    } else if (typeof value === 'string') {
-      this.storage.setItem(key, value);
-    } else if (typeof value === 'number') {
-      this.storage.setItem(key, value.toString());
-    } else if (typeof value === 'boolean') {
-      this.storage.setItem(key, value.valueOf().toString());
-    }
+    await this.storage.setItem(key, serializeValue(value));
   }
 
   async removeItem(key: string): Promise<void> {

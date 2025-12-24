@@ -1,16 +1,16 @@
-import { NativefyError, NativefyErrorCode } from '../../errors';
+import { NatifyError, NatifyErrorCode } from '../../errors';
 
 /**
- * Convierte un error desconocido a NativefyError
+ * Convierte un error desconocido a NatifyError
  *
  * @param err - Error a convertir
- * @returns NativefyError
+ * @returns NatifyError
  */
-export function toNativefyError(err: unknown): NativefyError {
-  if (err instanceof NativefyError) {
+export function toNatifyError(err: unknown): NatifyError {
+  if (err instanceof NatifyError) {
     return err;
   }
 
   const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-  return new NativefyError(NativefyErrorCode.UNKNOWN, errorMessage, err);
+  return new NatifyError(NatifyErrorCode.UNKNOWN, errorMessage, err);
 }

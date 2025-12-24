@@ -4,7 +4,7 @@ import {
   useUseCase,
   useAdapter,
   NavigationPort,
-} from "@nativefy/core";
+} from "@natify/core";
 import { GetProductsUseCase, Product } from "../usecases/GetProductsUseCase";
 
 export function useProductListViewModel() {

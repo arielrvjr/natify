@@ -17,7 +17,7 @@ jest.mock('react-native', () => ({
 }));
 
 import { RnImagePickerAdapter } from '../src';
-import { NativefyError } from '@nativefy/core';
+import { NatifyError } from '@natify/core';
 
 describe('RnImagePickerAdapter', () => {
   let adapter: RnImagePickerAdapter;
@@ -101,7 +101,7 @@ describe('RnImagePickerAdapter', () => {
       expect(result).toBeNull();
     });
 
-    it('should throw NativefyError when error occurs', async () => {
+    it('should throw NatifyError when error occurs', async () => {
       const mockResponse = {
         didCancel: false,
         errorCode: 'permission',
@@ -113,7 +113,7 @@ describe('RnImagePickerAdapter', () => {
         callback(mockResponse);
       });
 
-      await expect(adapter.pickImage()).rejects.toThrow(NativefyError);
+      await expect(adapter.pickImage()).rejects.toThrow(NatifyError);
       await expect(adapter.pickImage()).rejects.toThrow('Error al seleccionar imagen');
     });
 
@@ -184,7 +184,7 @@ describe('RnImagePickerAdapter', () => {
         callback(mockResponse);
       });
 
-      await expect(adapter.pickImage()).rejects.toThrow(NativefyError);
+      await expect(adapter.pickImage()).rejects.toThrow(NatifyError);
     });
 
     it('should handle empty uri in mapResponseToResult', async () => {
@@ -272,7 +272,7 @@ describe('RnImagePickerAdapter', () => {
       expect(result).toBeNull();
     });
 
-    it('should throw NativefyError when error occurs', async () => {
+    it('should throw NatifyError when error occurs', async () => {
       const mockResponse = {
         didCancel: false,
         errorCode: 'camera_unavailable',
@@ -284,7 +284,7 @@ describe('RnImagePickerAdapter', () => {
         callback(mockResponse);
       });
 
-      await expect(adapter.takePhoto()).rejects.toThrow(NativefyError);
+      await expect(adapter.takePhoto()).rejects.toThrow(NatifyError);
       await expect(adapter.takePhoto()).rejects.toThrow('Error al tomar foto');
     });
 
@@ -300,7 +300,7 @@ describe('RnImagePickerAdapter', () => {
         callback(mockResponse);
       });
 
-      await expect(adapter.takePhoto()).rejects.toThrow(NativefyError);
+      await expect(adapter.takePhoto()).rejects.toThrow(NatifyError);
     });
 
     it('should pass options to launchCamera', async () => {
@@ -409,7 +409,7 @@ describe('RnImagePickerAdapter', () => {
       expect(result).toEqual([]);
     });
 
-    it('should throw NativefyError when error occurs', async () => {
+    it('should throw NatifyError when error occurs', async () => {
       const mockResponse = {
         didCancel: false,
         errorCode: 'permission',
@@ -421,7 +421,7 @@ describe('RnImagePickerAdapter', () => {
         callback(mockResponse);
       });
 
-      await expect(adapter.pickMultipleImages()).rejects.toThrow(NativefyError);
+      await expect(adapter.pickMultipleImages()).rejects.toThrow(NatifyError);
       await expect(adapter.pickMultipleImages()).rejects.toThrow('Error al seleccionar imágenes');
     });
 

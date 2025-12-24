@@ -1,7 +1,7 @@
 import { GetAdapterUseCase } from '../GetAdapterUseCase';
 import { DIContainer } from '../../Container';
 import { Port } from '../../../ports/Port';
-import { NativefyError, NativefyErrorCode } from '../../../errors';
+import { NatifyError, NatifyErrorCode } from '../../../errors';
 
 describe('GetAdapterUseCase', () => {
   let container: DIContainer;
@@ -46,17 +46,17 @@ describe('GetAdapterUseCase', () => {
       expect(result).toBe(mockAdapter);
     });
 
-    it('should throw NativefyError when adapter not found', () => {
+    it('should throw NatifyError when adapter not found', () => {
       expect(() => {
         useCase.execute('nonexistent');
-      }).toThrow(NativefyError);
+      }).toThrow(NatifyError);
 
       try {
         useCase.execute('nonexistent');
       } catch (error) {
-        expect(error).toBeInstanceOf(NativefyError);
-        if (error instanceof NativefyError) {
-          expect(error.code).toBe(NativefyErrorCode.VALIDATION_ERROR);
+        expect(error).toBeInstanceOf(NatifyError);
+        if (error instanceof NatifyError) {
+          expect(error.code).toBe(NatifyErrorCode.VALIDATION_ERROR);
           expect(error.message).toContain('No adapter found for "nonexistent"');
           expect(error.context).toEqual({ lookupKey: 'nonexistent' });
         }

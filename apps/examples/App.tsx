@@ -2,14 +2,14 @@ import React, { StrictMode } from 'react';
 import { StatusBar, Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { NativefyApp } from '@nativefy/core';
-import { AxiosHttpAdapter } from '@nativefy/http-axios';
-import { MMKVStorageAdapter } from '@nativefy/storage-mmkv';
-import { KeychainStorageAdapter } from '@nativefy/storage-keychain';
-import { createReactNavigationAdapter } from '@nativefy/navigation-react';
-import { RnBiometricAdapter } from '@nativefy/biometrics-rn';
-import { RnPermissionsAdapter } from '@nativefy/permissions-rn';
-import { RnImagePickerAdapter } from '@nativefy/image-picker-rn';
+import { NatifyApp } from '@natify/core';
+import { AxiosHttpAdapter } from '@natify/http-axios';
+import { MMKVStorageAdapter } from '@natify/storage-mmkv';
+import { KeychainStorageAdapter } from '@natify/storage-keychain';
+import { createReactNavigationAdapter } from '@natify/navigation-react';
+import { RnBiometricAdapter } from '@natify/biometrics-rn';
+import { RnPermissionsAdapter } from '@natify/permissions-rn';
+import { RnImagePickerAdapter } from '@natify/image-picker-rn';
 // Módulos
 import {
   AuthModule,
@@ -17,7 +17,7 @@ import {
   ProfileModule,
   SharedModule,
 } from './modules';
-import { ThemeProvider, useTheme } from '@nativefy/ui';
+import { ThemeProvider, useTheme } from '@natify/ui';
 
 // Crear adapters
 const httpAdapter = new AxiosHttpAdapter(
@@ -37,8 +37,8 @@ const secureStorageAdapter = new KeychainStorageAdapter();
 // Configurar adapter de navegación con deeplinks
 const navigationAdapter = createReactNavigationAdapter({
   prefixes: [
-    'nativefy://', // Custom scheme
-    'https://nativefy.app', // HTTPS (requiere configuración nativa)
+    'natify://', // Custom scheme
+    'https://natify.app', // HTTPS (requiere configuración nativa)
   ],
   // Configuración personalizada opcional
   // Si no se proporciona, se genera automáticamente desde los módulos
@@ -88,7 +88,7 @@ function ThemedApp() {
         }
         translucent={Platform.OS === 'android'}
       />
-      <NativefyApp
+      <NatifyApp
         adapters={adapters}
         modules={modules}
         initialModule="auth"

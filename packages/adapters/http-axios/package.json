@@ -1,5 +1,5 @@
 {
-  "name": "@nativefy/http-axios",
+  "name": "@natify/http-axios",
   "version": "0.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,12 +19,12 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\""
   },
   "devDependencies": {
-    "@nativefy/core": "workspace:*",
+    "@natify/core": "workspace:*",
     "typescript": "*",
     "axios": "^1.6.0"
   },
   "peerDependencies": {
-    "@nativefy/core": "*",
+    "@natify/core": "*",
     "axios": "^1.6.0"
   }
 }

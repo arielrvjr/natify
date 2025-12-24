@@ -11,7 +11,7 @@ import {
   Spacer,
   Loading,
   EmptyState,
-} from '@nativefy/ui';
+} from '@natify/ui';
 import { useProductDetailViewModel } from '../viewmodels/useProductDetailViewModel';
 
 export function ProductDetailScreen() {

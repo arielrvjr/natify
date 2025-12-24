@@ -23,7 +23,7 @@ describe('module/validation', () => {
 
       expect(() => {
         validateAdaptersConfig(adapters, ['http', 'storage']);
-      }).toThrow('[Nativefy] Adapter configuration errors:');
+      }).toThrow('[Natify] Adapter configuration errors:');
       expect(() => {
         validateAdaptersConfig(adapters, ['http', 'storage']);
       }).toThrow("Missing required adapter: 'storage'");

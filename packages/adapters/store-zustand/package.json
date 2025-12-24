@@ -1,5 +1,5 @@
 {
-  "name": "@nativefy/store-zustand",
+  "name": "@natify/store-zustand",
   "version": "0.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -17,7 +17,7 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\""
   },
   "peerDependencies": {
-    "@nativefy/core": "workspace:*",
+    "@natify/core": "workspace:*",
     "zustand": "^5.0.9"
   }
 }

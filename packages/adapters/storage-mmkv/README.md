@@ -1,6 +1,6 @@
-# @nativefy/storage-mmkv
+# @natify/storage-mmkv
 
-The **High Performance Storage Adapter** for the Nativefy Framework.
+The **High Performance Storage Adapter** for the Natify Framework.
 This package implements the `IAsyncStorage` interface using [react-native-mmkv](https://www.google.com/search?q=https://github.com/mamous/react-native-mmkv), which is roughly **30x faster** than the standard AsyncStorage
 
 **Architectural Note:** Although MMKV is synchronous by nature, this adapter wraps operations in Promises to maintain interchangeability with other `IAsyncStorage` implementations (like Keychain or filesystem-based storage).
@@ -14,7 +14,7 @@ Since this is an adapter, you must install both the package and its native drive
 **Bash**
 
 ```
-pnpm add @nativefy/storage-mmkv react-native-mmkv
+pnpm add @natify/storage-mmkv react-native-mmkv
 ```
 
 ### Using yarn
@@ -22,7 +22,7 @@ pnpm add @nativefy/storage-mmkv react-native-mmkv
 **Bash**
 
 ```
-yarn add @nativefy/storage-mmkv react-native-mmkv
+yarn add @natify/storage-mmkv react-native-mmkv
 ```
 
 ### Native Linking (Required)
@@ -41,14 +41,14 @@ pnpm run android # or pnpm run ios
 
 ## Setup & Integration
 
-Register this adapter in your `NativefyProvider` configuration at the root of your application (`App.tsx`).
+Register this adapter in your `NatifyProvider` configuration at the root of your application (`App.tsx`).
 
 **TypeScript**
 
 ```
-import { NativefyProvider } from '@nativefy/core';
-import { MMKVAdapter } from '@nativefy/storage-mmkv';
-import { AxiosHttpAdapter } from '@nativefy/http-axios';
+import { NatifyProvider } from '@natify/core';
+import { MMKVAdapter } from '@natify/storage-mmkv';
+import { AxiosHttpAdapter } from '@natify/http-axios';
 
 // 1. Instantiate the adapter
 // Optional: You can pass an instance ID for data isolation
@@ -68,9 +68,9 @@ const config = {
 
 export default function App() {
   return (
-    <NativefyProvider config={config}>
+    <NatifyProvider config={config}>
       <YourMainNavigator />
-    </NativefyProvider>
+    </NatifyProvider>
   );
 }
 ```
@@ -88,8 +88,8 @@ Get the first available adapter that handles `'storage'`.
 **TypeScript**
 
 ```
-import { useAdapter } from '@nativefy/core';
-import { IAsyncStorage } from '@nativefy/core/interfaces';
+import { useAdapter } from '@natify/core';
+import { IAsyncStorage } from '@natify/core/interfaces';
 
 const SettingsScreen = () => {
   // Returns the default storage adapter
@@ -108,8 +108,8 @@ If you registered it as `'storage-fast'` in the config.
 **TypeScript**
 
 ```
-import { useAdapter } from '@nativefy/core';
-import { IAsyncStorage } from '@nativefy/core/interfaces';
+import { useAdapter } from '@natify/core';
+import { IAsyncStorage } from '@natify/core/interfaces';
 
 const CacheManager = () => {
   // Explicitly request the fast storage (MMKV)

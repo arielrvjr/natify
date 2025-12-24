@@ -1,11 +1,11 @@
-# @nativefy/storage-async
+# @natify/storage-async
 
-Adapter de almacenamiento para Nativefy Framework usando `@react-native-async-storage/async-storage`.
+Adapter de almacenamiento para Natify Framework usando `@react-native-async-storage/async-storage`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy/storage-async @react-native-async-storage/async-storage
+pnpm add @natify/storage-async @react-native-async-storage/async-storage
 ```
 
 ## Cuándo Usar
@@ -32,8 +32,8 @@ pnpm add @nativefy/storage-async @react-native-async-storage/async-storage
 ### Configuración del Provider
 
 ```typescript
-import { NativefyProvider } from "@nativefy/core";
-import { AsyncStorageAdapter } from "@nativefy/storage-async";
+import { NatifyProvider } from "@natify/core";
+import { AsyncStorageAdapter } from "@natify/storage-async";
 
 const config = {
   storage: new AsyncStorageAdapter(),
@@ -42,9 +42,9 @@ const config = {
 
 function App() {
   return (
-    <NativefyProvider config={config}>
+    <NatifyProvider config={config}>
       <MyApp />
-    </NativefyProvider>
+    </NatifyProvider>
   );
 }
 ```
@@ -52,7 +52,7 @@ function App() {
 ### Uso en Componentes
 
 ```typescript
-import { useAdapter, StoragePort } from "@nativefy/core";
+import { useAdapter, StoragePort } from "@natify/core";
 
 function SettingsScreen() {
   const storage = useAdapter<StoragePort>("storage");

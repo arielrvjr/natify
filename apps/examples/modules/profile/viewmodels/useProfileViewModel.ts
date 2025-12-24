@@ -6,7 +6,7 @@ import {
   useAdapter,
   NavigationPort,
   LoggerPort,
-} from "@nativefy/core";
+} from "@natify/core";
 import { GetProfileUseCase } from "../usecases/GetProfileUseCase";
 import { User } from "../../auth/usecases/LoginUseCase";
 

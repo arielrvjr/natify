@@ -1,5 +1,5 @@
 import React from 'react';
-import { Avatar } from '@nativefy/ui';
+import { Avatar } from '@natify/ui';
 import { useProductListViewModel } from '../viewmodels/useProductListViewModel';
 
 /**

@@ -47,7 +47,7 @@ const updated = await updateDarkMode.execute(true);
 ## Uso en ViewModels
 
 ```typescript
-import { useUseCase } from '@nativefy/core';
+import { useUseCase } from '@natify/core';
 import { GetAppPreferencesUseCase } from '../../shared/usecases/GetAppPreferencesUseCase';
 import { UpdateDarkModeUseCase } from '../../shared/usecases/UpdateDarkModeUseCase';
 

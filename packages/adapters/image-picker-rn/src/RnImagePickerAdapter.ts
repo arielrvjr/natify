@@ -9,9 +9,9 @@ import {
   ImagePickerPort,
   ImagePickerOptions,
   ImagePickerResult,
-  NativefyError,
-  NativefyErrorCode,
-} from '@nativefy/core';
+  NatifyError,
+  NatifyErrorCode,
+} from '@natify/core';
 
 export class RnImagePickerAdapter implements ImagePickerPort {
   readonly capability = 'image-picker';
@@ -21,7 +21,7 @@ export class RnImagePickerAdapter implements ImagePickerPort {
       const result = await this.launchImageLibrary(options);
       return this.mapResponseToResult(result);
     } catch (error) {
-      throw new NativefyError(NativefyErrorCode.UNKNOWN, 'Error al seleccionar imagen', error, {
+      throw new NatifyError(NatifyErrorCode.UNKNOWN, 'Error al seleccionar imagen', error, {
         options,
       });
     }
@@ -32,7 +32,7 @@ export class RnImagePickerAdapter implements ImagePickerPort {
       const result = await this.launchCamera(options);
       return this.mapResponseToResult(result);
     } catch (error) {
-      throw new NativefyError(NativefyErrorCode.UNKNOWN, 'Error al tomar foto', error, { options });
+      throw new NatifyError(NatifyErrorCode.UNKNOWN, 'Error al tomar foto', error, { options });
     }
   }
 
@@ -44,7 +44,7 @@ export class RnImagePickerAdapter implements ImagePickerPort {
       });
       return this.mapMultipleResponseToResults(result);
     } catch (error) {
-      throw new NativefyError(NativefyErrorCode.UNKNOWN, 'Error al seleccionar imágenes', error, {
+      throw new NatifyError(NatifyErrorCode.UNKNOWN, 'Error al seleccionar imágenes', error, {
         options,
       });
     }

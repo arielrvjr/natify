@@ -1,11 +1,11 @@
-# @nativefy/error-reporting-sentry
+# @natify/error-reporting-sentry
 
-Adapter de Error Reporting para Nativefy Framework usando Sentry.
+Adapter de Error Reporting para Natify Framework usando Sentry.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy/error-reporting-sentry @sentry/react-native
+pnpm add @natify/error-reporting-sentry @sentry/react-native
 ```
 
 ### Configuración Automática
@@ -47,8 +47,8 @@ No requiere configuración adicional después de ejecutar el wizard.
 ### Configuración Básica
 
 ```typescript
-import { NativefyProvider } from "@nativefy/core";
-import { SentryErrorReportingAdapter } from "@nativefy/error-reporting-sentry";
+import { NatifyProvider } from "@natify/core";
+import { SentryErrorReportingAdapter } from "@natify/error-reporting-sentry";
 
 const errorReporting = new SentryErrorReportingAdapter({
   dsn: "YOUR_SENTRY_DSN",
@@ -66,9 +66,9 @@ const config = {
 
 function App() {
   return (
-    <NativefyProvider config={config}>
+    <NatifyProvider config={config}>
       <MyApp />
-    </NativefyProvider>
+    </NatifyProvider>
   );
 }
 ```
@@ -93,7 +93,7 @@ const errorReporting = new SentryErrorReportingAdapter({
 ### Capturar Excepción
 
 ```typescript
-import { useAdapter, ErrorReportingPort, SeverityLevel } from "@nativefy/core";
+import { useAdapter, ErrorReportingPort, SeverityLevel } from "@natify/core";
 
 function MyComponent() {
   const errorReporting = useAdapter<ErrorReportingPort>("errorReporting");
@@ -135,15 +135,15 @@ errorReporting.captureMessage("Payment gateway unavailable", SeverityLevel.ERROR
 });
 ```
 
-### Con NativefyError
+### Con NatifyError
 
 ```typescript
-import { NativefyError, NativefyErrorCode } from "@nativefy/core";
+import { NatifyError, NatifyErrorCode } from "@natify/core";
 
 try {
   await operation();
 } catch (error) {
-  if (error instanceof NativefyError) {
+  if (error instanceof NatifyError) {
     errorReporting.captureException(error, {
       errorCode: error.code,
       context: error.context,
@@ -159,7 +159,7 @@ try {
 ### Establecer Usuario
 
 ```typescript
-import { useAdapter, ErrorReportingPort } from "@nativefy/core";
+import { useAdapter, ErrorReportingPort } from "@natify/core";
 
 function useAuth() {
   const errorReporting = useAdapter<ErrorReportingPort>("errorReporting");
@@ -284,7 +284,7 @@ errorReporting.setContext("navigation", {
 
 ```typescript
 import { ErrorBoundary } from "@sentry/react-native";
-import { NativefyProvider } from "@nativefy/core";
+import { NatifyProvider } from "@natify/core";
 
 function App() {
   const errorReporting = new SentryErrorReportingAdapter({
@@ -295,9 +295,9 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <NativefyProvider config={{ errorReporting, ...otherAdapters }}>
+      <NatifyProvider config={{ errorReporting, ...otherAdapters }}>
         <MyApp />
-      </NativefyProvider>
+      </NatifyProvider>
     </ErrorBoundary>
   );
 }
@@ -306,7 +306,7 @@ function App() {
 ### Capturar Errores en UseCase
 
 ```typescript
-import { ErrorReportingPort, HttpClientPort } from "@nativefy/core";
+import { ErrorReportingPort, HttpClientPort } from "@natify/core";
 
 export class PurchaseProductUseCase {
   constructor(
@@ -377,8 +377,8 @@ const trackPerformance = async (operation: string, fn: () => Promise<void>) => {
 ### Integración con BaseViewModel
 
 ```typescript
-import { useBaseViewModel } from "@nativefy/core";
-import { useAdapter, ErrorReportingPort } from "@nativefy/core";
+import { useBaseViewModel } from "@natify/core";
+import { useAdapter, ErrorReportingPort } from "@natify/core";
 
 function useMyViewModel() {
   const [baseState, { execute }] = useBaseViewModel();
@@ -407,7 +407,7 @@ function useMyViewModel() {
 ### Capturar Errores de Red
 
 ```typescript
-import { NativefyError, NativefyErrorCode } from "@nativefy/core";
+import { NatifyError, NatifyErrorCode } from "@natify/core";
 
 // En un interceptor HTTP
 const httpAdapter = new AxiosHttpAdapter("https://api.example.com", {}, {
@@ -428,7 +428,7 @@ const httpAdapter = new AxiosHttpAdapter("https://api.example.com", {}, {
 ## Integración con Módulos
 
 ```typescript
-import { createModule } from "@nativefy/core";
+import { createModule } from "@natify/core";
 import { PurchaseProductUseCase } from "./usecases/PurchaseProductUseCase";
 
 export const ProductsModule = createModule("products", "Products")

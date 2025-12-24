@@ -1,5 +1,5 @@
-import { createModule } from "@nativefy/core";
-import { createTopAppBarHeader } from "@nativefy/ui";
+import { createModule } from "@natify/core";
+import { createTopAppBarHeader } from "@natify/ui";
 import React from "react";
 
 // Screens

@@ -1,11 +1,11 @@
-# @nativefy/permissions-rn
+# @natify/permissions-rn
 
-Adapter de permisos para Nativefy Framework usando `react-native-permissions`.
+Adapter de permisos para Natify Framework usando `react-native-permissions`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy/permissions-rn react-native-permissions
+pnpm add @natify/permissions-rn react-native-permissions
 ```
 
 ## Configuración Nativa
@@ -49,8 +49,8 @@ Agrega los permisos en `android/app/src/main/AndroidManifest.xml`:
 ### Configuración del Provider
 
 ```typescript
-import { NativefyProvider } from "@nativefy/core";
-import { RnPermissionsAdapter } from "@nativefy/permissions-rn";
+import { NatifyProvider } from "@natify/core";
+import { RnPermissionsAdapter } from "@natify/permissions-rn";
 
 const config = {
   permissions: new RnPermissionsAdapter(),
@@ -59,9 +59,9 @@ const config = {
 
 function App() {
   return (
-    <NativefyProvider config={config}>
+    <NatifyProvider config={config}>
       <MyApp />
-    </NativefyProvider>
+    </NatifyProvider>
   );
 }
 ```
@@ -69,7 +69,7 @@ function App() {
 ### Uso en Componentes
 
 ```typescript
-import { useAdapter, PermissionPort, PermissionStatus } from "@nativefy/core";
+import { useAdapter, PermissionPort, PermissionStatus } from "@natify/core";
 
 function CameraButton() {
   const permissions = useAdapter<PermissionPort>("permissions");
@@ -121,7 +121,7 @@ function CameraButton() {
 
 > **\* Notificaciones**: Las notificaciones push en iOS/Android se manejan de forma diferente y típicamente requieren librerías como `notifee` o `@react-native-firebase/messaging`. Este adapter proporciona un fallback básico.
 
-> **\*\* Biometrics en Android**: La autenticación biométrica en Android no requiere un permiso runtime explícito. Usa el `BiometricPort` con `@nativefy/biometrics-rn` para esta funcionalidad.
+> **\*\* Biometrics en Android**: La autenticación biométrica en Android no requiere un permiso runtime explícito. Usa el `BiometricPort` con `@natify/biometrics-rn` para esta funcionalidad.
 
 ## Estados de Permiso
 

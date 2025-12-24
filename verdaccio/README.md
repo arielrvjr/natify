@@ -1,6 +1,6 @@
-# Verdaccio Registry para Nativefy Framework
+# Verdaccio Registry para Natify Framework
 
-Este directorio contiene la configuración de Verdaccio, un registry privado de npm para publicar y distribuir los paquetes de Nativefy Framework.
+Este directorio contiene la configuración de Verdaccio, un registry privado de npm para publicar y distribuir los paquetes de Natify Framework.
 
 ## 🚀 Inicio Rápido
 

@@ -1,1 +1,1 @@
-export * from './NativefyProvider';
+export * from './NatifyProvider';

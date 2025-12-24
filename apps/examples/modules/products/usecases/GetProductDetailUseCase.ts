@@ -1,4 +1,4 @@
-import { HttpClientPort } from "@nativefy/core";
+import { HttpClientPort } from "@natify/core";
 import { Product } from "./GetProductsUseCase";
 
 /**

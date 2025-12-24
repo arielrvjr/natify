@@ -1,11 +1,11 @@
-# @nativefy/push-notification-notifee
+# @natify/push-notification-notifee
 
 Adapter de Push Notifications usando `react-native-notifee`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy/push-notification-notifee react-native-notifee
+pnpm add @natify/push-notification-notifee react-native-notifee
 ```
 
 ### iOS
@@ -21,8 +21,8 @@ No requiere configuración adicional.
 ## Uso
 
 ```typescript
-import { NotifeePushAdapter } from '@nativefy/push-notification-notifee';
-import { NativefyApp } from '@nativefy/core';
+import { NotifeePushAdapter } from '@natify/push-notification-notifee';
+import { NatifyApp } from '@natify/core';
 
 const pushAdapter = new NotifeePushAdapter();
 
@@ -31,7 +31,7 @@ const adapters = {
   // ... otros adapters
 };
 
-<NativefyApp adapters={adapters} modules={modules} />
+<NatifyApp adapters={adapters} modules={modules} />
 ```
 
 ## Características
@@ -51,8 +51,8 @@ const adapters = {
 ## Ejemplo
 
 ```typescript
-import { useAdapter } from '@nativefy/core';
-import { PushNotificationPort } from '@nativefy/core';
+import { useAdapter } from '@natify/core';
+import { PushNotificationPort } from '@natify/core';
 
 function MyComponent() {
   const push = useAdapter<PushNotificationPort>('pushNotification');

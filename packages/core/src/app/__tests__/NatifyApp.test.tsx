@@ -1,12 +1,12 @@
 import React from 'react';
-import { NativefyApp } from '../NativefyApp';
+import { NatifyApp } from '../NatifyApp';
 import { ModuleDefinition } from '../../module/types';
 import { AdapterMap } from '../../types/adapters';
 import { Port } from '../../ports/Port';
 
-// Mock NativefyProvider
-jest.mock('../../context/NativefyProvider', () => ({
-  NativefyProvider: ({ children }: { children: React.ReactNode }) => children,
+// Mock NatifyProvider
+jest.mock('../../context/NatifyProvider', () => ({
+  NatifyProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 // Mock ModuleProvider
@@ -33,16 +33,16 @@ jest.mock('react', () => {
   };
 });
 
-describe('NativefyApp', () => {
+describe('NatifyApp', () => {
   const mockModules: ModuleDefinition[] = [];
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe('NativefyApp component', () => {
+  describe('NatifyApp component', () => {
     it('should be a function component', () => {
-      expect(typeof NativefyApp).toBe('function');
+      expect(typeof NatifyApp).toBe('function');
     });
 
     it('should validate navigation adapter exists', () => {
@@ -56,9 +56,9 @@ describe('NativefyApp', () => {
       expect(() => {
         const nav = props.adapters.navigation;
         if (!nav) {
-          throw new Error('[NativefyApp] Navigation adapter is required');
+          throw new Error('[NatifyApp] Navigation adapter is required');
         }
-      }).toThrow('[NativefyApp] Navigation adapter is required');
+      }).toThrow('[NatifyApp] Navigation adapter is required');
     });
 
     it('should validate NavigationContainer exists', () => {
@@ -76,9 +76,9 @@ describe('NativefyApp', () => {
       expect(() => {
         const nav = props.adapters.navigation as any;
         if (!nav.NavigationContainer) {
-          throw new Error('[NativefyApp] Navigation adapter must provide NavigationContainer');
+          throw new Error('[NatifyApp] Navigation adapter must provide NavigationContainer');
         }
-      }).toThrow('[NativefyApp] Navigation adapter must provide NavigationContainer');
+      }).toThrow('[NatifyApp] Navigation adapter must provide NavigationContainer');
     });
 
     it('should validate AppNavigator exists', () => {
@@ -96,9 +96,9 @@ describe('NativefyApp', () => {
       expect(() => {
         const nav = props.adapters.navigation as any;
         if (!nav.AppNavigator) {
-          throw new Error('[NativefyApp] Navigation adapter must provide NavigationContainer');
+          throw new Error('[NatifyApp] Navigation adapter must provide NavigationContainer');
         }
-      }).toThrow('[NativefyApp] Navigation adapter must provide NavigationContainer');
+      }).toThrow('[NatifyApp] Navigation adapter must provide NavigationContainer');
     });
   });
 });

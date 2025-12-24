@@ -25,7 +25,7 @@ describe('MMKVStorageAdapter', () => {
     it('should create adapter with default instanceId', () => {
       expect(adapter).toBeDefined();
       expect(adapter.capability).toBe('storage');
-      expect(createMMKV).toHaveBeenCalledWith({ id: 'nativefy-storage' });
+      expect(createMMKV).toHaveBeenCalledWith({ id: 'natify-storage' });
     });
 
     it('should create adapter with custom instanceId', () => {

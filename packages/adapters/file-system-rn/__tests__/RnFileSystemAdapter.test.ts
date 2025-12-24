@@ -1,5 +1,5 @@
 import { RnFileSystemAdapter } from '../src';
-import { NativefyError } from '@nativefy/core';
+import { NatifyError } from '@natify/core';
 
 // Mock react-native-blob-util
 const mockFs = {
@@ -93,11 +93,11 @@ describe('RnFileSystemAdapter', () => {
       expect(content).toBe('base64content');
     });
 
-    it('should throw NativefyError on read error', async () => {
+    it('should throw NatifyError on read error', async () => {
       const error = new Error('Read failed');
       fs.readFile.mockRejectedValue(error);
 
-      await expect(adapter.readFile('/path/to/file.txt')).rejects.toThrow(NativefyError);
+      await expect(adapter.readFile('/path/to/file.txt')).rejects.toThrow(NatifyError);
       await expect(adapter.readFile('/path/to/file.txt')).rejects.toThrow('Failed to read file');
     });
   });
@@ -123,13 +123,13 @@ describe('RnFileSystemAdapter', () => {
       expect(fs.writeFile).toHaveBeenCalled();
     });
 
-    it('should throw NativefyError on write error', async () => {
+    it('should throw NatifyError on write error', async () => {
       const error = new Error('Write failed');
       fs.exists.mockResolvedValue(true);
       fs.writeFile.mockRejectedValue(error);
 
       await expect(adapter.writeFile('/path/to/file.txt', 'content')).rejects.toThrow(
-        NativefyError,
+        NatifyError,
       );
     });
   });
@@ -152,12 +152,12 @@ describe('RnFileSystemAdapter', () => {
       expect(fs.unlink).not.toHaveBeenCalled();
     });
 
-    it('should throw NativefyError on delete error', async () => {
+    it('should throw NatifyError on delete error', async () => {
       const error = new Error('Delete failed');
       fs.exists.mockResolvedValue(true);
       fs.unlink.mockRejectedValue(error);
 
-      await expect(adapter.deleteFile('/path/to/file.txt')).rejects.toThrow(NativefyError);
+      await expect(adapter.deleteFile('/path/to/file.txt')).rejects.toThrow(NatifyError);
     });
   });
 
@@ -211,12 +211,12 @@ describe('RnFileSystemAdapter', () => {
       expect(info).toBeNull();
     });
 
-    it('should throw NativefyError on stat error', async () => {
+    it('should throw NatifyError on stat error', async () => {
       const error = new Error('Stat failed');
       fs.exists.mockResolvedValue(true);
       fs.stat.mockRejectedValue(error);
 
-      await expect(adapter.getFileInfo('/path/to/file.txt')).rejects.toThrow(NativefyError);
+      await expect(adapter.getFileInfo('/path/to/file.txt')).rejects.toThrow(NatifyError);
     });
   });
 
@@ -239,12 +239,12 @@ describe('RnFileSystemAdapter', () => {
       expect(files).toEqual([]);
     });
 
-    it('should throw NativefyError on list error', async () => {
+    it('should throw NatifyError on list error', async () => {
       const error = new Error('List failed');
       fs.exists.mockResolvedValue(true);
       fs.ls.mockRejectedValue(error);
 
-      await expect(adapter.listFiles('/path/to/dir')).rejects.toThrow(NativefyError);
+      await expect(adapter.listFiles('/path/to/dir')).rejects.toThrow(NatifyError);
     });
   });
 
@@ -266,12 +266,12 @@ describe('RnFileSystemAdapter', () => {
       expect(fs.mkdir).not.toHaveBeenCalled();
     });
 
-    it('should throw NativefyError on mkdir error', async () => {
+    it('should throw NatifyError on mkdir error', async () => {
       const error = new Error('Mkdir failed');
       fs.exists.mockResolvedValue(false);
       fs.mkdir.mockRejectedValue(error);
 
-      await expect(adapter.mkdir('/path/to/new-dir')).rejects.toThrow(NativefyError);
+      await expect(adapter.mkdir('/path/to/new-dir')).rejects.toThrow(NatifyError);
     });
   });
 
@@ -287,11 +287,12 @@ describe('RnFileSystemAdapter', () => {
 
     it('should remove directory non-recursively', async () => {
       fs.exists.mockResolvedValue(true);
-      fs.rmdir.mockResolvedValue(undefined);
+      fs.unlink.mockResolvedValue(undefined);
 
       await adapter.rmdir('/path/to/dir', false);
 
-      expect(fs.rmdir).toHaveBeenCalledWith('/path/to/dir');
+      // react-native-blob-util solo tiene unlink, que elimina archivos y directorios
+      expect(fs.unlink).toHaveBeenCalledWith('/path/to/dir');
     });
 
     it('should not throw error if directory does not exist', async () => {
@@ -307,10 +308,9 @@ describe('RnFileSystemAdapter', () => {
   describe('downloadFile', () => {
     it('should download file successfully', async () => {
       const mockStat = { size: 2048, lastModified: Date.now() };
-      const mockFetchResult = {
-        progress: jest.fn().mockReturnThis(),
-      };
-      const mockFetch = jest.fn().mockResolvedValue(mockFetchResult);
+      const mockFetchResult = Promise.resolve();
+      mockFetchResult.progress = jest.fn().mockReturnValue(mockFetchResult);
+      const mockFetch = jest.fn().mockReturnValue(mockFetchResult);
       config.mockReturnValue({
         fetch: mockFetch,
       });
@@ -326,10 +326,9 @@ describe('RnFileSystemAdapter', () => {
 
     it('should create parent directory before download', async () => {
       const mockStat = { size: 2048 };
-      const mockFetchResult = {
-        progress: jest.fn().mockReturnThis(),
-      };
-      const mockFetch = jest.fn().mockResolvedValue(mockFetchResult);
+      const mockFetchResult = Promise.resolve();
+      mockFetchResult.progress = jest.fn().mockReturnValue(mockFetchResult);
+      const mockFetch = jest.fn().mockReturnValue(mockFetchResult);
       config.mockReturnValue({
         fetch: mockFetch,
       });
@@ -345,13 +344,12 @@ describe('RnFileSystemAdapter', () => {
     it('should call onProgress callback', async () => {
       const mockStat = { size: 2048 };
       const onProgress = jest.fn();
-      const mockFetchResult = {
-        progress: jest.fn((callback) => {
-          callback(1024, 2048);
-          return mockFetchResult;
-        }),
-      };
-      const mockFetch = jest.fn().mockResolvedValue(mockFetchResult);
+      const mockFetchResult = Promise.resolve();
+      mockFetchResult.progress = jest.fn((callback) => {
+        callback(1024, 2048);
+        return mockFetchResult;
+      });
+      const mockFetch = jest.fn().mockReturnValue(mockFetchResult);
       config.mockReturnValue({
         fetch: mockFetch,
       });
@@ -366,47 +364,42 @@ describe('RnFileSystemAdapter', () => {
       expect(onProgress).toHaveBeenCalledWith(1024, 2048);
     });
 
-    it('should throw NativefyError on download error', async () => {
+    it('should throw NatifyError on download error', async () => {
       fs.exists.mockResolvedValue(false);
       fs.mkdir.mockResolvedValue(undefined);
       
-      // Mock config para que retorne un objeto con fetch que rechace
-      // El código usa: ReactNativeBlobUtil.config(config).fetch('GET', url).progress(...)
-      // Así que config() devuelve un objeto con fetch()
-      // fetch() devuelve un objeto con progress() que devuelve this (el mismo objeto)
-      // El await se hace sobre el resultado de fetch(), así que fetch() debe devolver una promesa que rechace
-      // Pero primero debe devolver un objeto con progress() para que el código pueda llamarlo
-      const mockProgress = jest.fn().mockReturnThis();
+      // El código llama a: ReactNativeBlobUtil.config(config).fetch('GET', url).progress(...)
+      // fetch() debe devolver un objeto con progress() que devuelve una promesa que rechace
+      const downloadError = new Error('Download failed');
+      
+      // Crear un objeto que tenga un método progress() que devuelva una promesa rechazada
+      // Usar mockRejectedValue para que Jest maneje correctamente la promesa rechazada
       const mockFetchResult = {
-        progress: mockProgress,
+        progress: jest.fn().mockRejectedValue(downloadError),
       };
-      // fetch() debe devolver una promesa que rechace
-      // El problema es que el código llama a .progress() después de fetch(), así que necesitamos
-      // que fetch() devuelva un objeto con progress() primero, pero luego rechace
-      // La solución: hacer que fetch() devuelva una promesa que rechace directamente
-      // El objeto mockFetchResult no se necesita porque el error ocurre antes de llamar a progress()
-      const downloadError = { message: 'Download failed', name: 'Error' };
-      const mockFetchFn = jest.fn().mockRejectedValue(downloadError);
+      
+      const mockFetchFn = jest.fn().mockReturnValue(mockFetchResult);
       const mockConfigObj = {
         fetch: mockFetchFn,
       };
       config.mockReturnValue(mockConfigObj);
 
-      await expect(
-        adapter.downloadFile('https://example.com/file.txt', '/path/to/file.txt'),
-      ).rejects.toThrow(NativefyError);
+      await expect(async () => {
+        await adapter.downloadFile('https://example.com/file.txt', '/path/to/file.txt');
+      }).rejects.toThrow(NatifyError);
     });
   });
 
   describe('uploadFile', () => {
     it('should upload file successfully', async () => {
       const mockStat = { size: 1024 };
-      const mockFetchResult = {
-        progress: jest.fn().mockReturnThis(),
+      const mockFetchResult = Promise.resolve({
         info: jest.fn().mockReturnValue({ status: 200 }),
-        text: jest.fn().mockResolvedValue('{"success": true}'),
-      };
-      const mockFetch = jest.fn().mockResolvedValue(mockFetchResult);
+        json: jest.fn().mockReturnValue({ success: true }),
+        text: jest.fn().mockReturnValue('{"success": true}'),
+      });
+      mockFetchResult.uploadProgress = jest.fn().mockReturnValue(mockFetchResult);
+      const mockFetch = jest.fn().mockReturnValue(mockFetchResult);
       config.mockReturnValue({
         fetch: mockFetch,
       });
@@ -418,25 +411,34 @@ describe('RnFileSystemAdapter', () => {
       expect(result.status).toBe(200);
     });
 
-    it('should throw NativefyError if file does not exist', async () => {
+    it('should throw NatifyError if file does not exist', async () => {
       fs.exists.mockResolvedValue(false);
 
       await expect(
         adapter.uploadFile('/path/to/non-existent.txt', 'https://example.com/upload'),
-      ).rejects.toThrow(NativefyError);
+      ).rejects.toThrow(NatifyError);
     });
 
-    it('should throw NativefyError on upload error', async () => {
+    it('should throw NatifyError on upload error', async () => {
       const error = new Error('Upload failed');
       fs.exists.mockResolvedValue(true);
-      const mockFetch = jest.fn().mockRejectedValue(error);
+      fs.stat.mockResolvedValue({ size: 1024 });
+      
+      // El código llama a: ReactNativeBlobUtil.config(config).fetch('POST', url, headers, formData).uploadProgress(...)
+      // uploadProgress() debe devolver una promesa rechazada
+      // Usar mockRejectedValue para que Jest maneje correctamente la promesa rechazada
+      const mockFetchResult = {
+        uploadProgress: jest.fn().mockRejectedValue(error),
+      };
+      
+      const mockFetch = jest.fn().mockReturnValue(mockFetchResult);
       config.mockReturnValue({
         fetch: mockFetch,
       });
 
-      await expect(
-        adapter.uploadFile('/path/to/file.txt', 'https://example.com/upload'),
-      ).rejects.toThrow(NativefyError);
+      await expect(async () => {
+        await adapter.uploadFile('/path/to/file.txt', 'https://example.com/upload');
+      }).rejects.toThrow(NatifyError);
     });
   });
 });

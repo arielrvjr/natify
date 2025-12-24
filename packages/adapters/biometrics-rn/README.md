@@ -1,11 +1,11 @@
-# @nativefy/biometrics-rn
+# @natify/biometrics-rn
 
-Adapter de autenticación biométrica para Nativefy Framework usando `react-native-biometrics`.
+Adapter de autenticación biométrica para Natify Framework usando `react-native-biometrics`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy/biometrics-rn react-native-biometrics
+pnpm add @natify/biometrics-rn react-native-biometrics
 ```
 
 ## Configuración Nativa
@@ -28,8 +28,8 @@ No requiere configuración adicional. La librería usa el sistema biométrico na
 ### Configuración del Provider
 
 ```typescript
-import { NativefyProvider } from "@nativefy/core";
-import { RnBiometricAdapter } from "@nativefy/biometrics-rn";
+import { NatifyProvider } from "@natify/core";
+import { RnBiometricAdapter } from "@natify/biometrics-rn";
 
 const config = {
   biometrics: new RnBiometricAdapter(),
@@ -38,9 +38,9 @@ const config = {
 
 function App() {
   return (
-    <NativefyProvider config={config}>
+    <NatifyProvider config={config}>
       <MyApp />
-    </NativefyProvider>
+    </NatifyProvider>
   );
 }
 ```
@@ -48,7 +48,7 @@ function App() {
 ### Uso en Componentes
 
 ```typescript
-import { useAdapter, BiometricPort, BiometryType } from "@nativefy/core";
+import { useAdapter, BiometricPort, BiometryType } from "@natify/core";
 
 function SecureAction() {
   const biometrics = useAdapter<BiometricPort>("biometrics");

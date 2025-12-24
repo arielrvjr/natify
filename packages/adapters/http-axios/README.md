@@ -1,11 +1,11 @@
-# @nativefy/http-axios
+# @natify/http-axios
 
-Adapter HTTP para Nativefy Framework usando `axios`.
+Adapter HTTP para Natify Framework usando `axios`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy/http-axios axios
+pnpm add @natify/http-axios axios
 ```
 
 ## Uso
@@ -13,8 +13,8 @@ pnpm add @nativefy/http-axios axios
 ### Configuración del Provider
 
 ```typescript
-import { NativefyProvider } from "@nativefy/core";
-import { AxiosHttpAdapter } from "@nativefy/http-axios";
+import { NatifyProvider } from "@natify/core";
+import { AxiosHttpAdapter } from "@natify/http-axios";
 
 // Configuración básica
 const httpAdapter = new AxiosHttpAdapter("https://api.example.com");
@@ -56,9 +56,9 @@ const config = {
 
 function App() {
   return (
-    <NativefyProvider config={config}>
+    <NatifyProvider config={config}>
       <MyApp />
-    </NativefyProvider>
+    </NatifyProvider>
   );
 }
 ```
@@ -66,7 +66,7 @@ function App() {
 ### Uso en Componentes
 
 ```typescript
-import { useAdapter, HttpClientPort, NativefyError, NativefyErrorCode } from "@nativefy/core";
+import { useAdapter, HttpClientPort, NatifyError, NatifyErrorCode } from "@natify/core";
 
 interface User {
   id: number;
@@ -83,15 +83,15 @@ function UserList() {
       const response = await http.get<User[]>("/users");
       setUsers(response.data);
     } catch (error) {
-      if (error instanceof NativefyError) {
+      if (error instanceof NatifyError) {
         switch (error.code) {
-          case NativefyErrorCode.UNAUTHORIZED:
+          case NatifyErrorCode.UNAUTHORIZED:
             navigateToLogin();
             break;
-          case NativefyErrorCode.NETWORK_ERROR:
+          case NatifyErrorCode.NETWORK_ERROR:
             showToast("Sin conexión a internet");
             break;
-          case NativefyErrorCode.SERVER_ERROR:
+          case NatifyErrorCode.SERVER_ERROR:
             showToast("Error del servidor, intenta más tarde");
             break;
         }
@@ -216,9 +216,9 @@ interface HttpResponse<T> {
 
 ## Manejo de Errores
 
-El adapter convierte automáticamente los errores HTTP a `NativefyError`:
+El adapter convierte automáticamente los errores HTTP a `NatifyError`:
 
-| Código HTTP | NativefyErrorCode |
+| Código HTTP | NatifyErrorCode |
 |-------------|-------------------|
 | 401 | `UNAUTHORIZED` |
 | 403 | `FORBIDDEN` |

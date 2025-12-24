@@ -1,5 +1,5 @@
 {
-  "name": "@nativefy/permissions-rn",
+  "name": "@natify/permissions-rn",
   "version": "0.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -17,14 +17,14 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\""
   },
   "devDependencies": {
-    "@nativefy/core": "workspace:*",
+    "@natify/core": "workspace:*",
     "react": "*",
     "react-native": "*",
     "typescript": "*",
     "react-native-permissions": "^5.4.0"
   },
   "peerDependencies": {
-    "@nativefy/core": "*",
+    "@natify/core": "*",
     "react": "*",
     "react-native": "*",
     "react-native-permissions": "^5.4.0"

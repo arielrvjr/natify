@@ -1,5 +1,5 @@
 {
-  "name": "@nativefy/push-notification-firebase",
+  "name": "@natify/push-notification-firebase",
   "version": "0.0.1",
   "description": "Push Notification adapter using @react-native-firebase/messaging",
   "main": "dist/index.js",
@@ -16,12 +16,12 @@
     "lint:fix": "eslint src/ --fix"
   },
   "peerDependencies": {
-    "@nativefy/core": "*",
+    "@natify/core": "*",
     "@react-native-firebase/messaging": ">=20.0.0",
     "@notifee/react-native": ">=7.0.0"
   },
   "devDependencies": {
-    "@nativefy/core": "workspace:*",
+    "@natify/core": "workspace:*",
     "@react-native-firebase/messaging": "^20.0.0",
     "@notifee/react-native": "^7.8.2",
     "typescript": "*"
@@ -31,7 +31,7 @@
     "push-notification",
     "firebase",
     "fcm",
-    "nativefy"
+    "natify"
   ],
   "license": "MIT"
 }

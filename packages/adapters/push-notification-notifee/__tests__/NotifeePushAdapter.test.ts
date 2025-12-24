@@ -40,7 +40,7 @@ jest.mock('react-native', () => ({
 }));
 
 import { NotifeePushAdapter } from '../src';
-import { PushNotificationPriority, NativefyError } from '@nativefy/core';
+import { PushNotificationPriority, NatifyError } from '@natify/core';
 
 describe('NotifeePushAdapter', () => {
   let adapter: NotifeePushAdapter;
@@ -79,11 +79,11 @@ describe('NotifeePushAdapter', () => {
       expect(result).toBe(false);
     });
 
-    it('should throw NativefyError when request fails', async () => {
+    it('should throw NatifyError when request fails', async () => {
       const error = new Error('Permission request failed');
       mockNotifee.requestPermission.mockRejectedValue(error);
 
-      await expect(adapter.requestPermission()).rejects.toThrow(NativefyError);
+      await expect(adapter.requestPermission()).rejects.toThrow(NatifyError);
       await expect(adapter.requestPermission()).rejects.toThrow('Error al solicitar permisos de notificación');
     });
   });
@@ -110,11 +110,11 @@ describe('NotifeePushAdapter', () => {
       expect(result).toBe(false);
     });
 
-    it('should throw NativefyError when check fails', async () => {
+    it('should throw NatifyError when check fails', async () => {
       const error = new Error('Permission check failed');
       mockNotifee.getNotificationSettings.mockRejectedValue(error);
 
-      await expect(adapter.hasPermission()).rejects.toThrow(NativefyError);
+      await expect(adapter.hasPermission()).rejects.toThrow(NatifyError);
       await expect(adapter.hasPermission()).rejects.toThrow('Error al verificar permisos de notificación');
     });
   });
@@ -165,7 +165,7 @@ describe('NotifeePushAdapter', () => {
       expect(mockNotifee.createTriggerNotification).toHaveBeenCalled();
     });
 
-    it('should throw NativefyError when displayNotification fails', async () => {
+    it('should throw NatifyError when displayNotification fails', async () => {
       const error = new Error('Display notification failed');
       mockNotifee.displayNotification.mockRejectedValue(error);
 
@@ -174,7 +174,7 @@ describe('NotifeePushAdapter', () => {
           title: 'Test',
           body: 'Test body',
         }),
-      ).rejects.toThrow(NativefyError);
+      ).rejects.toThrow(NatifyError);
       await expect(
         adapter.displayNotification({
           title: 'Test',
@@ -193,11 +193,11 @@ describe('NotifeePushAdapter', () => {
       expect(mockNotifee.cancelNotification).toHaveBeenCalledWith('notification-id');
     });
 
-    it('should throw NativefyError when cancelNotification fails', async () => {
+    it('should throw NatifyError when cancelNotification fails', async () => {
       const error = new Error('Cancel notification failed');
       mockNotifee.cancelNotification.mockRejectedValue(error);
 
-      await expect(adapter.cancelNotification('notification-id')).rejects.toThrow(NativefyError);
+      await expect(adapter.cancelNotification('notification-id')).rejects.toThrow(NatifyError);
       await expect(adapter.cancelNotification('notification-id')).rejects.toThrow('Error al cancelar notificación');
     });
   });
@@ -211,11 +211,11 @@ describe('NotifeePushAdapter', () => {
       expect(mockNotifee.cancelAllNotifications).toHaveBeenCalled();
     });
 
-    it('should throw NativefyError when cancelAllNotifications fails', async () => {
+    it('should throw NatifyError when cancelAllNotifications fails', async () => {
       const error = new Error('Cancel all notifications failed');
       mockNotifee.cancelAllNotifications.mockRejectedValue(error);
 
-      await expect(adapter.cancelAllNotifications()).rejects.toThrow(NativefyError);
+      await expect(adapter.cancelAllNotifications()).rejects.toThrow(NatifyError);
       await expect(adapter.cancelAllNotifications()).rejects.toThrow('Error al cancelar todas las notificaciones');
     });
   });
@@ -241,11 +241,11 @@ describe('NotifeePushAdapter', () => {
       expect(result).toEqual([]);
     });
 
-    it('should throw NativefyError when getScheduledNotifications fails', async () => {
+    it('should throw NatifyError when getScheduledNotifications fails', async () => {
       const error = new Error('Get scheduled notifications failed');
       mockNotifee.getTriggerNotifications.mockRejectedValue(error);
 
-      await expect(adapter.getScheduledNotifications()).rejects.toThrow(NativefyError);
+      await expect(adapter.getScheduledNotifications()).rejects.toThrow(NatifyError);
       await expect(adapter.getScheduledNotifications()).rejects.toThrow('Error al obtener notificaciones programadas');
     });
   });
@@ -302,12 +302,12 @@ describe('NotifeePushAdapter', () => {
       expect(mockNotifee.createChannel).not.toHaveBeenCalled();
     });
 
-    it('should throw NativefyError when createChannel fails', async () => {
+    it('should throw NatifyError when createChannel fails', async () => {
       require('react-native').Platform.OS = 'android';
       const error = new Error('Create channel failed');
       mockNotifee.createChannel.mockRejectedValue(error);
 
-      await expect(adapter.createChannel('channel-id', 'Channel Name')).rejects.toThrow(NativefyError);
+      await expect(adapter.createChannel('channel-id', 'Channel Name')).rejects.toThrow(NatifyError);
       await expect(adapter.createChannel('channel-id', 'Channel Name')).rejects.toThrow('Error al crear canal de notificación');
     });
   });
@@ -331,12 +331,12 @@ describe('NotifeePushAdapter', () => {
       expect(mockNotifee.deleteChannel).not.toHaveBeenCalled();
     });
 
-    it('should throw NativefyError when deleteChannel fails', async () => {
+    it('should throw NatifyError when deleteChannel fails', async () => {
       require('react-native').Platform.OS = 'android';
       const error = new Error('Delete channel failed');
       mockNotifee.deleteChannel.mockRejectedValue(error);
 
-      await expect(adapter.deleteChannel('channel-id')).rejects.toThrow(NativefyError);
+      await expect(adapter.deleteChannel('channel-id')).rejects.toThrow(NatifyError);
       await expect(adapter.deleteChannel('channel-id')).rejects.toThrow('Error al eliminar canal de notificación');
     });
   });

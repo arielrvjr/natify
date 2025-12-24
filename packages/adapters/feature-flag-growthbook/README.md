@@ -1,11 +1,11 @@
-# @nativefy/feature-flag-growthbook
+# @natify/feature-flag-growthbook
 
-Adapter de Feature Flags para Nativefy Framework usando GrowthBook.
+Adapter de Feature Flags para Natify Framework usando GrowthBook.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy/feature-flag-growthbook @growthbook/growthbook-react
+pnpm add @natify/feature-flag-growthbook @growthbook/growthbook-react
 ```
 
 ### Para Streaming en Tiempo Real (Opcional)
@@ -39,8 +39,8 @@ No requiere configuración adicional.
 ### Configuración Básica
 
 ```typescript
-import { NativefyProvider } from "@nativefy/core";
-import { GrowthBookFeatureFlagAdapter } from "@nativefy/feature-flag-growthbook";
+import { NatifyProvider } from "@natify/core";
+import { GrowthBookFeatureFlagAdapter } from "@natify/feature-flag-growthbook";
 
 const featureFlags = new GrowthBookFeatureFlagAdapter({
   clientKey: "YOUR_GROWTHBOOK_CLIENT_KEY",
@@ -53,9 +53,9 @@ const config = {
 
 function App() {
   return (
-    <NativefyProvider config={config}>
+    <NatifyProvider config={config}>
       <MyApp />
-    </NativefyProvider>
+    </NatifyProvider>
   );
 }
 ```
@@ -104,7 +104,7 @@ await featureFlags.init();
 ### Verificar Si Está Habilitado
 
 ```typescript
-import { useAdapter, FeatureFlagPort } from "@nativefy/core";
+import { useAdapter, FeatureFlagPort } from "@natify/core";
 
 function PremiumFeature() {
   const featureFlags = useAdapter<FeatureFlagPort>("featureflags");
@@ -181,7 +181,7 @@ function FeatureGate() {
 ### Establecer Atributos (Identificar Usuario)
 
 ```typescript
-import { useAdapter, FeatureFlagPort } from "@nativefy/core";
+import { useAdapter, FeatureFlagPort } from "@natify/core";
 
 function useAuth() {
   const featureFlags = useAdapter<FeatureFlagPort>("featureflags");
@@ -312,7 +312,7 @@ function NewFeature() {
 ### UseCase con Feature Flags
 
 ```typescript
-import { FeatureFlagPort, HttpClientPort } from "@nativefy/core";
+import { FeatureFlagPort, HttpClientPort } from "@natify/core";
 
 export class GetProductsUseCase {
   constructor(
@@ -336,7 +336,7 @@ export class GetProductsUseCase {
 
 ```typescript
 import { useEffect } from "react";
-import { useAdapter, FeatureFlagPort, StoragePort } from "@nativefy/core";
+import { useAdapter, FeatureFlagPort, StoragePort } from "@natify/core";
 
 function AppInitializer() {
   const featureFlags = useAdapter<FeatureFlagPort>("featureflags");
@@ -389,7 +389,7 @@ function RefreshFlagsButton() {
 ## Integración con Módulos
 
 ```typescript
-import { createModule } from "@nativefy/core";
+import { createModule } from "@natify/core";
 import { GetProductsUseCase } from "./usecases/GetProductsUseCase";
 
 export const ProductsModule = createModule("products", "Products")

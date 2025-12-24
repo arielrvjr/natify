@@ -1,6 +1,11 @@
-# Nativefy Framework
+# Natify
 
-> **Framework de arquitectura hexagonal para React Native** que abstrae dependencias nativas y proporciona una API unificada, tipada y testeable.
+**Natify** is a clean, modular architecture framework for React Native.
+
+It decouples your business logic from native and third-party implementations
+using **Ports & Adapters (Hexagonal Architecture)**.
+
+Build faster. Refactor without fear. Swap implementations without touching your core.
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue.svg)](https://www.typescriptlang.org/)
 [![React Native](https://img.shields.io/badge/React%20Native-0.82+-61DAFB.svg)](https://reactnative.dev/)
@@ -8,55 +13,55 @@
 
 ---
 
-## Tabla de Contenidos
+## Table of Contents
 
-- [¿Qué es Nativefy?](#qué-es-nativefy)
-- [¿Por qué Nativefy?](#por-qué-nativefy)
-- [Arquitectura](#arquitectura)
-- [Características Principales](#características-principales)
-- [Niveles de Integración](#niveles-de-integración)
+- [What is Natify?](#what-is-natify)
+- [Why Natify?](#why-natify)
+- [Architecture](#architecture)
+- [Key Features](#key-features)
+- [Integration Levels](#integration-levels)
 - [Quick Start](#quick-start)
-- [Casos de Uso](#casos-de-uso)
-- [Capacidades Disponibles](#capacidades-disponibles)
-- [Comparación con Alternativas](#comparación-con-alternativas)
-- [Documentación](#documentación)
-- [Contribuir](#contribuir)
+- [Use Cases](#use-cases)
+- [Available Capabilities](#available-capabilities)
+- [Comparison with Alternatives](#comparison-with-alternatives)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
 
 ---
 
-## ¿Qué es Nativefy?
+## What is Natify?
 
-**Nativefy Framework** es un framework de arquitectura hexagonal (Ports & Adapters) diseñado específicamente para React Native. Su objetivo principal es **desacoplar la lógica de negocio de las implementaciones nativas**, permitiendo que desarrolladores construyan aplicaciones más mantenibles, testeables y escalables.
+**Natify** is a hexagonal architecture (Ports & Adapters) framework designed specifically for React Native. Its main goal is to **decouple business logic from native implementations**, enabling developers to build more maintainable, testable, and scalable applications.
 
-Nativefy implementa **casos de negocio (UseCases)** y **ViewModels** para mantener la capa de UI limpia y libre de lógica de negocio, siguiendo los principios de Clean Architecture y separación de responsabilidades.
+Natify implements **use cases** and **view models** to keep the UI layer clean and free of business logic, following Clean Architecture principles and separation of concerns.
 
-### El Problema que Resuelve
+### The Problem It Solves
 
-En React Native tradicional, tu código de negocio está **acoplado directamente** a librerías específicas:
+In traditional React Native, your business code is **directly coupled** to specific libraries:
 
 ```typescript
-// Código acoplado - difícil de testear y cambiar
+// Coupled code - hard to test and change
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 async function login(email: string, password: string) {
-  // Si cambias de axios a fetch, debes reescribir todas las llamadas
+  // If you change from axios to fetch, you must rewrite all calls
   const response = await axios.post('https://api.example.com/auth/login', {
     email,
     password,
   });
-  // Si quieres cambiar a MMKV, debes buscar y reemplazar en TODO el código
+  // If you want to change to MMKV, you must search and replace in ALL code
   await AsyncStorage.setItem('token', response.data.token);
   
   return response.data.user;
 }
 ```
 
-Con Nativefy, usas **interfaces** y cambias implementaciones sin tocar tu código:
+With Natify, you use **interfaces** and change implementations without touching your code:
 
 ```typescript
-// Código desacoplado - fácil de testear y cambiar
-import { useAdapter, HttpClientPort, StoragePort } from '@nativefy/core';
+// Decoupled code - easy to test and change
+import { useAdapter, HttpClientPort, StoragePort } from '@natify/core';
 
 function useLogin() {
   const http = useAdapter<HttpClientPort>('http');
@@ -67,8 +72,8 @@ function useLogin() {
   
     await storage.setItem('token', response.data.token);
   
-    // Cambiar de AsyncStorage a MMKV o de axios a fetch
-    // es solo cambiar el adapter en App.tsx - este código NO cambia
+    // Changing from AsyncStorage to MMKV or from axios to fetch
+    // is just changing the adapter in App.tsx - this code does NOT change
     return response.data.user;
   };
 }
@@ -76,164 +81,175 @@ function useLogin() {
 
 ---
 
-## ¿Por qué Nativefy?
+## Why Natify?
 
-### Para Equipos y Proyectos
+React Native apps tend to couple business logic with libraries and native APIs.
 
-| Escenario                           | Beneficio                                   |
-| ----------------------------------- | ------------------------------------------- |
-| **Equipos grandes (3+ devs)** | Arquitectura clara, fácil onboarding       |
-| **Proyectos a largo plazo**   | Mantenibilidad y escalabilidad              |
-| **Apps empresariales**        | Governance y control sobre capacidades      |
-| **Testing robusto**           | Mocks fáciles, tests aislados              |
-| **Migración de librerías**  | Cambiar implementaciones sin romper código |
+Natify introduces a clear architectural boundary:
 
-### Ventajas Clave
+**UI → ViewModel → UseCase → Port → Adapter → Native**
 
-#### 1. Testing Simplificado
+This allows you to:
+- **Change implementations** without rewriting business logic
+- **Test easily** by mocking adapters
+- **Keep your architecture** clean and future-proof
+
+### For Teams and Projects
+
+| Scenario                          | Benefit                                    |
+| --------------------------------- | ------------------------------------------ |
+| **Large teams (3+ devs)**         | Clear architecture, easy onboarding       |
+| **Long-term projects**            | Maintainability and scalability            |
+| **Enterprise apps**               | Governance and control over capabilities   |
+| **Robust testing**                | Easy mocks, isolated tests                 |
+| **Library migration**             | Change implementations without breaking code |
+
+### Key Advantages
+
+#### 1. Simplified Testing
 
 ```typescript
-// En tests, simplemente mockeas el adapter
+// In tests, simply mock the adapter
 const mockStorage = {
   getItem: jest.fn(),
   setItem: jest.fn(),
 };
 
-// Tu código de negocio se testea sin dependencias nativas
+// Your business code is tested without native dependencies
 const useCase = new LoginUseCase(mockStorage);
 ```
 
-#### 2. Flexibilidad de Implementación
+#### 2. Implementation Flexibility
 
 ```typescript
-// Desarrollo: AsyncStorage (más simple)
+// Development: AsyncStorage (simpler)
 const storage = new AsyncStorageAdapter();
 
-// Producción: MMKV (30x más rápido)
+// Production: MMKV (30x faster)
 const storage = new MMKVStorageAdapter();
 
-// Tu código de negocio NO cambia
+// Your business code does NOT change
 ```
 
-#### 3. Governance y Control
+#### 3. Governance and Control
 
-- **Interfaces tipadas** definen qué capacidades puede usar tu app
-- **Adapters centralizados** facilitan auditorías de seguridad
-- **Sistema de errores unificado** para manejo consistente
+- **Typed interfaces** define what capabilities your app can use
+- **Centralized adapters** facilitate security audits
+- **Unified error system** for consistent handling
 
-#### 4. Arquitectura Escalable
+#### 4. Scalable Architecture
 
-- **Sistema de módulos**: Organiza tu app en módulos independientes
-- **Casos de negocio (UseCases)**: Lógica de negocio encapsulada y testeable
-- **ViewModels**: Separación clara entre UI y lógica, UI limpia y mantenible
-- **Inyección de dependencias**: Gestión automática de dependencias
-- **ActionBus**: Comunicación inter-módulo sin acoplamiento
-
----
-
-## Arquitectura
-
-Nativefy sigue el patrón **Hexagonal (Ports & Adapters)** combinado con **Clean Architecture**:
-
-- **Ports (Interfaces)**: Contratos que definen capacidades sin implementación
-- **Adapters**: Implementaciones concretas de los Ports usando librerías nativas
-- **ViewModels** (Nivel 2): Manejan el estado de la UI, loading, errores y coordinan con UseCases
-- **UseCases** (Nivel 2): Contienen la lógica de negocio pura, orquestan adapters
-
-### Principios
-
-- **Dependencias apuntan hacia el dominio** (Clean Architecture)
-- **Separación de capas**: UI → ViewModel → UseCase → Adapter
-- **UI limpia**: Los componentes solo renderizan, sin lógica de negocio
-- **Casos de negocio aislados**: UseCases testables independientemente
-- **Interfaces agnósticas de implementación**
-- **Testing sin dependencias nativas**
-- **Cambio de librerías sin afectar código de negocio**
+- **Module system**: Organize your app into independent modules
+- **Use cases**: Encapsulated and testable business logic
+- **View models**: Clear separation between UI and logic, clean and maintainable UI
+- **Dependency injection**: Automatic dependency management
+- **ActionBus**: Inter-module communication without coupling
 
 ---
 
-## Características Principales
+## Architecture
 
-### Arquitectura Hexagonal
+Natify follows the **Hexagonal (Ports & Adapters)** pattern combined with **Clean Architecture**:
 
-- Patrón Ports & Adapters implementado completamente
-- Separación clara entre lógica de negocio e infraestructura
-- Dependencias invertidas (Dependency Inversion Principle)
+- **Ports (Interfaces)**: Contracts that define capabilities without implementation
+- **Adapters**: Concrete implementations of Ports using native libraries
+- **View Models** (Level 2): Handle UI state, loading, errors, and coordinate with use cases
+- **Use Cases** (Level 2): Contain pure business logic, orchestrate adapters
 
-### Sistema de Módulos
+### Principles
 
-- Organiza tu app en módulos independientes (Auth, Products, Profile, etc.)
-- Cada módulo declara sus dependencias explícitamente
-- Carga/descarga dinámica de módulos (Hot Reload)
+- **Dependencies point toward the domain** (Clean Architecture)
+- **Layer separation**: UI → ViewModel → UseCase → Adapter
+- **Clean UI**: Components only render, no business logic
+- **Isolated use cases**: Use cases testable independently
+- **Implementation-agnostic interfaces**
+- **Testing without native dependencies**
+- **Change libraries without affecting business code**
 
-### Inyección de Dependencias
+---
 
-- Container DI con soporte para singletons y factories
-- Inferencia automática de tipos de adapters
-- Hooks `useAdapter<T>()` y `useUseCase<T>()` para acceso tipado
+## Key Features
+
+### Hexagonal Architecture
+
+- Ports & Adapters pattern fully implemented
+- Clear separation between business logic and infrastructure
+- Inverted dependencies (Dependency Inversion Principle)
+
+### Module System
+
+- Organize your app into independent modules (Auth, Products, Profile, etc.)
+- Each module explicitly declares its dependencies
+- Dynamic module loading/unloading (Hot Reload)
+
+### Dependency Injection
+
+- DI Container with support for singletons and factories
+- Automatic type inference for adapters
+- `useAdapter<T>()` and `useUseCase<T>()` hooks for typed access
 
 ### ActionBus
 
-- Comunicación inter-módulo sin acoplamiento directo
-- Permite que módulos se comuniquen sin conocerse
+- Inter-module communication without direct coupling
+- Allows modules to communicate without knowing each other
 
-### Tipado Fuerte
+### Strong Typing
 
-- TypeScript en todo el framework
-- Interfaces tipadas para todos los Ports
-- Inferencia automática de tipos en adapters
+- TypeScript throughout the framework
+- Typed interfaces for all Ports
+- Automatic type inference in adapters
 
-### Casos de Negocio (UseCases)
+### Use Cases
 
-- Encapsulan la lógica de negocio pura, independiente de la UI
-- Reciben adapters inyectados, no dependen de implementaciones concretas
-- Altamente testeables sin necesidad de mocks complejos
-- Un UseCase = Una responsabilidad de negocio
+- Encapsulate pure business logic, independent of UI
+- Receive injected adapters, don't depend on concrete implementations
+- Highly testable without complex mocks
+- One Use Case = One business responsibility
 
-### ViewModels
+### View Models
 
-- Hook base (`useBaseViewModel`) para manejo automático de loading y errores
-- Coordinan entre componentes UI y UseCases
-- Mantienen el estado de la UI (loading, error, data)
-- Reducen boilerplate en componentes
-- Estado consistente en toda la app
+- Base hook (`useBaseViewModel`) for automatic loading and error handling
+- Coordinate between UI components and use cases
+- Maintain UI state (loading, error, data)
+- Reduce boilerplate in components
+- Consistent state across the app
 
 ---
 
-## Niveles de Integración
+## Integration Levels
 
-Nativefy ofrece **dos niveles de integración** para adaptarse a las necesidades de tu proyecto. Puedes integrarlo hasta el nivel que desees:
+Natify offers **two integration levels** to adapt to your project's needs. You can integrate up to the level you want:
 
-### Nivel 1: Solo Abstracción (NativefyProvider)
+### Level 1: Abstraction Only (NatifyProvider)
 
-**Ideal para:** Proyectos existentes que solo quieren abstraer las librerías nativas sin cambiar su arquitectura.
+**Ideal for:** Existing projects that only want to abstract native libraries without changing their architecture.
 
-Este nivel te da acceso a los **adapters y ports** (abstracción de implementaciones), pero sin el sistema de módulos ni la inyección de dependencias completa.
+This level gives you access to **adapters and ports** (abstraction of implementations), but without the module system or full dependency injection.
 
-#### Arquitectura del Nivel 1
+#### Level 1 Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    TU APLICACIÓN                             │
+│                    YOUR APPLICATION                          │
 │  ┌─────────────────────────────────────────────────────┐    │
-│  │              Componentes React Native               │    │
+│  │              React Native Components                │    │
 │  │  ┌──────────────────────────────────────────────┐   │    │
-│  │  │  useAdapter<Port>() → Acceso directo         │   │    │
+│  │  │  useAdapter<Port>() → Direct access         │   │    │
 │  │  └──────────────────────────────────────────────┘   │    │
 │  └─────────────────────────────────────────────────────┘    │
 │                            │                                 │
 │                            ▼                                 │
 │  ┌─────────────────────────────────────────────────────┐    │
-│  │            NativefyProvider (DI + Registry)          │    │
+│  │            NatifyProvider (DI + Registry)          │    │
 │  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │    │
 │  │  │   PORTS     │  │   ERRORS    │  │   DI        │  │    │
-│  │  │ (Interfaces)│  │(NativefyErr)│  │ Container  │  │    │
+│  │  │ (Interfaces)│  │(NatifyError)│  │ Container  │  │    │
 │  │  └─────────────┘  └─────────────┘  └─────────────┘  │    │
 │  └─────────────────────────────────────────────────────┘    │
 │                            ▲                                 │
 │                            │ implements                      │
 │  ┌─────────────────────────┴───────────────────────────┐    │
-│  │               @nativefy/*                    │    │
+│  │               @natify/*                             │    │
 │  │  ┌──────────┐ ┌──────────┐ ┌──────────┐             │    │
 │  │  │http-axios│ │storage-  │ │biometrics│             │    │
 │  │  │          │ │mmkv      │ │-rn       │             │    │
@@ -241,39 +257,39 @@ Este nivel te da acceso a los **adapters y ports** (abstracción de implementaci
 │  └─────────────────────────────────────────────────────┘    │
 └─────────────────────────────────────────────────────────────┘
 
-Incluye: Ports, Errors, DI Container, Adapters
-NO incluye: Módulos, UseCases, ViewModels, ActionBus, Navigation
+Includes: Ports, Errors, DI Container, Adapters
+Does NOT include: Modules, Use Cases, View Models, ActionBus, Navigation
 ```
 
-#### Flujo del Nivel 1
+#### Level 1 Flow
 
-1. **Core** define las interfaces (Ports) - `HttpClientPort`, `StoragePort`, etc.
-2. **Adapters** implementan las interfaces usando librerías específicas
-3. **NativefyProvider** registra adapters en el contenedor DI
-4. **Componentes UI** usan `useAdapter<Port>()` para acceder directamente a adapters
-5. La lógica de negocio puede estar en los componentes o en funciones/hooks personalizados
+1. **Core** defines interfaces (Ports) - `HttpClientPort`, `StoragePort`, etc.
+2. **Adapters** implement interfaces using specific libraries
+3. **NatifyProvider** registers adapters in the DI container
+4. **UI Components** use `useAdapter<Port>()` to access adapters directly
+5. Business logic can be in components or custom functions/hooks
 
 ```typescript
 // App.tsx
-import { NativefyProvider, useAdapter } from '@nativefy/core';
-import { AxiosHttpAdapter } from '@nativefy/http-axios';
-import { MMKVStorageAdapter } from '@nativefy/storage-mmkv';
-import { HttpClientPort, StoragePort } from '@nativefy/core';
+import { NatifyProvider, useAdapter } from '@natify/core';
+import { AxiosHttpAdapter } from '@natify/http-axios';
+import { MMKVStorageAdapter } from '@natify/storage-mmkv';
+import { HttpClientPort, StoragePort } from '@natify/core';
 
 export default function App() {
   return (
-    <NativefyProvider
+    <NatifyProvider
       adapters={{
         http: new AxiosHttpAdapter('https://api.example.com'),
         storage: new MMKVStorageAdapter(),
       }}
     >
       <MyApp />
-    </NativefyProvider>
+    </NatifyProvider>
   );
 }
 
-// Usar adapters en componentes
+// Use adapters in components
 function MyComponent() {
   const http = useAdapter<HttpClientPort>('http');
   const storage = useAdapter<StoragePort>('storage');
@@ -287,56 +303,56 @@ function MyComponent() {
 }
 ```
 
-**Lo que obtienes:**
+**What you get:**
 
-- Abstracción de librerías nativas (Ports & Adapters)
-- Acceso a adapters tipados con `useAdapter<T>()`
-- Cambio de implementaciones sin tocar código de negocio
-- Testing simplificado con mocks
+- Native library abstraction (Ports & Adapters)
+- Typed adapter access with `useAdapter<T>()`
+- Change implementations without touching business code
+- Simplified testing with mocks
 
-**Lo que NO incluye:**
+**What it does NOT include:**
 
-- Sistema de módulos
-- Inyección de dependencias para UseCases
+- Module system
+- Dependency injection for use cases
 - Module Registry
 - ActionBus
-- Navegación integrada
+- Integrated navigation
 
 ---
 
-### Nivel 2: Framework Completo (NativefyApp)
+### Level 2: Full Framework (NatifyApp)
 
-**Ideal para:** Proyectos nuevos o refactorizaciones que buscan arquitectura completa con módulos, UseCases y ViewModels.
+**Ideal for:** New projects or refactorings seeking complete architecture with modules, use cases, and view models.
 
-Este nivel incluye **todo el framework**: sistema de módulos, inyección de dependencias, Module Registry, ActionBus y navegación integrada.
+This level includes **the entire framework**: module system, dependency injection, Module Registry, ActionBus, and integrated navigation.
 
-#### Arquitectura del Nivel 2
+#### Level 2 Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    TU APLICACIÓN                             │
+│                    YOUR APPLICATION                          │
 │  ┌─────────────────────────────────────────────────────┐    │
-│  │              Componentes React Native               │    │
+│  │              React Native Components                │    │
 │  │  ┌──────────────────────────────────────────────┐   │    │
-│  │  │  ViewModels → useBaseViewModel()             │   │    │
-│  │  │  useUseCase<T>() → Casos de negocio         │   │    │
-│  │  │  useAdapter<T>() → Acceso directo           │   │    │
+│  │  │  View Models → useBaseViewModel()             │   │    │
+│  │  │  useUseCase<T>() → Business cases           │   │    │
+│  │  │  useAdapter<T>() → Direct access           │   │    │
 │  │  └──────────────────────────────────────────────┘   │    │
 │  └─────────────────────────────────────────────────────┘    │
 │                            │                                 │
 │                            ▼                                 │
 │  ┌─────────────────────────────────────────────────────┐    │
-│  │              NativefyApp (Framework Completo)      │    │
+│  │              NatifyApp (Full Framework)            │    │
 │  │  ┌──────────────────────────────────────────────┐ │    │
-│  │  │  ModuleProvider → Sistema de módulos         │ │    │
-│  │  │  ModuleRegistry → Validación dependencias    │ │    │
-│  │  │  ActionBus → Comunicación inter-módulo       │ │    │
+│  │  │  ModuleProvider → Module system              │ │    │
+│  │  │  ModuleRegistry → Dependency validation      │ │    │
+│  │  │  ActionBus → Inter-module communication      │ │    │
 │  │  └──────────────────────────────────────────────┘ │    │
 │  │  ┌──────────────────────────────────────────────┐ │    │
-│  │  │  NativefyProvider (DI + Registry)            │ │    │
+│  │  │  NatifyProvider (DI + Registry)             │ │    │
 │  │  │  ┌─────────────┐  ┌─────────────┐           │ │    │
 │  │  │  │   PORTS     │  │   ERRORS    │           │ │    │
-│  │  │  │ (Interfaces)│  │(NativefyErr)│           │ │    │
+│  │  │  │ (Interfaces)│  │(NatifyError)│           │ │    │
 │  │  │  └─────────────┘  └─────────────┘           │ │    │
 │  │  └──────────────────────────────────────────────┘ │    │
 │  │  ┌──────────────────────────────────────────────┐ │    │
@@ -346,7 +362,7 @@ Este nivel incluye **todo el framework**: sistema de módulos, inyección de dep
 │                            ▲                                 │
 │                            │ implements                      │
 │  ┌─────────────────────────┴───────────────────────────┐    │
-│  │               @nativefy/*                    │    │
+│  │               @natify/*                             │    │
 │  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────┐  │    │
 │  │  │http-axios│ │storage-  │ │biometrics│ │nav-    │  │    │
 │  │  │          │ │mmkv      │ │-rn       │ │react   │  │    │
@@ -354,29 +370,29 @@ Este nivel incluye **todo el framework**: sistema de módulos, inyección de dep
 │  └─────────────────────────────────────────────────────┘    │
 └─────────────────────────────────────────────────────────────┘
 
-Incluye: TODO (Ports, Errors, DI, Adapters, Módulos, UseCases, 
-         ViewModels, ActionBus, Navigation, Module Registry)
+Includes: EVERYTHING (Ports, Errors, DI, Adapters, Modules, Use Cases, 
+         View Models, ActionBus, Navigation, Module Registry)
 ```
 
-#### Flujo del Nivel 2
+#### Level 2 Flow
 
-1. **Core** define las interfaces (Ports) - `HttpClientPort`, `StoragePort`, etc.
-2. **Adapters** implementan las interfaces usando librerías específicas
-3. **NativefyProvider** (interno) registra adapters en el contenedor DI
-4. **ModuleProvider** carga y valida módulos con sus dependencias
-5. **UseCases** encapsulan la lógica de negocio y usan adapters inyectados
-6. **ViewModels** coordinan entre UI y UseCases, manejan estado de UI
-7. **Componentes UI** consumen ViewModels y permanecen libres de lógica de negocio
-8. Los componentes usan `useUseCase<T>()` para casos de negocio y `useAdapter<Port>()` para acceso directo a adapters
+1. **Core** defines interfaces (Ports) - `HttpClientPort`, `StoragePort`, etc.
+2. **Adapters** implement interfaces using specific libraries
+3. **NatifyProvider** (internal) registers adapters in the DI container
+4. **ModuleProvider** loads and validates modules with their dependencies
+5. **Use Cases** encapsulate business logic and use injected adapters
+6. **View Models** coordinate between UI and use cases, handle UI state
+7. **UI Components** consume view models and remain free of business logic
+8. Components use `useUseCase<T>()` for business cases and `useAdapter<Port>()` for direct adapter access
 
 ```typescript
 // App.tsx
-import { NativefyApp } from '@nativefy/core';
-import { AxiosHttpAdapter } from '@nativefy/http-axios';
-import { MMKVStorageAdapter } from '@nativefy/storage-mmkv';
-import { createReactNavigationAdapter } from '@nativefy/navigation-react';
+import { NatifyApp } from '@natify/core';
+import { AxiosHttpAdapter } from '@natify/http-axios';
+import { MMKVStorageAdapter } from '@natify/storage-mmkv';
+import { createReactNavigationAdapter } from '@natify/navigation-react';
 
-// Módulos
+// Modules
 import { AuthModule, ProductsModule } from './modules';
 
 const adapters = {
@@ -387,7 +403,7 @@ const adapters = {
 
 export default function App() {
   return (
-    <NativefyApp
+    <NatifyApp
       adapters={adapters}
       modules={[AuthModule, ProductsModule]}
       initialModule="auth"
@@ -396,105 +412,105 @@ export default function App() {
 }
 ```
 
-**Lo que obtienes:**
+**What you get:**
 
-- Todo lo del Nivel 1
-- Sistema de módulos
-- Inyección de dependencias completa
-- UseCases con `useUseCase<T>()`
-- Module Registry (validación de dependencias)
-- ActionBus (comunicación inter-módulo)
-- Navegación integrada
-- Hot Reload de módulos
-- ViewModels con `useBaseViewModel()`
+- Everything from Level 1
+- Module system
+- Complete dependency injection
+- Use cases with `useUseCase<T>()`
+- Module Registry (dependency validation)
+- ActionBus (inter-module communication)
+- Integrated navigation
+- Hot reload of modules
+- View models with `useBaseViewModel()`
 
 ---
 
-### Comparación de Niveles
+### Level Comparison
 
-| Característica                      | Nivel 1 (NativefyProvider) | Nivel 2 (NativefyApp) |
-| ------------------------------------ | -------------------------- | --------------------- |
-| **Abstracción de librerías** | Sí                        | Sí                   |
-| **useAdapter `<T>`()**       | Sí                        | Sí                   |
-| **Sistema de módulos**        | No                         | Sí                   |
-| **useUseCase `<T>`()**       | No                         | Sí                   |
-| **Module Registry**            | No                         | Sí                   |
-| **ActionBus**                  | No                         | Sí                   |
-| **Navegación integrada**      | No                         | Sí                   |
-| **Hot Reload módulos**        | No                         | Sí                   |
-| **ViewModels**                 | No                         | Sí                   |
-| **Complejidad**                | Baja                       | Media-Alta            |
-| **Recomendado para**           | Proyectos existentes       | Proyectos nuevos      |
+| Feature                      | Level 1 (NatifyProvider) | Level 2 (NatifyApp) |
+| ---------------------------- | ------------------------ | ------------------- |
+| **Library abstraction**      | Yes                      | Yes                 |
+| **useAdapter `<T>`()**       | Yes                      | Yes                 |
+| **Module system**            | No                       | Yes                 |
+| **useUseCase `<T>`()**       | No                       | Yes                 |
+| **Module Registry**          | No                       | Yes                 |
+| **ActionBus**                | No                       | Yes                 |
+| **Integrated navigation**     | No                       | Yes                 |
+| **Hot reload modules**        | No                       | Yes                 |
+| **View Models**              | No                       | Yes                 |
+| **Complexity**               | Low                      | Medium-High          |
+| **Recommended for**          | Existing projects        | New projects        |
 
 ---
 
 ## Quick Start
 
-### Instalación
+### Installation
 
 ```bash
-# Instalar core
-pnpm add @nativefy/core @nativefy/ui
+# Install core
+pnpm add @natify/core @natify/ui
 
-# Instalar adapters necesarios
-pnpm add @nativefy/http-axios
-pnpm add @nativefy/storage-mmkv
-pnpm add @nativefy/storage-keychain
-pnpm add @nativefy/navigation-react
-pnpm add @nativefy/biometrics-rn
-pnpm add @nativefy/permissions-rn
-pnpm add @nativefy/image-picker-rn
+# Install required adapters
+pnpm add @natify/http-axios
+pnpm add @natify/storage-mmkv
+pnpm add @natify/storage-keychain
+pnpm add @natify/navigation-react
+pnpm add @natify/biometrics-rn
+pnpm add @natify/permissions-rn
+pnpm add @natify/image-picker-rn
 ```
 
-### Configuración Básica (Nivel 1 - Solo Abstracción)
+### Basic Setup (Level 1 - Abstraction Only)
 
-Si prefieres solo la abstracción sin el sistema completo:
+If you prefer only abstraction without the full system:
 
 ```typescript
 // App.tsx
-import { NativefyProvider, useAdapter } from '@nativefy/core';
-import { AxiosHttpAdapter } from '@nativefy/http-axios';
-import { MMKVStorageAdapter } from '@nativefy/storage-mmkv';
-import { HttpClientPort, StoragePort } from '@nativefy/core';
+import { NatifyProvider, useAdapter } from '@natify/core';
+import { AxiosHttpAdapter } from '@natify/http-axios';
+import { MMKVStorageAdapter } from '@natify/storage-mmkv';
+import { HttpClientPort, StoragePort } from '@natify/core';
 
 export default function App() {
   return (
-    <NativefyProvider
+    <NatifyProvider
       adapters={{
         http: new AxiosHttpAdapter('https://api.example.com'),
         storage: new MMKVStorageAdapter(),
       }}
     >
       <MyApp />
-    </NativefyProvider>
+    </NatifyProvider>
   );
 }
 
-// Usar en componentes
+// Use in components
 function MyComponent() {
   const http = useAdapter<HttpClientPort>('http');
   const storage = useAdapter<StoragePort>('storage');
   
-  // Tu lógica aquí
+  // Your logic here
 }
 ```
 
-### Configuración Básica (Nivel 2 - Framework Completo)
+### Basic Setup (Level 2 - Full Framework)
 
 ```typescript
 // App.tsx
 import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { NativefyApp } from '@nativefy/core';
-import { ThemeProvider } from '@nativefy/ui';
+import { NatifyApp } from '@natify/core';
+import { ThemeProvider } from '@natify/ui';
 
 // Adapters
-import { AxiosHttpAdapter } from '@nativefy/http-axios';
-import { MMKVStorageAdapter } from '@nativefy/storage-mmkv';
-import { KeychainStorageAdapter } from '@nativefy/storage-keychain';
-import { createReactNavigationAdapter } from '@nativefy/navigation-react';
+import { AxiosHttpAdapter } from '@natify/http-axios';
+import { MMKVStorageAdapter } from '@natify/storage-mmkv';
+import { KeychainStorageAdapter } from '@natify/storage-keychain';
+import { createReactNavigationAdapter } from '@natify/navigation-react';
 
-// Módulos
+// Modules
 import { AuthModule, ProductsModule } from './modules';
 
 const adapters = {
@@ -508,7 +524,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <NativefyApp
+        <NatifyApp
           adapters={adapters}
           modules={[AuthModule, ProductsModule]}
           initialModule="auth"
@@ -519,11 +535,11 @@ export default function App() {
 }
 ```
 
-### Crear un Módulo (Solo Nivel 2)
+### Create a Module (Level 2 Only)
 
 ```typescript
 // modules/auth/index.ts
-import { createModule } from '@nativefy/core';
+import { createModule } from '@natify/core';
 import { LoginScreen } from './screens/LoginScreen';
 import { LoginUseCase } from './usecases/LoginUseCase';
 
@@ -537,23 +553,23 @@ export const AuthModule = createModule('auth', 'Authentication')
   .build();
 ```
 
-### Crear un ViewModel (Solo Nivel 2)
+### Create a View Model (Level 2 Only)
 
 ```typescript
 // viewmodels/useLoginViewModel.ts
-import { useBaseViewModel, useUseCase, useAdapter, NavigationPort } from '@nativefy/core';
+import { useBaseViewModel, useUseCase, useAdapter, NavigationPort } from '@natify/core';
 import { useState, useCallback } from 'react';
 import { LoginUseCase } from '../usecases/LoginUseCase';
 
 export function useLoginViewModel() {
-  // Estado base (loading, error)
+  // Base state (loading, error)
   const [baseState, { execute, clearError }] = useBaseViewModel();
   
-  // Estado del formulario
+  // Form state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // UseCase inyectado (prefijo: moduleId:useCaseKey)
+  // Injected use case (prefix: moduleId:useCaseKey)
   const loginUseCase = useUseCase<LoginUseCase>('auth:login');
   
   // Navigation
@@ -585,7 +601,7 @@ export function useLoginViewModel() {
 }
 ```
 
-### Usar ViewModel en un Componente (UI Limpia)
+### Use View Model in a Component (Clean UI)
 
 ```typescript
 // screens/LoginScreen.tsx
@@ -593,7 +609,7 @@ import { View, TextInput, Button, ActivityIndicator } from 'react-native';
 import { useLoginViewModel } from '../viewmodels/useLoginViewModel';
 
 export function LoginScreen() {
-  // El componente solo consume el ViewModel, sin lógica de negocio
+  // Component only consumes the view model, no business logic
   const { state, actions } = useLoginViewModel();
 
   return (
@@ -618,7 +634,7 @@ export function LoginScreen() {
       {state.isLoading ? (
         <ActivityIndicator />
       ) : (
-        <Button title="Iniciar Sesión" onPress={actions.login} />
+        <Button title="Sign In" onPress={actions.login} />
       )}
     </View>
   );
@@ -627,51 +643,51 @@ export function LoginScreen() {
 
 ---
 
-## Casos de Uso
+## Use Cases
 
-### Ideal Para
+### Ideal For
 
-- **Aplicaciones empresariales** que requieren mantenibilidad a largo plazo
-- **Equipos grandes** que necesitan estructura y governance
-- **Proyectos complejos** con múltiples módulos/features
-- **Apps que requieren testing robusto** (alta cobertura de tests)
-- **Proyectos que migran librerías frecuentemente** (ej: cambiar de AsyncStorage a MMKV)
-- **Organizaciones que necesitan control** sobre qué capacidades nativas se usan
+- **Enterprise applications** requiring long-term maintainability
+- **Large teams** needing structure and governance
+- **Complex projects** with multiple modules/features
+- **Apps requiring robust testing** (high test coverage)
+- **Projects that migrate libraries frequently** (e.g., changing from AsyncStorage to MMKV)
+- **Organizations needing control** over what native capabilities are used
 
-### No Recomendado Para
+### Not Recommended For
 
-- **Prototipos rápidos** (overhead innecesario)
-- **Apps muy simples** (una sola pantalla, sin lógica compleja)
-- **Equipos de 1-2 personas** (puede ser excesivo)
-- **Proyectos con timeline muy corto** (setup inicial toma tiempo)
+- **Quick prototypes** (unnecessary overhead)
+- **Very simple apps** (single screen, no complex logic)
+- **1-2 person teams** (may be excessive)
+- **Projects with very short timelines** (initial setup takes time)
 
 ---
 
-## Capacidades Disponibles
+## Available Capabilities
 
-### Implementadas
+### Implemented
 
-| Capacidad                  | Adapter                                   | Librería Subyacente                 |
-| -------------------------- | ----------------------------------------- | ------------------------------------ |
-| **Analytics**        | `@nativefy/analytics-mixpanel`  | mixpanel-react-native                |
-| **Biometrics**       | `@nativefy/biometrics-rn`       | react-native-biometrics              |
-| **Error Reporting**  | `@nativefy/error-reporting-sentry` | @sentry/react-native            |
-| **Feature Flags**    | `@nativefy/feature-flag-growthbook` | @growthbook/growthbook-react   |
-| **File System**      | `@nativefy/file-system-rn`      | react-native-blob-util               |
-| **Geolocation**      | `@nativefy/geolocation-rn`      | @react-native-community/geolocation  |
-| **GraphQL**          | `@nativefy/graphql-apollo`       | @apollo/client                       |
-| **HTTP Client**      | `@nativefy/http-axios`          | Axios                                |
-| **Image Picker**     | `@nativefy/image-picker-rn`     | react-native-image-picker            |
-| **Navigation**       | `@nativefy/navigation-react`    | React Navigation                     |
-| **Permissions**      | `@nativefy/permissions-rn`      | react-native-permissions             |
-| **Push Notifications** | `@nativefy/push-notification-firebase` | @react-native-firebase/messaging |
-| **Push Notifications** | `@nativefy/push-notification-notifee` | @notifee/react-native        |
-| **Secure Storage**   | `@nativefy/storage-keychain`    | react-native-keychain                |
-| **State Management** | `@nativefy/store-zustand`       | Zustand                              |
-| **Storage**          | `@nativefy/storage-async`       | AsyncStorage                         |
-| **Storage**          | `@nativefy/storage-mmkv`        | react-native-mmkv (30x más rápido) |
+| Capability              | Adapter                              | Underlying Library                    |
+| ----------------------- | ------------------------------------ | ------------------------------------- |
+| **Analytics**           | `@natify/analytics-mixpanel`         | mixpanel-react-native                 |
+| **Biometrics**          | `@natify/biometrics-rn`              | react-native-biometrics               |
+| **Error Reporting**     | `@natify/error-reporting-sentry`     | @sentry/react-native                  |
+| **Feature Flags**       | `@natify/feature-flag-growthbook`     | @growthbook/growthbook-react          |
+| **File System**         | `@natify/file-system-rn`             | react-native-blob-util                |
+| **Geolocation**         | `@natify/geolocation-rn`             | @react-native-community/geolocation   |
+| **GraphQL**             | `@natify/graphql-apollo`             | @apollo/client                        |
+| **HTTP Client**         | `@natify/http-axios`                 | Axios                                 |
+| **Image Picker**        | `@natify/image-picker-rn`            | react-native-image-picker             |
+| **Navigation**           | `@natify/navigation-react`            | React Navigation                      |
+| **Permissions**         | `@natify/permissions-rn`             | react-native-permissions              |
+| **Push Notifications**  | `@natify/push-notification-firebase` | @react-native-firebase/messaging      |
+| **Push Notifications**  | `@natify/push-notification-notifee`  | @notifee/react-native                  |
+| **Secure Storage**      | `@natify/storage-keychain`            | react-native-keychain                 |
+| **State Management**    | `@natify/store-zustand`               | Zustand                               |
+| **Storage**             | `@natify/storage-async`               | AsyncStorage                          |
+| **Storage**             | `@natify/storage-mmkv`                | react-native-mmkv (30x faster)        |
 
-### Planificadas
+### Planned
 
 - Camera/Media (react-native-vision-camera)
 - Theme Engine (@shopify/restyle)
@@ -679,138 +695,138 @@ export function LoginScreen() {
 
 ---
 
-## Comparación con Alternativas
+## Comparison with Alternatives
 
-### Nativefy vs Expo
+### Natify vs Expo
 
-| Aspecto                | Expo                     | Nativefy                  |
-| ---------------------- | ------------------------ | ------------------------- |
-| **Propósito**   | Plataforma de desarrollo | Framework de arquitectura |
-| **Setup**        | Muy rápido              | Más lento                |
-| **Flexibilidad** | Limitada (managed)       | Alta                      |
-| **Testing**      | Estándar                | Más fácil               |
-| **Arquitectura** | No impone                | Hexagonal                 |
-| **Build System** | EAS Build                | Manual                    |
+| Aspect         | Expo                    | Natify                    |
+| -------------- | ----------------------- | ------------------------- |
+| **Purpose**    | Development platform    | Architecture framework    |
+| **Setup**      | Very fast               | Slower                    |
+| **Flexibility** | Limited (managed)       | High                      |
+| **Testing**    | Standard                | Easier                    |
+| **Architecture** | Doesn't impose        | Hexagonal                 |
+| **Build System** | EAS Build              | Manual                    |
 
-**Recomendación**: Usar **Expo para tooling** (EAS Build, Updates) + **Nativefy para arquitectura**.
+**Recommendation**: Use **Expo for tooling** (EAS Build, Updates) + **Natify for architecture**.
 
-### Nativefy vs React Native Puro
+### Natify vs Pure React Native
 
-| Aspecto                            | RN Puro                    | Nativefy                     |
-| ---------------------------------- | -------------------------- | ---------------------------- |
-| **Testing**                  | Difícil (mocks complejos) | Fácil (adapters mockeables) |
-| **Mantenibilidad**           | Depende del equipo         | Estructura clara             |
-| **Migración de librerías** | Buscar/reemplazar todo     | Cambiar adapter              |
-| **Onboarding**               | Depende del proyecto       | Arquitectura documentada     |
-| **Governance**               | Manual                     | Interfaces tipadas           |
-
----
-
-## Documentación
-
-- **[Core Package](./packages/core/README.md)** - Arquitectura, módulos, DI
-- **[UI Package](./packages/ui/README.md)** - Componentes reutilizables
-- **[Adapters](./packages/adapters/)** - Documentación de cada adapter
-- **[Examples App](./apps/examples/)** - App de demostración completa
-
-### Guías
-
-Consulta la documentación en [`.cursorrules`](.cursorrules) para:
-
-- Cómo crear un Port
-- Cómo crear un Adapter
-- Cómo crear un Módulo
-- Testing con Nativefy
+| Aspect                  | Pure RN                      | Natify                        |
+| ----------------------- | ---------------------------- | ----------------------------- |
+| **Testing**             | Difficult (complex mocks)    | Easy (mockable adapters)      |
+| **Maintainability**     | Depends on team              | Clear structure               |
+| **Library migration**    | Search/replace everything    | Change adapter                |
+| **Onboarding**          | Depends on project           | Documented architecture       |
+| **Governance**          | Manual                       | Typed interfaces              |
 
 ---
 
-## Stack Tecnológico
+## Documentation
 
-| Herramienta            | Versión | Propósito                   |
-| ---------------------- | -------- | ---------------------------- |
-| **pnpm**         | 10.24.0  | Package manager (workspaces) |
-| **Turbo**        | 2.6.2    | Build system monorepo        |
-| **TypeScript**   | 5.9.3    | Tipado estático             |
-| **React Native** | 0.82+    | Framework móvil             |
-| **React**        | 19.1.1   | UI library                   |
+- **[Core Package](./packages/core/README.md)** - Architecture, modules, DI
+- **[UI Package](./packages/ui/README.md)** - Reusable components
+- **[Adapters](./packages/adapters/)** - Documentation for each adapter
+- **[Examples App](./apps/examples/)** - Complete demonstration app
+
+### Guides
+
+See documentation in [`.cursorrules`](.cursorrules) for:
+
+- How to create a Port
+- How to create an Adapter
+- How to create a Module
+- Testing with Natify
 
 ---
 
-## Ejemplo Completo
+## Tech Stack
 
-Ver la app de ejemplos completa en [`apps/examples/`](./apps/examples/) que incluye:
+| Tool            | Version | Purpose                      |
+| --------------- | ------- | ---------------------------- |
+| **pnpm**        | 10.24.0 | Package manager (workspaces) |
+| **Turbo**       | 2.6.2   | Build system monorepo        |
+| **TypeScript**  | 5.9.3   | Static typing                |
+| **React Native** | 0.82+  | Mobile framework             |
+| **React**       | 19.1.1  | UI library                   |
 
-- Módulo de Autenticación (Login, Registro)
-- Módulo de Productos (Lista, Detalle)
-- Módulo de Perfil (Configuración, Biometría, Permisos)
-- Integración de todos los adapters
-- ViewModels con `useBaseViewModel`
-- UseCases con inyección de dependencias
-- Navegación entre módulos
+---
+
+## Complete Example
+
+See the complete example app in [`apps/examples/`](./apps/examples/) which includes:
+
+- Authentication Module (Login, Register)
+- Products Module (List, Detail)
+- Profile Module (Settings, Biometrics, Permissions)
+- Integration of all adapters
+- View models with `useBaseViewModel`
+- Use cases with dependency injection
+- Navigation between modules
 
 ```bash
-# Ejecutar app de ejemplos
+# Run example app
 cd apps/examples
 pnpm install
-pnpm ios    # o pnpm android
+pnpm ios    # or pnpm android
 ```
 
 ---
 
-## Contribuir
+## Contributing
 
-Las contribuciones son bienvenidas. Por favor:
+Contributions are welcome. Please:
 
-1. Fork el repositorio
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+1. Fork the repository
+2. Create a branch for your feature (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-### Guías de Contribución
+### Contribution Guides
 
-Consulta [`.cursorrules`](.cursorrules) para:
+See [`.cursorrules`](.cursorrules) for:
 
-- Cómo crear un nuevo Adapter
-- Cómo crear un nuevo Port
-- Convenciones de código y arquitectura
-
----
-
-## Licencia
-
-Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
+- How to create a new Adapter
+- How to create a new Port
+- Code and architecture conventions
 
 ---
 
-## Soporte
+## License
 
-- [Documentación Completa](./packages/core/README.md)
-- [App de Ejemplos](./apps/examples/)
-- [Reportar Issues](https://github.com/tu-usuario/nativefy-framework/issues)
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
-## Aprende Más
+## Support
 
-### Conceptos Clave
+- [Complete Documentation](./packages/core/README.md)
+- [Example App](./apps/examples/)
+- [Report Issues](https://github.com/arielrvjr/natify/issues)
 
-- **Arquitectura Hexagonal** - Ver sección de arquitectura en este README
-- **Ports & Adapters** - Interfaces definidas en `packages/core/src/ports/`
-- **Sistema de Módulos** - Ver `packages/core/src/module/`
-- **Inyección de Dependencias** - Ver `packages/core/src/di/`
+---
 
-### Ejemplos Prácticos
+## Learn More
 
-- Ver [`apps/examples/`](./apps/examples/) para una app completa
-- Cada adapter tiene su propio README con ejemplos en `packages/adapters/*/README.md`
-- Consulta [`.cursorrules`](.cursorrules) para guías detalladas
+### Key Concepts
+
+- **Hexagonal Architecture** - See architecture section in this README
+- **Ports & Adapters** - Interfaces defined in `packages/core/src/ports/`
+- **Module System** - See `packages/core/src/module/`
+- **Dependency Injection** - See `packages/core/src/di/`
+
+### Practical Examples
+
+- See [`apps/examples/`](./apps/examples/) for a complete app
+- Each adapter has its own README with examples in `packages/adapters/*/README.md`
+- See [`.cursorrules`](.cursorrules) for detailed guides
 
 ---
 
 ## Roadmap
 
-### Próximas Capacidades
+### Upcoming Capabilities
 
 - **Camera/Media** - react-native-vision-camera
 - **Location** - react-native-geolocation-service
@@ -820,36 +836,36 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para
 - **Crash Reporting** - Sentry integration
 - **Validation** - Zod schemas
 
-### Mejoras Planificadas
+### Planned Improvements
 
-- Hot Reload mejorado para módulos
-- Métricas y telemetría
-- Testing utilities mejoradas
-- Generadores de código (CLI)
+- Improved hot reload for modules
+- Metrics and telemetry
+- Improved testing utilities
+- Code generators (CLI)
 
 ---
 
-## Compatibilidad
+## Compatibility
 
 ### React Native
 
-- **0.82+** (Recomendado)
-- Compatible con Expo (usando adapters de Expo)
-- Compatible con bare React Native
+- **0.82+** (Recommended)
+- Compatible with Expo (using Expo adapters)
+- Compatible with bare React Native
 
 ### TypeScript
 
-- **5.9+** (Recomendado)
-- Tipado completo en todo el framework
+- **5.9+** (Recommended)
+- Full typing throughout the framework
 
 ---
 
 <div align="center">
 
-**Hecho para la comunidad de React Native**
+**Made for the React Native community**
 
-**Star este repo** si te resulta útil
+**Star this repo** if you find it useful
 
-[Documentación](./packages/core/README.md) • [Ejemplos](./apps/examples/) • [Issues](https://github.com/tu-usuario/nativefy-framework/issues)
+[Documentation](./packages/core/README.md) • [Examples](./apps/examples/) • [Issues](https://github.com/arielrvjr/natify/issues)
 
 </div>

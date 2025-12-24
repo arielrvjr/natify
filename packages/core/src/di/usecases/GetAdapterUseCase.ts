@@ -1,7 +1,7 @@
 import { Port } from '../../ports/Port';
 import { AdapterMap } from '../../types/adapters';
 import { DIContainer } from '../Container';
-import { NativefyError, NativefyErrorCode } from '../../errors';
+import { NatifyError, NatifyErrorCode } from '../../errors';
 
 /**
  * UseCase para obtener un adapter
@@ -29,8 +29,8 @@ export class GetAdapterUseCase {
       }
     }
 
-    throw new NativefyError(
-      NativefyErrorCode.VALIDATION_ERROR,
+    throw new NatifyError(
+      NatifyErrorCode.VALIDATION_ERROR,
       `No adapter found for "${lookupKey}"`,
       undefined,
       { lookupKey },

@@ -1,21 +1,13 @@
 import Keychain from 'react-native-keychain';
-import { StoragePort } from '@nativefy/core';
+import { StoragePort } from '@natify/core';
+import { serializeValue } from './utils/serializers';
 
 export class KeychainStorageAdapter implements StoragePort {
   readonly capability: 'storage' = 'storage';
   async setItem<T = string>(key: string, value: T): Promise<void> {
-    let genericPassword = null;
-    if (typeof value === 'object') {
-      genericPassword = JSON.stringify(value);
-    } else if (typeof value === 'string') {
-      genericPassword = value;
-    } else if (typeof value === 'number') {
-      genericPassword = value.toString();
-    } else if (typeof value === 'boolean') {
-      genericPassword = value.valueOf().toString();
-    }
+    const genericPassword = serializeValue(value);
 
-    const credentials = await Keychain.setGenericPassword(key, genericPassword!, {
+    const credentials = await Keychain.setGenericPassword(key, genericPassword, {
       service: key,
       accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
     });

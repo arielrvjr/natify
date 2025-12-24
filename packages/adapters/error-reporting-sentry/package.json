@@ -1,5 +1,5 @@
 {
-  "name": "@nativefy/error-reporting-sentry",
+  "name": "@natify/error-reporting-sentry",
   "version": "0.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,11 +19,11 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\""
   },
   "devDependencies": {
-    "@nativefy/core": "workspace:*",
+    "@natify/core": "workspace:*",
     "typescript": "*"
   },
   "peerDependencies": {
-    "@nativefy/core": "*",
+    "@natify/core": "*",
     "@sentry/react-native": "^5.0.0"
   }
 }

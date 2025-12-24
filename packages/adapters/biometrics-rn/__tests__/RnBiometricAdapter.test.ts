@@ -1,5 +1,5 @@
 import { RnBiometricAdapter } from '../src';
-import { BiometryType } from '@nativefy/core';
+import { BiometryType } from '@natify/core';
 
 const mockIsSensorAvailable = jest.fn();
 const mockSimplePrompt = jest.fn();

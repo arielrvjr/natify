@@ -1,5 +1,5 @@
 import RnBiometrics from 'react-native-biometrics';
-import { BiometricPort, BiometryType } from '@nativefy/core';
+import { BiometricPort, BiometryType } from '@natify/core';
 
 export class RnBiometricAdapter implements BiometricPort {
   readonly capability = 'biometrics';

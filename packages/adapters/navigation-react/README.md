@@ -1,11 +1,11 @@
-# @nativefy/navigation-react
+# @natify/navigation-react
 
-Adapter de navegación para Nativefy Framework usando `@react-navigation/native`.
+Adapter de navegación para Natify Framework usando `@react-navigation/native`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy/navigation-react @react-navigation/native @react-navigation/native-stack react-native-screens react-native-safe-area-context
+pnpm add @natify/navigation-react @react-navigation/native @react-navigation/native-stack react-native-screens react-native-safe-area-context
 ```
 
 ### iOS
@@ -35,12 +35,12 @@ export type RootStackParamList = {
 
 ### 2. Configurar el Adapter
 
-#### Con NativefyApp (Recomendado)
+#### Con NatifyApp (Recomendado)
 
 ```typescript
 // App.tsx
-import { NativefyApp } from "@nativefy/core";
-import { createReactNavigationAdapter } from "@nativefy/navigation-react";
+import { NatifyApp } from "@natify/core";
+import { createReactNavigationAdapter } from "@natify/navigation-react";
 
 // Crear adapter con configuración
 const navigationAdapter = createReactNavigationAdapter({
@@ -56,7 +56,7 @@ const navigationAdapter = createReactNavigationAdapter({
 
 export default function App() {
   return (
-    <NativefyApp
+    <NatifyApp
       adapters={{ navigation: navigationAdapter }}
       modules={[AuthModule, ProductsModule]}
     />
@@ -64,12 +64,12 @@ export default function App() {
 }
 ```
 
-#### Con NativefyProvider (Nivel 1 - Solo Abstracción)
+#### Con NatifyProvider (Nivel 1 - Solo Abstracción)
 
 ```typescript
 // App.tsx
-import { NativefyProvider } from "@nativefy/core";
-import { createReactNavigationAdapter } from "@nativefy/navigation-react";
+import { NatifyProvider } from "@natify/core";
+import { createReactNavigationAdapter } from "@natify/navigation-react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -85,14 +85,14 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function App() {
   return (
-    <NativefyProvider adapters={{ navigation: navigationAdapter }}>
+    <NatifyProvider adapters={{ navigation: navigationAdapter }}>
       <NavigationContainer ref={navigationAdapter.navigationRef}>
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
         </Stack.Navigator>
       </NavigationContainer>
-    </NativefyProvider>
+    </NatifyProvider>
   );
 }
 ```
@@ -100,7 +100,7 @@ function App() {
 ### 3. Uso en Componentes
 
 ```typescript
-import { useAdapter, NavigationPort } from "@nativefy/core";
+import { useAdapter, NavigationPort } from "@natify/core";
 
 function HomeScreen() {
   const navigation = useAdapter<NavigationPort>("navigation");
@@ -128,7 +128,7 @@ Una de las ventajas principales del adapter es poder navegar desde cualquier lug
 
 ```typescript
 // services/auth.service.ts
-import { navigationAdapter } from "../config/nativefy";
+import { navigationAdapter } from "../config/natify";
 
 class AuthService {
   async logout() {
@@ -250,7 +250,7 @@ El adapter soporta deeplinks de forma automática. Configura los prefijos al cre
 
 ```typescript
 // App.tsx
-import { createReactNavigationAdapter } from '@nativefy/navigation-react';
+import { createReactNavigationAdapter } from '@natify/navigation-react';
 
 // Crear adapter con deeplinks
 const navigationAdapter = createReactNavigationAdapter({
@@ -259,8 +259,8 @@ const navigationAdapter = createReactNavigationAdapter({
   },
 });
 
-// En NativefyApp (se pasa automáticamente)
-<NativefyApp
+// En NatifyApp (se pasa automáticamente)
+<NatifyApp
   adapters={{ navigation: navigationAdapter }}
   modules={[AuthModule, ProductsModule]}
 />
@@ -287,7 +287,7 @@ const navigationAdapter = createReactNavigationAdapter({
 Define la configuración de deeplink en cada pantalla al crear el módulo:
 
 ```typescript
-import { createModule } from "@nativefy/core";
+import { createModule } from "@natify/core";
 
 export const ProductsModule = createModule("products", "Products")
   .screen({
@@ -347,8 +347,8 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 Para tipado completo de parámetros, puedes usar el hook nativo de React Navigation:
 
 ```typescript
-import { useNavigation } from "@nativefy/navigation-react";
-import type { NativeStackNavigationProp } from "@nativefy/navigation-react";
+import { useNavigation } from "@natify/navigation-react";
+import type { NativeStackNavigationProp } from "@natify/navigation-react";
 import type { RootStackParamList } from "../types/navigation";
 
 type ProfileScreenNavigationProp = NativeStackNavigationProp<
@@ -434,6 +434,6 @@ const adapter4 = createReactNavigationAdapter({
 ## Consideraciones
 
 1. **Crear el adapter fuera de componentes**: Debe ser una instancia global
-2. **Configuración en el adapter**: `theme` y `screenOptions` se configuran al crear el adapter, no en `NativefyApp`
+2. **Configuración en el adapter**: `theme` y `screenOptions` se configuran al crear el adapter, no en `NatifyApp`
 3. **Verificar isReady**: El adapter maneja esto internamente, pero ten en cuenta que la navegación no funciona antes de que el container esté montado
 

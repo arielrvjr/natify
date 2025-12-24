@@ -1,5 +1,5 @@
 import { RnGeolocationAdapter } from '../src';
-import { NativefyError, NativefyErrorCode } from '@nativefy/core';
+import { NatifyError, NatifyErrorCode } from '@natify/core';
 import Geolocation from '@react-native-community/geolocation';
 
 // Mock @react-native-community/geolocation
@@ -86,7 +86,7 @@ describe('RnGeolocationAdapter', () => {
       });
     });
 
-    it('should throw NativefyError on error', async () => {
+    it('should throw NatifyError on error', async () => {
       const mockError = {
         code: 1,
         message: 'Location permission denied',
@@ -96,7 +96,7 @@ describe('RnGeolocationAdapter', () => {
         error(mockError);
       });
 
-      await expect(adapter.getCurrentPosition()).rejects.toThrow(NativefyError);
+      await expect(adapter.getCurrentPosition()).rejects.toThrow(NatifyError);
     });
   });
 

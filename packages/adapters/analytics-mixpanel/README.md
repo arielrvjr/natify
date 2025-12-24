@@ -1,11 +1,11 @@
-# @nativefy/analytics-mixpanel
+# @natify/analytics-mixpanel
 
-Adapter de Analytics para Nativefy Framework usando `mixpanel-react-native`.
+Adapter de Analytics para Natify Framework usando `mixpanel-react-native`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy/analytics-mixpanel mixpanel-react-native
+pnpm add @natify/analytics-mixpanel mixpanel-react-native
 ```
 
 ### iOS
@@ -31,8 +31,8 @@ No requiere configuración adicional.
 ### Configuración Básica
 
 ```typescript
-import { NativefyProvider } from "@nativefy/core";
-import { MixpanelAnalyticsAdapter } from "@nativefy/analytics-mixpanel";
+import { NatifyProvider } from "@natify/core";
+import { MixpanelAnalyticsAdapter } from "@natify/analytics-mixpanel";
 
 const analyticsAdapter = new MixpanelAnalyticsAdapter({
   token: "YOUR_MIXPANEL_TOKEN",
@@ -45,9 +45,9 @@ const config = {
 
 function App() {
   return (
-    <NativefyProvider config={config}>
+    <NatifyProvider config={config}>
       <MyApp />
-    </NativefyProvider>
+    </NatifyProvider>
   );
 }
 ```
@@ -72,7 +72,7 @@ await analyticsAdapter.init();
 ### Evento Simple
 
 ```typescript
-import { useAdapter, AnalyticsPort } from "@nativefy/core";
+import { useAdapter, AnalyticsPort } from "@natify/core";
 
 function CheckoutButton() {
   const analytics = useAdapter<AnalyticsPort>("analytics");
@@ -128,7 +128,7 @@ analytics.track("button_clicked", {
 ### Identificar Usuario
 
 ```typescript
-import { useAdapter, AnalyticsPort } from "@nativefy/core";
+import { useAdapter, AnalyticsPort } from "@natify/core";
 
 function useAuth() {
   const analytics = useAdapter<AnalyticsPort>("analytics");
@@ -169,7 +169,7 @@ analytics.identify(userId, {
 
 ```typescript
 import { useEffect } from "react";
-import { useAdapter, AnalyticsPort } from "@nativefy/core";
+import { useAdapter, AnalyticsPort } from "@natify/core";
 
 function ProductDetailScreen({ productId }: { productId: string }) {
   const analytics = useAdapter<AnalyticsPort>("analytics");
@@ -190,7 +190,7 @@ function ProductDetailScreen({ productId }: { productId: string }) {
 
 ```typescript
 import { useFocusEffect } from "@react-navigation/native";
-import { useAdapter, AnalyticsPort } from "@nativefy/core";
+import { useAdapter, AnalyticsPort } from "@natify/core";
 
 function ProductListScreen() {
   const analytics = useAdapter<AnalyticsPort>("analytics");
@@ -255,7 +255,7 @@ if (analytics instanceof MixpanelAnalyticsAdapter) {
 ### Tracking en UseCase
 
 ```typescript
-import { AnalyticsPort } from "@nativefy/core";
+import { AnalyticsPort } from "@natify/core";
 
 export class PurchaseProductUseCase {
   constructor(
@@ -316,7 +316,7 @@ function CheckoutFlow() {
 ### Tracking de Errores
 
 ```typescript
-import { NativefyError } from "@nativefy/core";
+import { NatifyError } from "@natify/core";
 
 function handleError(error: Error) {
   const analytics = useAdapter<AnalyticsPort>("analytics");
@@ -325,7 +325,7 @@ function handleError(error: Error) {
     error_message: error.message,
     error_type: error.constructor.name,
     screen: currentScreen,
-    ...(error instanceof NativefyError && {
+    ...(error instanceof NatifyError && {
       error_code: error.code,
       error_context: error.context,
     }),
@@ -370,9 +370,9 @@ await trackPerformance("load_products", async () => {
 ## Combinar con Otros Adapters (Composite)
 
 ```typescript
-import { CompositeAnalyticsAdapter } from "@nativefy/core";
-import { MixpanelAnalyticsAdapter } from "@nativefy/analytics-mixpanel";
-// import { FirebaseAnalyticsAdapter } from "@nativefy/analytics-firebase";
+import { CompositeAnalyticsAdapter } from "@natify/core";
+import { MixpanelAnalyticsAdapter } from "@natify/analytics-mixpanel";
+// import { FirebaseAnalyticsAdapter } from "@natify/analytics-firebase";
 
 const mixpanel = new MixpanelAnalyticsAdapter({
   token: "YOUR_MIXPANEL_TOKEN",
@@ -397,7 +397,7 @@ analytics.track("user_login", { method: "email" });
 ## Integración con Módulos
 
 ```typescript
-import { createModule } from "@nativefy/core";
+import { createModule } from "@natify/core";
 import { PurchaseProductUseCase } from "./usecases/PurchaseProductUseCase";
 
 export const ProductsModule = createModule("products", "Products")

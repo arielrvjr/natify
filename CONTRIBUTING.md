@@ -1,12 +1,12 @@
 # Guía de Contribución
 
-¡Gracias por tu interés en contribuir a Nativefy Framework!
+¡Gracias por tu interés en contribuir a Natify Framework!
 
 ## Cómo Contribuir
 
 ### Reportar Bugs
 
-1. Verifica que el bug no haya sido reportado ya en [Issues](https://github.com/tu-usuario/nativefy/issues)
+1. Verifica que el bug no haya sido reportado ya en [Issues](https://github.com/arielrvjr/natify/issues)
 2. Crea un nuevo issue usando el template de [Bug Report](.github/ISSUE_TEMPLATE/bug_report.md)
 3. Proporciona toda la información solicitada
 
@@ -21,8 +21,8 @@
 1. **Fork** el repositorio
 2. **Clone** tu fork:
    ```bash
-   git clone https://github.com/tu-usuario/nativefy.git
-   cd nativefy
+   git clone https://github.com/arielrvjr/natify.git
+   cd natify
    ```
 3. **Instala dependencias**:
    ```bash

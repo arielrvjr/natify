@@ -1,11 +1,11 @@
-# @nativefy/storage-keychain
+# @natify/storage-keychain
 
-Adapter de almacenamiento seguro para Nativefy Framework usando `react-native-keychain`.
+Adapter de almacenamiento seguro para Natify Framework usando `react-native-keychain`.
 
 ## Instalación
 
 ```bash
-pnpm add @nativefy/storage-keychain react-native-keychain
+pnpm add @natify/storage-keychain react-native-keychain
 ```
 
 ## Cuándo Usar
@@ -32,9 +32,9 @@ pnpm add @nativefy/storage-keychain react-native-keychain
 ### Configuración del Provider
 
 ```typescript
-import { NativefyProvider } from "@nativefy/core";
-import { KeychainStorageAdapter } from "@nativefy/storage-keychain";
-import { MMKVStorageAdapter } from "@nativefy/storage-mmkv";
+import { NatifyProvider } from "@natify/core";
+import { KeychainStorageAdapter } from "@natify/storage-keychain";
+import { MMKVStorageAdapter } from "@natify/storage-mmkv";
 
 const config = {
   // Storage regular para datos no sensibles
@@ -45,9 +45,9 @@ const config = {
 
 function App() {
   return (
-    <NativefyProvider config={config}>
+    <NatifyProvider config={config}>
       <MyApp />
-    </NativefyProvider>
+    </NatifyProvider>
   );
 }
 ```
@@ -55,7 +55,7 @@ function App() {
 ### Uso en Componentes
 
 ```typescript
-import { useAdapter, StoragePort } from "@nativefy/core";
+import { useAdapter, StoragePort } from "@natify/core";
 
 function AuthService() {
   const secureStorage = useAdapter<StoragePort>("secureStorage");
