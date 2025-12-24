@@ -1,35 +1,35 @@
 # @natify/storage-keychain
 
-Adapter de almacenamiento seguro para Natify Framework usando `react-native-keychain`.
+Secure storage adapter for Natify Framework using `react-native-keychain`.
 
-## Instalación
+## Installation
 
 ```bash
 pnpm add @natify/storage-keychain react-native-keychain
 ```
 
-## Cuándo Usar
+## When to Use
 
-| Adapter | Caso de Uso |
-|---------|-------------|
-| storage-async | Datos no sensibles, compatibilidad |
-| storage-mmkv | Alto rendimiento, datos frecuentes |
-| **storage-keychain** | **Datos sensibles (tokens, passwords)** |
+| Adapter | Use Case |
+|---------|----------|
+| storage-async | Non-sensitive data, compatibility |
+| storage-mmkv | High performance, frequent data |
+| **storage-keychain** | **Sensitive data (tokens, passwords)** |
 
-**Keychain** usa encriptación nativa del sistema:
+**Keychain** uses native system encryption:
 - **iOS**: Keychain Services (AES-256)
 - **Android**: Keystore + EncryptedSharedPreferences
 
-**Usar para**:
-- Tokens de autenticación
+**Use for**:
+- Authentication tokens
 - Refresh tokens
 - API keys
-- Contraseñas
-- Datos personales sensibles
+- Passwords
+- Sensitive personal data
 
-## Uso
+## Usage
 
-### Configuración del Provider
+### Provider Configuration
 
 ```typescript
 import { NatifyProvider } from "@natify/core";
@@ -37,9 +37,9 @@ import { KeychainStorageAdapter } from "@natify/storage-keychain";
 import { MMKVStorageAdapter } from "@natify/storage-mmkv";
 
 const config = {
-  // Storage regular para datos no sensibles
+  // Regular storage for non-sensitive data
   storage: new MMKVStorageAdapter(),
-  // Storage seguro para datos sensibles
+  // Secure storage for sensitive data
   secureStorage: new KeychainStorageAdapter(),
 };
 
@@ -52,7 +52,7 @@ function App() {
 }
 ```
 
-### Uso en Componentes
+### Usage in Components
 
 ```typescript
 import { useAdapter, StoragePort } from "@natify/core";
@@ -60,18 +60,18 @@ import { useAdapter, StoragePort } from "@natify/core";
 function AuthService() {
   const secureStorage = useAdapter<StoragePort>("secureStorage");
 
-  // Guardar tokens después del login
+  // Save tokens after login
   const saveAuthTokens = async (accessToken: string, refreshToken: string) => {
     await secureStorage.setItem("access_token", accessToken);
     await secureStorage.setItem("refresh_token", refreshToken);
   };
 
-  // Recuperar token para peticiones
+  // Retrieve token for requests
   const getAccessToken = async (): Promise<string | null> => {
     return secureStorage.getItem<string>("access_token");
   };
 
-  // Limpiar tokens en logout
+  // Clear tokens on logout
   const clearAuthTokens = async () => {
     await secureStorage.removeItem("access_token");
     await secureStorage.removeItem("refresh_token");
@@ -79,7 +79,7 @@ function AuthService() {
 }
 ```
 
-### Ejemplo: Login Completo
+### Example: Complete Login
 
 ```typescript
 function useAuth() {
@@ -93,29 +93,29 @@ function useAuth() {
       password,
     });
 
-    // Guardar tokens de forma segura
+    // Save tokens securely
     await secureStorage.setItem("access_token", response.data.accessToken);
     await secureStorage.setItem("refresh_token", response.data.refreshToken);
     await secureStorage.setItem("user_email", email);
 
-    // Configurar header para futuras peticiones
+    // Set header for future requests
     http.setHeader("Authorization", `Bearer ${response.data.accessToken}`);
   };
 
   const loginWithBiometrics = async () => {
-    // Verificar si hay credenciales guardadas
+    // Check if there are saved credentials
     const savedEmail = await secureStorage.getItem<string>("user_email");
     if (!savedEmail) {
-      throw new Error("No hay sesión guardada");
+      throw new Error("No saved session");
     }
 
-    // Autenticar con biometría
-    const { success } = await biometrics.authenticate("Confirma tu identidad");
+    // Authenticate with biometrics
+    const { success } = await biometrics.authenticate("Confirm your identity");
     if (!success) {
-      throw new Error("Autenticación biométrica fallida");
+      throw new Error("Biometric authentication failed");
     }
 
-    // Recuperar y usar token guardado
+    // Retrieve and use saved token
     const token = await secureStorage.getItem<string>("access_token");
     http.setHeader("Authorization", `Bearer ${token}`);
   };
@@ -129,7 +129,7 @@ function useAuth() {
 }
 ```
 
-### Ejemplo: Almacenar Datos Sensibles
+### Example: Store Sensitive Data
 
 ```typescript
 interface SecureUserData {
@@ -159,31 +159,31 @@ function SecureDataManager() {
 
 ### StoragePort
 
-| Método | Retorno | Descripción |
-|--------|---------|-------------|
-| `getItem<T>(key)` | `Promise<T \| null>` | Obtiene un valor encriptado |
-| `setItem<T>(key, value)` | `Promise<void>` | Guarda un valor encriptado |
-| `removeItem(key)` | `Promise<void>` | Elimina un valor |
-| `clear()` | `Promise<void>` | Limpia todo el storage seguro |
+| Method | Return | Description |
+|--------|--------|-------------|
+| `getItem<T>(key)` | `Promise<T \| null>` | Gets an encrypted value |
+| `setItem<T>(key, value)` | `Promise<void>` | Saves an encrypted value |
+| `removeItem(key)` | `Promise<void>` | Removes a value |
+| `clear()` | `Promise<void>` | Clears all secure storage |
 
-## Configuración de Seguridad
+## Security Configuration
 
-El adapter usa `ACCESSIBLE.WHEN_UNLOCKED` por defecto, lo que significa:
-- Los datos solo son accesibles cuando el dispositivo está desbloqueado
-- Máxima seguridad para datos sensibles
+The adapter uses `ACCESSIBLE.WHEN_UNLOCKED` by default, which means:
+- Data is only accessible when the device is unlocked
+- Maximum security for sensitive data
 
-## Consideraciones
+## Considerations
 
-### Rendimiento
-- Más lento que MMKV/AsyncStorage debido a la encriptación
-- Usar solo para datos que realmente necesitan seguridad
+### Performance
+- Slower than MMKV/AsyncStorage due to encryption
+- Use only for data that really needs security
 
-### Límites
-- Cada item se guarda como una "credencial" separada
-- Ideal para pocos items de alto valor (tokens, keys)
+### Limits
+- Each item is saved as a separate "credential"
+- Ideal for few high-value items (tokens, keys)
 
-### Migración
-Si cambias de AsyncStorage a Keychain, debes migrar los datos:
+### Migration
+If you switch from AsyncStorage to Keychain, you must migrate the data:
 
 ```typescript
 const migrateToSecure = async () => {
@@ -194,4 +194,3 @@ const migrateToSecure = async () => {
   }
 };
 ```
-

@@ -1,31 +1,31 @@
 # @natify/biometrics-rn
 
-Adapter de autenticación biométrica para Natify Framework usando `react-native-biometrics`.
+Biometric authentication adapter for Natify Framework using `react-native-biometrics`.
 
-## Instalación
+## Installation
 
 ```bash
 pnpm add @natify/biometrics-rn react-native-biometrics
 ```
 
-## Configuración Nativa
+## Native Configuration
 
 ### iOS
 
-Agrega la descripción de Face ID en `ios/YourApp/Info.plist`:
+Add Face ID description in `ios/YourApp/Info.plist`:
 
 ```xml
 <key>NSFaceIDUsageDescription</key>
-<string>Usamos Face ID para autenticación segura</string>
+<string>We use Face ID for secure authentication</string>
 ```
 
 ### Android
 
-No requiere configuración adicional. La librería usa el sistema biométrico nativo de Android.
+No additional configuration required. The library uses Android's native biometric system.
 
-## Uso
+## Usage
 
-### Configuración del Provider
+### Provider Configuration
 
 ```typescript
 import { NatifyProvider } from "@natify/core";
@@ -33,7 +33,7 @@ import { RnBiometricAdapter } from "@natify/biometrics-rn";
 
 const config = {
   biometrics: new RnBiometricAdapter(),
-  // ... otros adapters
+  // ... other adapters
 };
 
 function App() {
@@ -45,7 +45,7 @@ function App() {
 }
 ```
 
-### Uso en Componentes
+### Usage in Components
 
 ```typescript
 import { useAdapter, BiometricPort, BiometryType } from "@natify/core";
@@ -54,32 +54,32 @@ function SecureAction() {
   const biometrics = useAdapter<BiometricPort>("biometrics");
 
   const handleSecureAction = async () => {
-    // 1. Verificar tipo de biometría disponible
+    // 1. Check available biometric type
     const biometryType = await biometrics.getBiometryType();
     
     if (biometryType === BiometryType.None) {
-      Alert.alert("Sin Biometría", "Tu dispositivo no soporta autenticación biométrica");
+      Alert.alert("No Biometrics", "Your device does not support biometric authentication");
       return;
     }
 
-    // 2. Autenticar al usuario
+    // 2. Authenticate user
     const { success, error } = await biometrics.authenticate(
-      "Confirma tu identidad para continuar"
+      "Confirm your identity to continue"
     );
 
     if (success) {
-      // Proceder con la acción segura
+      // Proceed with secure action
       performSecureAction();
     } else {
-      Alert.alert("Autenticación Fallida", error || "No se pudo verificar tu identidad");
+      Alert.alert("Authentication Failed", error || "Could not verify your identity");
     }
   };
 
-  return <Button title="Acción Segura" onPress={handleSecureAction} />;
+  return <Button title="Secure Action" onPress={handleSecureAction} />;
 }
 ```
 
-### Ejemplo: Login con Biometría
+### Example: Biometric Login
 
 ```typescript
 function BiometricLogin() {
@@ -90,15 +90,15 @@ function BiometricLogin() {
     const biometryType = await biometrics.getBiometryType();
     
     const buttonText = biometryType === BiometryType.FaceID 
-      ? "Usar Face ID" 
-      : "Usar Huella";
+      ? "Use Face ID" 
+      : "Use Fingerprint";
 
     const { success } = await biometrics.authenticate(
-      `Inicia sesión con ${buttonText}`
+      `Sign in with ${buttonText}`
     );
 
     if (success) {
-      // Recuperar token guardado
+      // Retrieve saved token
       const token = await storage.getItem("auth_token");
       if (token) {
         navigateToHome();
@@ -106,7 +106,7 @@ function BiometricLogin() {
     }
   };
 
-  return <Button title="Login Biométrico" onPress={loginWithBiometrics} />;
+  return <Button title="Biometric Login" onPress={loginWithBiometrics} />;
 }
 ```
 
@@ -114,24 +114,23 @@ function BiometricLogin() {
 
 ### BiometricPort
 
-| Método | Retorno | Descripción |
-|--------|---------|-------------|
-| `getBiometryType()` | `Promise<BiometryType>` | Obtiene el tipo de biometría disponible |
-| `authenticate(prompt)` | `Promise<{ success, error? }>` | Muestra el prompt de autenticación |
-| `isAvailable()` | `Promise<boolean>` | Verifica si la biometría está disponible |
+| Method | Return | Description |
+|--------|--------|-------------|
+| `getBiometryType()` | `Promise<BiometryType>` | Gets the available biometric type |
+| `authenticate(prompt)` | `Promise<{ success, error? }>` | Shows authentication prompt |
+| `isAvailable()` | `Promise<boolean>` | Checks if biometrics is available |
 
 ### BiometryType
 
-| Valor | Descripción |
+| Value | Description |
 |-------|-------------|
 | `FaceID` | Face ID (iOS) |
-| `Fingerprint` | Touch ID (iOS) o Huella (Android) |
-| `None` | Sin biometría disponible |
+| `Fingerprint` | Touch ID (iOS) or Fingerprint (Android) |
+| `None` | No biometrics available |
 
-## Casos de Uso Comunes
+## Common Use Cases
 
-- **Login biométrico**: Permitir acceso rápido sin contraseña
-- **Confirmar transacciones**: Verificar identidad antes de pagos
-- **Acceso a datos sensibles**: Proteger información confidencial
-- **Desbloqueo de app**: Después de un período de inactividad
-
+- **Biometric login**: Allow quick access without password
+- **Confirm transactions**: Verify identity before payments
+- **Access sensitive data**: Protect confidential information
+- **App unlock**: After a period of inactivity

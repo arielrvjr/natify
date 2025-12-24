@@ -1,49 +1,49 @@
 # @natify/image-picker-rn
 
-Adapter para selección de imágenes usando `react-native-image-picker`.
+Image picker adapter using `react-native-image-picker`.
 
-## Instalación
+## Installation
 
 ```bash
 pnpm add @natify/image-picker-rn react-native-image-picker
 ```
 
-## Uso
+## Usage
 
 ```typescript
 import { RnImagePickerAdapter } from "@natify/image-picker-rn";
 
 const imagePicker = new RnImagePickerAdapter();
 
-// Seleccionar imagen de la galería
+// Select image from gallery
 const image = await imagePicker.pickImage({
   quality: 0.8,
   maxWidth: 800,
   maxHeight: 800,
 });
 
-// Tomar foto con la cámara
+// Take photo with camera
 const photo = await imagePicker.takePhoto({
   quality: 0.8,
 });
 
-// Seleccionar múltiples imágenes
+// Select multiple images
 const images = await imagePicker.pickMultipleImages({
   quality: 0.8,
 });
 ```
 
-## Métodos
+## Methods
 
-- `pickImage(options?)`: Abre el selector de imágenes (galería)
-- `takePhoto(options?)`: Abre la cámara para tomar una foto
-- `pickMultipleImages(options?)`: Selecciona múltiples imágenes
+- `pickImage(options?)`: Opens image selector (gallery)
+- `takePhoto(options?)`: Opens camera to take a photo
+- `pickMultipleImages(options?)`: Selects multiple images
 
-## Opciones
+## Options
 
-- `quality`: Calidad de la imagen (0-1), por defecto 0.8
-- `maxWidth`: Ancho máximo de la imagen
-- `maxHeight`: Alto máximo de la imagen
-- `allowsMultipleSelection`: Permitir selección múltiple (solo en pickImage)
-- `mediaType`: Tipo de medio ('photo', 'video', 'mixed')
-- `includeBase64`: Incluir datos base64 de la imagen
+- `quality`: Image quality (0-1), default 0.8
+- `maxWidth`: Maximum image width
+- `maxHeight`: Maximum image height
+- `allowsMultipleSelection`: Allow multiple selection (only in pickImage)
+- `mediaType`: Media type ('photo', 'video', 'mixed')
+- `includeBase64`: Include base64 image data

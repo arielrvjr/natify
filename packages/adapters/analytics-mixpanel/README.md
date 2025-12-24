@@ -1,8 +1,8 @@
 # @natify/analytics-mixpanel
 
-Adapter de Analytics para Natify Framework usando `mixpanel-react-native`.
+Analytics adapter for Natify Framework using `mixpanel-react-native`.
 
-## Instalación
+## Installation
 
 ```bash
 pnpm add @natify/analytics-mixpanel mixpanel-react-native
@@ -16,19 +16,19 @@ cd ios && pod install && cd ..
 
 ### Android
 
-No requiere configuración adicional.
+No additional configuration required.
 
-## Configuración
+## Configuration
 
-### Obtener Token de Mixpanel
+### Get Mixpanel Token
 
-1. Crea una cuenta en [Mixpanel](https://mixpanel.com)
-2. Crea un nuevo proyecto
-3. Copia el **Project Token** desde Settings → Project Settings
+1. Create an account on [Mixpanel](https://mixpanel.com)
+2. Create a new project
+3. Copy the **Project Token** from Settings → Project Settings
 
-## Uso
+## Usage
 
-### Configuración Básica
+### Basic Configuration
 
 ```typescript
 import { NatifyProvider } from "@natify/core";
@@ -40,7 +40,7 @@ const analyticsAdapter = new MixpanelAnalyticsAdapter({
 
 const config = {
   analytics: analyticsAdapter,
-  // ... otros adapters
+  // ... other adapters
 };
 
 function App() {
@@ -52,24 +52,24 @@ function App() {
 }
 ```
 
-### Configuración Avanzada
+### Advanced Configuration
 
 ```typescript
 const analyticsAdapter = new MixpanelAnalyticsAdapter({
   token: "YOUR_MIXPANEL_TOKEN",
-  autoInit: true, // Inicializar automáticamente (default: true)
-  optOutTrackingByDefault: false, // Si deshabilitar tracking por defecto
-  trackAutomaticEvents: false, // Si trackear eventos automáticos de Mixpanel
-  useSuperProperties: true, // Si usar super properties (default: true)
+  autoInit: true, // Auto-initialize (default: true)
+  optOutTrackingByDefault: false, // Whether to disable tracking by default
+  trackAutomaticEvents: false, // Whether to track Mixpanel automatic events
+  useSuperProperties: true, // Whether to use super properties (default: true)
 });
 
-// Inicializar manualmente si autoInit es false
+// Initialize manually if autoInit is false
 await analyticsAdapter.init();
 ```
 
-## Tracking de Eventos
+## Event Tracking
 
-### Evento Simple
+### Simple Event
 
 ```typescript
 import { useAdapter, AnalyticsPort } from "@natify/core";
@@ -78,9 +78,9 @@ function CheckoutButton() {
   const analytics = useAdapter<AnalyticsPort>("analytics");
 
   const handleCheckout = async () => {
-    // Procesar checkout...
+    // Process checkout...
     
-    // Trackear evento
+    // Track event
     analytics.track("checkout_completed", {
       total: 99.99,
       currency: "USD",
@@ -93,7 +93,7 @@ function CheckoutButton() {
 }
 ```
 
-### Eventos Comunes
+### Common Events
 
 ```typescript
 // Login
@@ -102,13 +102,13 @@ analytics.track("user_login", {
   provider: "native",
 });
 
-// Registro
+// Signup
 analytics.track("user_signup", {
   method: "email",
   plan: "free",
 });
 
-// Compra
+// Purchase
 analytics.track("purchase_completed", {
   product_id: "123",
   product_name: "Premium Plan",
@@ -116,16 +116,16 @@ analytics.track("purchase_completed", {
   currency: "USD",
 });
 
-// Acción del usuario
+// User action
 analytics.track("button_clicked", {
   button_name: "share",
   screen: "product_detail",
 });
 ```
 
-## Identificación de Usuarios
+## User Identification
 
-### Identificar Usuario
+### Identify User
 
 ```typescript
 import { useAdapter, AnalyticsPort } from "@natify/core";
@@ -134,7 +134,7 @@ function useAuth() {
   const analytics = useAdapter<AnalyticsPort>("analytics");
 
   const login = async (user: User) => {
-    // Identificar usuario después del login
+    // Identify user after login
     analytics.identify(user.id, {
       email: user.email,
       name: user.name,
@@ -144,7 +144,7 @@ function useAuth() {
   };
 
   const logout = async () => {
-    // Limpiar sesión
+    // Clear session
     analytics.reset();
   };
 
@@ -152,20 +152,20 @@ function useAuth() {
 }
 ```
 
-### Actualizar Propiedades del Usuario
+### Update User Properties
 
 ```typescript
-// Después de actualizar perfil
+// After updating profile
 analytics.identify(userId, {
   email: updatedEmail,
   name: updatedName,
-  plan: "premium", // Actualizado
+  plan: "premium", // Updated
 });
 ```
 
-## Tracking de Pantallas
+## Screen Tracking
 
-### Tracking Automático
+### Automatic Tracking
 
 ```typescript
 import { useEffect } from "react";
@@ -175,7 +175,7 @@ function ProductDetailScreen({ productId }: { productId: string }) {
   const analytics = useAdapter<AnalyticsPort>("analytics");
 
   useEffect(() => {
-    // Trackear cuando se monta la pantalla
+    // Track when screen mounts
     analytics.screen("ProductDetail", {
       product_id: productId,
       category: "electronics",
@@ -186,7 +186,7 @@ function ProductDetailScreen({ productId }: { productId: string }) {
 }
 ```
 
-### Con React Navigation
+### With React Navigation
 
 ```typescript
 import { useFocusEffect } from "@react-navigation/native";
@@ -209,12 +209,12 @@ function ProductListScreen() {
 
 ## Super Properties
 
-Las super properties se incluyen automáticamente en todos los eventos.
+Super properties are automatically included in all events.
 
 ```typescript
 const analytics = useAdapter<AnalyticsPort>("analytics");
 
-// Establecer super properties (se incluyen en todos los eventos)
+// Set super properties (included in all events)
 if (analytics instanceof MixpanelAnalyticsAdapter) {
   analytics.registerSuperProperties({
     app_version: "1.0.0",
@@ -224,22 +224,22 @@ if (analytics instanceof MixpanelAnalyticsAdapter) {
 }
 ```
 
-## Funciones Avanzadas
+## Advanced Features
 
-### Incrementar Propiedades del Usuario
+### Increment User Properties
 
 ```typescript
-// Incrementar contador de acciones
+// Increment action counter
 if (analytics instanceof MixpanelAnalyticsAdapter) {
   analytics.incrementUserProperty("products_viewed", 1);
   analytics.incrementUserProperty("total_spent", 99.99);
 }
 ```
 
-### Establecer Propiedades del Usuario (People)
+### Set User Properties (People)
 
 ```typescript
-// Actualizar propiedades del usuario en Mixpanel People
+// Update user properties in Mixpanel People
 if (analytics instanceof MixpanelAnalyticsAdapter) {
   analytics.setUserProperties({
     "$email": user.email,
@@ -250,9 +250,9 @@ if (analytics instanceof MixpanelAnalyticsAdapter) {
 }
 ```
 
-## Casos de Uso Comunes
+## Common Use Cases
 
-### Tracking en UseCase
+### Tracking in UseCase
 
 ```typescript
 import { AnalyticsPort } from "@natify/core";
@@ -264,21 +264,21 @@ export class PurchaseProductUseCase {
   ) {}
 
   async execute(productId: string): Promise<void> {
-    // Trackear inicio de compra
+    // Track purchase start
     this.analytics.track("purchase_started", { product_id: productId });
 
     try {
-      // Procesar compra
+      // Process purchase
       const result = await this.http.post("/purchase", { productId });
 
-      // Trackear éxito
+      // Track success
       this.analytics.track("purchase_completed", {
         product_id: productId,
         order_id: result.data.orderId,
         total: result.data.total,
       });
     } catch (error) {
-      // Trackear error
+      // Track error
       this.analytics.track("purchase_failed", {
         product_id: productId,
         error: error.message,
@@ -289,7 +289,7 @@ export class PurchaseProductUseCase {
 }
 ```
 
-### Tracking de Funnel
+### Funnel Tracking
 
 ```typescript
 function CheckoutFlow() {
@@ -313,7 +313,7 @@ function CheckoutFlow() {
 }
 ```
 
-### Tracking de Errores
+### Error Tracking
 
 ```typescript
 import { NatifyError } from "@natify/core";
@@ -333,7 +333,7 @@ function handleError(error: Error) {
 }
 ```
 
-### Tracking de Performance
+### Performance Tracking
 
 ```typescript
 const trackPerformance = async (operation: string, fn: () => Promise<void>) => {
@@ -361,13 +361,13 @@ const trackPerformance = async (operation: string, fn: () => Promise<void>) => {
   }
 };
 
-// Uso
+// Usage
 await trackPerformance("load_products", async () => {
   await loadProducts();
 });
 ```
 
-## Combinar con Otros Adapters (Composite)
+## Combining with Other Adapters (Composite)
 
 ```typescript
 import { CompositeAnalyticsAdapter } from "@natify/core";
@@ -380,21 +380,21 @@ const mixpanel = new MixpanelAnalyticsAdapter({
 
 // const firebase = new FirebaseAnalyticsAdapter();
 
-// Combinar múltiples adapters
+// Combine multiple adapters
 const analytics = new CompositeAnalyticsAdapter([
   mixpanel,
   // firebase,
 ]);
 
-// Inicializar todos
+// Initialize all
 await analytics.init();
 
-// Los eventos se envían a todos los adapters
+// Events are sent to all adapters
 analytics.track("user_login", { method: "email" });
-// ↑ Se envía a Mixpanel (y Firebase si está configurado)
+// ↑ Sent to Mixpanel (and Firebase if configured)
 ```
 
-## Integración con Módulos
+## Module Integration
 
 ```typescript
 import { createModule } from "@natify/core";
@@ -412,85 +412,84 @@ export const ProductsModule = createModule("products", "Products")
 
 ### AnalyticsPort
 
-| Método | Descripción |
+| Method | Description |
 |--------|-------------|
-| `init()` | Inicializa el servicio |
-| `identify(userId, traits?)` | Identifica un usuario |
-| `track(event, properties?)` | Registra un evento |
-| `screen(name, properties?)` | Registra una pantalla |
-| `reset()` | Limpia la sesión |
+| `init()` | Initializes the service |
+| `identify(userId, traits?)` | Identifies a user |
+| `track(event, properties?)` | Records an event |
+| `screen(name, properties?)` | Records a screen |
+| `reset()` | Clears the session |
 
-### MixpanelAnalyticsAdapter (Métodos Adicionales)
+### MixpanelAnalyticsAdapter (Additional Methods)
 
-| Método | Descripción |
+| Method | Description |
 |--------|-------------|
-| `registerSuperProperties(properties)` | Establece super properties |
-| `registerSuperProperty(key, value)` | Establece una super property |
-| `incrementUserProperty(property, value?)` | Incrementa propiedad del usuario |
-| `setUserProperties(properties)` | Establece propiedades del usuario |
-| `getMixpanelClient()` | Obtiene cliente Mixpanel subyacente |
+| `registerSuperProperties(properties)` | Sets super properties |
+| `registerSuperProperty(key, value)` | Sets a super property |
+| `incrementUserProperty(property, value?)` | Increments user property |
+| `setUserProperties(properties)` | Sets user properties |
+| `getMixpanelClient()` | Gets underlying Mixpanel client |
 
-## Mejores Prácticas
+## Best Practices
 
-### Nombres de Eventos
+### Event Names
 
-✅ **Buenos nombres:**
+✅ **Good names:**
 - `checkout_completed`
 - `user_login`
 - `product_viewed`
 - `button_clicked`
 
-❌ **Evitar:**
-- `event1`, `action`, `click` (muy genéricos)
-- `CheckoutCompleted` (usar snake_case)
-- `checkout-completed` (usar snake_case, no kebab-case)
+❌ **Avoid:**
+- `event1`, `action`, `click` (too generic)
+- `CheckoutCompleted` (use snake_case)
+- `checkout-completed` (use snake_case, not kebab-case)
 
-### Propiedades Consistentes
+### Consistent Properties
 
 ```typescript
-// Siempre incluir estas propiedades comunes
+// Always include these common properties
 analytics.track("purchase_completed", {
-  // Identificadores
+  // Identifiers
   user_id: userId,
   order_id: orderId,
   
-  // Monetización
+  // Monetization
   revenue: 99.99,
   currency: "USD",
   
-  // Contexto
+  // Context
   screen: "checkout",
   platform: Platform.OS,
   app_version: "1.0.0",
 });
 ```
 
-### No Trackear Información Sensible
+### Don't Track Sensitive Information
 
-❌ **Evitar:**
+❌ **Avoid:**
 ```typescript
 analytics.track("user_login", {
-  password: userPassword, // ❌ NUNCA
-  credit_card: cardNumber, // ❌ NUNCA
-  ssn: userSSN, // ❌ NUNCA
+  password: userPassword, // ❌ NEVER
+  credit_card: cardNumber, // ❌ NEVER
+  ssn: userSSN, // ❌ NEVER
 });
 ```
 
-✅ **Usar:**
+✅ **Use:**
 ```typescript
 analytics.track("user_login", {
   method: "email",
   provider: "native",
-  user_id: userId, // ✅ OK (no es sensible)
+  user_id: userId, // ✅ OK (not sensitive)
 });
 ```
 
-## Notas
+## Notes
 
-- **Inicialización**: El adapter se inicializa automáticamente por defecto. Usa `autoInit: false` si necesitas control manual.
-- **Super Properties**: Se incluyen automáticamente en todos los eventos cuando `useSuperProperties` es `true`.
-- **People**: Las propiedades del usuario se sincronizan con Mixpanel People.
-- **Errores**: Los errores se loguean pero no lanzan excepciones para no interrumpir el flujo de la app.
-- **iOS**: Requiere `pod install` después de instalar.
-- **Android**: No requiere configuración adicional.
-
+- **Initialization**: The adapter initializes automatically by default. Use `autoInit: false` if you need manual control.
+- **Super Properties**: Automatically included in all events when `useSuperProperties` is `true`.
+- **People**: User properties sync with Mixpanel People.
+- **Errors**: Errors are logged but don't throw exceptions to avoid interrupting app flow.
+- **iOS**: Requires `pod install` after installation.
+- **Android**: No additional configuration required.

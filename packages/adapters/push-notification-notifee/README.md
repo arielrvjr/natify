@@ -1,8 +1,8 @@
 # @natify/push-notification-notifee
 
-Adapter de Push Notifications usando `react-native-notifee`.
+Push Notifications adapter using `react-native-notifee`.
 
-## Instalación
+## Installation
 
 ```bash
 pnpm add @natify/push-notification-notifee react-native-notifee
@@ -16,9 +16,9 @@ cd ios && pod install
 
 ### Android
 
-No requiere configuración adicional.
+No additional configuration required.
 
-## Uso
+## Usage
 
 ```typescript
 import { NotifeePushAdapter } from '@natify/push-notification-notifee';
@@ -28,27 +28,27 @@ const pushAdapter = new NotifeePushAdapter();
 
 const adapters = {
   pushNotification: pushAdapter,
-  // ... otros adapters
+  // ... other adapters
 };
 
 <NatifyApp adapters={adapters} modules={modules} />
 ```
 
-## Características
+## Features
 
-- ✅ Notificaciones locales
-- ✅ Notificaciones programadas
-- ✅ Canales de notificación (Android)
-- ✅ Acciones de notificación (botones)
-- ✅ Manejo de eventos (recibido, presionado)
-- ✅ Permisos de notificación
+- ✅ Local notifications
+- ✅ Scheduled notifications
+- ✅ Notification channels (Android)
+- ✅ Notification actions (buttons)
+- ✅ Event handling (received, pressed)
+- ✅ Notification permissions
 
-## Limitaciones
+## Limitations
 
-- ❌ No proporciona tokens FCM/APNS (usa Firebase adapter para eso)
-- ❌ Solo notificaciones locales y UI de notificaciones remotas
+- ❌ Does not provide FCM/APNS tokens (use Firebase adapter for that)
+- ❌ Only local notifications and remote notification UI
 
-## Ejemplo
+## Example
 
 ```typescript
 import { useAdapter } from '@natify/core';
@@ -57,30 +57,29 @@ import { PushNotificationPort } from '@natify/core';
 function MyComponent() {
   const push = useAdapter<PushNotificationPort>('pushNotification');
 
-  // Solicitar permisos
+  // Request permissions
   const requestPermission = async () => {
     const granted = await push.requestPermission();
     if (granted) {
-      console.log('Permisos concedidos');
+      console.log('Permissions granted');
     }
   };
 
-  // Mostrar notificación
+  // Display notification
   const showNotification = async () => {
     await push.displayNotification({
-      title: 'Hola',
-      body: 'Esta es una notificación',
+      title: 'Hello',
+      body: 'This is a notification',
       data: { userId: '123' },
     });
   };
 
-  // Escuchar cuando se presiona una notificación
+  // Listen when a notification is pressed
   useEffect(() => {
     const unsubscribe = push.onNotificationPressed(notification => {
-      console.log('Notificación presionada:', notification);
+      console.log('Notification pressed:', notification);
     });
     return unsubscribe;
   }, [push]);
 }
 ```
-

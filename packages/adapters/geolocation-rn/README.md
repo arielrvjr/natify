@@ -1,8 +1,8 @@
 # @natify/geolocation-rn
 
-Adapter de geolocalización para Natify Framework usando `@react-native-community/geolocation`.
+Geolocation adapter for Natify Framework using `@react-native-community/geolocation`.
 
-## Instalación
+## Installation
 
 ```bash
 pnpm add @natify/geolocation-rn @react-native-community/geolocation
@@ -10,18 +10,18 @@ pnpm add @natify/geolocation-rn @react-native-community/geolocation
 
 ### iOS
 
-Agrega el permiso en `ios/YourApp/Info.plist`:
+Add permission in `ios/YourApp/Info.plist`:
 
 ```xml
 <key>NSLocationWhenInUseUsageDescription</key>
-<string>Necesitamos tu ubicación para mostrarte lugares cercanos</string>
+<string>We need your location to show nearby places</string>
 
-<!-- Opcional: Para ubicación en background -->
+<!-- Optional: For background location -->
 <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-<string>Necesitamos tu ubicación para rastrear tu ubicación en tiempo real</string>
+<string>We need your location to track your location in real time</string>
 ```
 
-Luego:
+Then:
 
 ```bash
 cd ios && pod install && cd ..
@@ -29,16 +29,16 @@ cd ios && pod install && cd ..
 
 ### Android
 
-Agrega el permiso en `android/app/src/main/AndroidManifest.xml`:
+Add permission in `android/app/src/main/AndroidManifest.xml`:
 
 ```xml
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 ```
 
-## Uso
+## Usage
 
-### Configuración del Provider
+### Provider Configuration
 
 ```typescript
 import { NatifyProvider } from "@natify/core";
@@ -48,7 +48,7 @@ import { RnPermissionsAdapter } from "@natify/permissions-rn";
 const config = {
   geolocation: new RnGeolocationAdapter(),
   permissions: new RnPermissionsAdapter(),
-  // ... otros adapters
+  // ... other adapters
 };
 
 function App() {
@@ -60,9 +60,9 @@ function App() {
 }
 ```
 
-## Obtener Ubicación Actual
+## Get Current Location
 
-### Uso Básico
+### Basic Usage
 
 ```typescript
 import { useAdapter, GeolocationPort } from "@natify/core";
@@ -85,25 +85,25 @@ function MyComponent() {
 }
 ```
 
-### Con Opciones de Precisión
+### With Accuracy Options
 
 ```typescript
-// Alta precisión (GPS)
+// High accuracy (GPS)
 const location = await locationService.getCurrentPosition({
   enableHighAccuracy: true,
   timeout: 20000,
-  maximumAge: 0, // Siempre obtener nueva ubicación
+  maximumAge: 0, // Always get new location
 });
 
-// Baja precisión (más rápido, menos batería)
+// Low accuracy (faster, less battery)
 const location = await locationService.getCurrentPosition({
   enableHighAccuracy: false,
   timeout: 10000,
-  maximumAge: 60000, // Aceptar ubicación de hasta 1 minuto
+  maximumAge: 60000, // Accept location up to 1 minute old
 });
 ```
 
-### Con Verificación de Permisos
+### With Permission Check
 
 ```typescript
 import { useAdapter, GeolocationPort, PermissionPort, PermissionStatus } from "@natify/core";
@@ -113,26 +113,26 @@ function LocationButton() {
   const permissions = useAdapter<PermissionPort>("permissions");
 
   const requestLocation = async () => {
-    // Verificar permiso
+    // Check permission
     const status = await permissions.check("location");
     
     if (status !== PermissionStatus.GRANTED) {
-      // Solicitar permiso
+      // Request permission
       const newStatus = await permissions.request("location");
       if (newStatus !== PermissionStatus.GRANTED) {
-        alert("Se necesita permiso de ubicación");
+        alert("Location permission required");
         return;
       }
     }
 
-    // Verificar si el servicio está habilitado
+    // Check if service is enabled
     const isEnabled = await geolocation.isLocationEnabled();
     if (!isEnabled) {
-      alert("Por favor activa el servicio de ubicación");
+      alert("Please enable location services");
       return;
     }
 
-    // Obtener ubicación
+    // Get location
     try {
       const currentLocation = await geolocation.getCurrentPosition();
       console.log("Location:", currentLocation);
@@ -145,9 +145,9 @@ function LocationButton() {
 }
 ```
 
-## Observar Cambios de Ubicación
+## Watch Location Changes
 
-### Watch Position Simple
+### Simple Watch Position
 
 ```typescript
 function LocationTracker() {
@@ -160,7 +160,7 @@ function LocationTracker() {
       console.log("New location:", newLocation);
     });
 
-    // Limpiar al desmontar
+    // Cleanup on unmount
     return stopWatching;
   }, []);
 
@@ -176,23 +176,23 @@ function LocationTracker() {
 }
 ```
 
-### Con Filtro de Distancia
+### With Distance Filter
 
 ```typescript
-// Solo actualizar si el dispositivo se mueve más de 10 metros
+// Only update if device moves more than 10 meters
 const stopWatching = geolocation.watchPosition(
   (newLocation) => {
     console.log("Location updated:", newLocation);
   },
   {
     enableHighAccuracy: true,
-    distanceFilter: 10, // 10 metros
-    interval: 5000, // Mínimo 5 segundos entre actualizaciones
+    distanceFilter: 10, // 10 meters
+    interval: 5000, // Minimum 5 seconds between updates
   }
 );
 ```
 
-### Para Navegación en Tiempo Real
+### For Real-Time Navigation
 
 ```typescript
 function NavigationScreen() {
@@ -202,16 +202,16 @@ function NavigationScreen() {
   useEffect(() => {
     const stopWatching = geolocation.watchPosition(
       (newLocation) => {
-        // Agregar a la ruta
+        // Add to route
         setRoute((prev) => [...prev, newLocation]);
         
-        // Actualizar mapa
+        // Update map
         updateMapMarker(newLocation);
       },
       {
         enableHighAccuracy: true,
-        distanceFilter: 5, // Actualizar cada 5 metros
-        interval: 1000, // Máximo 1 actualización por segundo
+        distanceFilter: 5, // Update every 5 meters
+        interval: 1000, // Maximum 1 update per second
       }
     );
 
@@ -222,14 +222,14 @@ function NavigationScreen() {
 }
 ```
 
-## Calcular Distancia
+## Calculate Distance
 
-### Distancia Entre Dos Puntos
+### Distance Between Two Points
 
 ```typescript
 const geolocation = useAdapter<GeolocationPort>("geolocation");
 
-// Coordenadas de origen y destino
+// Origin and destination coordinates
 const origin: Coordinates = {
   latitude: 40.7128,
   longitude: -74.0060,
@@ -242,13 +242,13 @@ const destination: Coordinates = {
   accuracy: 10,
 };
 
-// Calcular distancia en metros
+// Calculate distance in meters
 const distance = geolocation.calculateDistance(origin, destination);
 console.log(`Distance: ${distance.toFixed(2)} meters`);
 console.log(`Distance: ${(distance / 1000).toFixed(2)} kilometers`);
 ```
 
-### Distancia a Múltiples Puntos
+### Distance to Multiple Points
 
 ```typescript
 const findNearestPlace = async (places: Array<{ name: string; coordinates: Coordinates }>) => {
@@ -259,14 +259,14 @@ const findNearestPlace = async (places: Array<{ name: string; coordinates: Coord
     distance: geolocation.calculateDistance(currentLocation, place.coordinates),
   }));
 
-  // Ordenar por distancia
+  // Sort by distance
   distances.sort((a, b) => a.distance - b.distance);
 
-  return distances[0]; // El más cercano
+  return distances[0]; // Nearest one
 };
 ```
 
-## Calcular Bearing (Dirección)
+## Calculate Bearing (Direction)
 
 ```typescript
 const geolocation = useAdapter<GeolocationPort>("geolocation");
@@ -283,19 +283,19 @@ const destination: Coordinates = {
   accuracy: 10,
 };
 
-// Calcular dirección en grados (0-360)
+// Calculate direction in degrees (0-360)
 const bearing = geolocation.calculateBearing(origin, destination);
 console.log(`Bearing: ${bearing.toFixed(2)}°`);
 
-// Convertir a dirección cardinal
+// Convert to cardinal direction
 const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
 const direction = directions[Math.round(bearing / 45) % 8];
 console.log(`Direction: ${direction}`);
 ```
 
-## Casos de Uso Comunes
+## Common Use Cases
 
-### Verificar Si el Usuario Está Cerca de un Lugar
+### Check If User Is Near a Place
 
 ```typescript
 const checkIfNearPlace = async (
@@ -309,7 +309,7 @@ const checkIfNearPlace = async (
 };
 ```
 
-### Rastreo de Ruta (Tracking)
+### Route Tracking
 
 ```typescript
 function RouteTracker() {
@@ -328,7 +328,7 @@ function RouteTracker() {
       },
       {
         enableHighAccuracy: true,
-        distanceFilter: 5, // Registrar cada 5 metros
+        distanceFilter: 5, // Record every 5 meters
         interval: 2000,
       }
     );
@@ -365,7 +365,7 @@ function RouteTracker() {
 }
 ```
 
-### Geofencing (Detección de Entrada/Salida de Zona)
+### Geofencing (Zone Entry/Exit Detection)
 
 ```typescript
 function GeofenceMonitor({ center, radius }: { center: Coordinates; radius: number }) {
@@ -391,7 +391,7 @@ function GeofenceMonitor({ center, radius }: { center: Coordinates; radius: numb
       },
       {
         enableHighAccuracy: true,
-        distanceFilter: 10, // Verificar cada 10 metros
+        distanceFilter: 10, // Check every 10 meters
       }
     );
 
@@ -402,7 +402,7 @@ function GeofenceMonitor({ center, radius }: { center: Coordinates; radius: numb
 }
 ```
 
-### UseCase de Ubicación
+### Location UseCase
 
 ```typescript
 import { GeolocationPort } from "@natify/core";
@@ -411,24 +411,24 @@ export class GetNearbyPlacesUseCase {
   constructor(private readonly geolocation: GeolocationPort) {}
 
   async execute(radiusKm: number): Promise<Place[]> {
-    // Obtener ubicación actual
+    // Get current location
     const currentLocation = await this.geolocation.getCurrentPosition({
       enableHighAccuracy: true,
     });
 
-    // Obtener lugares desde API
+    // Get places from API
     const allPlaces = await this.fetchPlacesFromAPI();
 
-    // Filtrar por distancia
+    // Filter by distance
     const nearbyPlaces = allPlaces.filter((place) => {
       const distance = this.geolocation.calculateDistance(
         currentLocation,
         place.coordinates
       );
-      return distance <= radiusKm * 1000; // Convertir km a metros
+      return distance <= radiusKm * 1000; // Convert km to meters
     });
 
-    // Ordenar por distancia
+    // Sort by distance
     nearbyPlaces.sort((a, b) => {
       const distA = this.geolocation.calculateDistance(currentLocation, a.coordinates);
       const distB = this.geolocation.calculateDistance(currentLocation, b.coordinates);
@@ -444,21 +444,21 @@ export class GetNearbyPlacesUseCase {
 
 ### GeolocationPort
 
-| Método | Descripción |
+| Method | Description |
 |--------|-------------|
-| `getCurrentPosition(options?)` | Obtiene ubicación actual |
-| `watchPosition(callback, options?)` | Observa cambios de ubicación |
-| `isLocationEnabled()` | Verifica si el servicio está habilitado |
-| `calculateDistance(from, to)` | Calcula distancia en metros |
-| `calculateBearing(from, to)` | Calcula dirección en grados |
+| `getCurrentPosition(options?)` | Gets current location |
+| `watchPosition(callback, options?)` | Watches location changes |
+| `isLocationEnabled()` | Checks if service is enabled |
+| `calculateDistance(from, to)` | Calculates distance in meters |
+| `calculateBearing(from, to)` | Calculates direction in degrees |
 
 ### LocationOptions
 
 ```typescript
 interface LocationOptions {
   enableHighAccuracy?: boolean; // default: true
-  timeout?: number; // default: 15000 (15 segundos)
-  maximumAge?: number; // default: 0 (siempre nueva)
+  timeout?: number; // default: 15000 (15 seconds)
+  maximumAge?: number; // default: 0 (always new)
 }
 ```
 
@@ -466,8 +466,8 @@ interface LocationOptions {
 
 ```typescript
 interface WatchLocationOptions extends LocationOptions {
-  distanceFilter?: number; // default: 0 (todas las actualizaciones)
-  interval?: number; // default: 1000 (1 segundo)
+  distanceFilter?: number; // default: 0 (all updates)
+  interval?: number; // default: 1000 (1 second)
 }
 ```
 
@@ -490,17 +490,17 @@ interface Coordinates {
 }
 ```
 
-## Notas
+## Notes
 
-- **Permisos**: Siempre verifica y solicita permisos antes de usar la ubicación
-- **Batería**: Usar `enableHighAccuracy: false` y `distanceFilter` para ahorrar batería
-- **Precisión**: `enableHighAccuracy: true` usa GPS (más preciso pero consume más batería)
-- **Timeout**: Configura un timeout razonable para evitar esperas infinitas
-- **Watch Position**: Siempre limpia los watchers en `useEffect` cleanup
-- **iOS**: Requiere configuración en `Info.plist`
-- **Android**: Requiere permisos en `AndroidManifest.xml`
+- **Permissions**: Always check and request permissions before using location
+- **Battery**: Use `enableHighAccuracy: false` and `distanceFilter` to save battery
+- **Accuracy**: `enableHighAccuracy: true` uses GPS (more accurate but consumes more battery)
+- **Timeout**: Set a reasonable timeout to avoid infinite waits
+- **Watch Position**: Always clean up watchers in `useEffect` cleanup
+- **iOS**: Requires configuration in `Info.plist`
+- **Android**: Requires permissions in `AndroidManifest.xml`
 
-## Integración con Módulos
+## Module Integration
 
 ```typescript
 import { createModule } from "@natify/core";
@@ -513,4 +513,3 @@ export const PlacesModule = createModule("places", "Places")
   })
   .build();
 ```
-

@@ -1,28 +1,28 @@
 # @natify/error-reporting-sentry
 
-Adapter de Error Reporting para Natify Framework usando Sentry.
+Error Reporting adapter for Natify Framework using Sentry.
 
-## Instalación
+## Installation
 
 ```bash
 pnpm add @natify/error-reporting-sentry @sentry/react-native
 ```
 
-### Configuración Automática
+### Automatic Configuration
 
-Sentry proporciona un wizard para configurar automáticamente el proyecto:
+Sentry provides a wizard to automatically configure the project:
 
 ```bash
 npx @sentry/wizard@latest -i reactNative
 ```
 
-Este comando:
-- Instala las dependencias necesarias
-- Configura iOS (CocoaPods)
-- Configura Android
-- Crea archivos de configuración
+This command:
+- Installs necessary dependencies
+- Configures iOS (CocoaPods)
+- Configures Android
+- Creates configuration files
 
-### Configuración Manual
+### Manual Configuration
 
 #### iOS
 
@@ -32,19 +32,19 @@ cd ios && pod install && cd ..
 
 #### Android
 
-No requiere configuración adicional después de ejecutar el wizard.
+No additional configuration required after running the wizard.
 
-## Configuración
+## Configuration
 
-### Obtener DSN de Sentry
+### Get Sentry DSN
 
-1. Crea una cuenta en [Sentry](https://sentry.io)
-2. Crea un nuevo proyecto (React Native)
-3. Copia el **DSN** desde Settings → Client Keys (DSN)
+1. Create an account on [Sentry](https://sentry.io)
+2. Create a new project (React Native)
+3. Copy the **DSN** from Settings → Client Keys (DSN)
 
-## Uso
+## Usage
 
-### Configuración Básica
+### Basic Configuration
 
 ```typescript
 import { NatifyProvider } from "@natify/core";
@@ -56,12 +56,12 @@ const errorReporting = new SentryErrorReportingAdapter({
   release: "1.0.0",
 });
 
-// Inicializar
+// Initialize
 await errorReporting.init();
 
 const config = {
   errorReporting: errorReporting,
-  // ... otros adapters
+  // ... other adapters
 };
 
 function App() {
@@ -73,24 +73,24 @@ function App() {
 }
 ```
 
-### Configuración Avanzada
+### Advanced Configuration
 
 ```typescript
 const errorReporting = new SentryErrorReportingAdapter({
   dsn: "YOUR_SENTRY_DSN",
   environment: "production",
   release: "1.0.0",
-  debug: false, // Habilitar logs de debug
+  debug: false, // Enable debug logs
   enableTracing: true, // Performance monitoring
-  tracesSampleRate: 0.1, // 10% de las transacciones
-  attachScreenshot: true, // Capturar screenshots en errores
-  attachViewHierarchy: true, // Capturar view hierarchy
+  tracesSampleRate: 0.1, // 10% of transactions
+  attachScreenshot: true, // Capture screenshots on errors
+  attachViewHierarchy: true, // Capture view hierarchy
 });
 ```
 
-## Capturar Errores
+## Capturing Errors
 
-### Capturar Excepción
+### Capture Exception
 
 ```typescript
 import { useAdapter, ErrorReportingPort, SeverityLevel } from "@natify/core";
@@ -102,7 +102,7 @@ function MyComponent() {
     try {
       await riskyOperation();
     } catch (error) {
-      // Capturar error con contexto
+      // Capture error with context
       errorReporting.captureException(error as Error, {
         screen: "ProductDetail",
         productId: "123",
@@ -113,29 +113,29 @@ function MyComponent() {
 }
 ```
 
-### Capturar Mensaje
+### Capture Message
 
 ```typescript
-// Mensaje informativo
+// Informative message
 errorReporting.captureMessage("User completed checkout", SeverityLevel.INFO, {
   orderId: "123",
   total: 99.99,
 });
 
-// Advertencia
+// Warning
 errorReporting.captureMessage("API response time is slow", SeverityLevel.WARNING, {
   endpoint: "/api/products",
   responseTime: 5000,
 });
 
-// Error crítico
+// Critical error
 errorReporting.captureMessage("Payment gateway unavailable", SeverityLevel.ERROR, {
   gateway: "stripe",
   retryCount: 3,
 });
 ```
 
-### Con NatifyError
+### With NatifyError
 
 ```typescript
 import { NatifyError, NatifyErrorCode } from "@natify/core";
@@ -154,9 +154,9 @@ try {
 }
 ```
 
-## Contexto de Usuario
+## User Context
 
-### Establecer Usuario
+### Set User
 
 ```typescript
 import { useAdapter, ErrorReportingPort } from "@natify/core";
@@ -165,7 +165,7 @@ function useAuth() {
   const errorReporting = useAdapter<ErrorReportingPort>("errorReporting");
 
   const login = async (user: User) => {
-    // Establecer contexto del usuario
+    // Set user context
     errorReporting.setUser({
       id: user.id,
       email: user.email,
@@ -176,7 +176,7 @@ function useAuth() {
   };
 
   const logout = async () => {
-    // Limpiar contexto
+    // Clear context
     errorReporting.clearUser();
   };
 
@@ -184,7 +184,7 @@ function useAuth() {
 }
 ```
 
-### Obtener Usuario Actual
+### Get Current User
 
 ```typescript
 const currentUser = errorReporting.getUser();
@@ -195,10 +195,10 @@ if (currentUser) {
 
 ## Breadcrumbs
 
-### Agregar Breadcrumbs
+### Add Breadcrumbs
 
 ```typescript
-// Antes de una operación crítica
+// Before a critical operation
 errorReporting.addBreadcrumb({
   message: "User clicked checkout button",
   category: "user-action",
@@ -209,7 +209,7 @@ errorReporting.addBreadcrumb({
   },
 });
 
-// Durante una operación
+// During an operation
 errorReporting.addBreadcrumb({
   message: "Calling payment API",
   category: "api",
@@ -220,28 +220,28 @@ errorReporting.addBreadcrumb({
   },
 });
 
-// Si hay un error, los breadcrumbs ayudan a entender qué pasó antes
+// If there's an error, breadcrumbs help understand what happened before
 try {
   await processPayment();
 } catch (error) {
   errorReporting.captureException(error as Error);
-  // Los breadcrumbs anteriores se incluyen automáticamente
+  // Previous breadcrumbs are automatically included
 }
 ```
 
-### Breadcrumbs Automáticos
+### Automatic Breadcrumbs
 
-Los breadcrumbs se agregan automáticamente para:
-- Navegación entre pantallas
-- Llamadas HTTP (si está configurado)
-- Interacciones del usuario (clicks, etc.)
+Breadcrumbs are automatically added for:
+- Navigation between screens
+- HTTP calls (if configured)
+- User interactions (clicks, etc.)
 
-## Tags y Contexto
+## Tags and Context
 
-### Establecer Tags
+### Set Tags
 
 ```typescript
-// Tags para filtrar errores en el dashboard
+// Tags to filter errors in dashboard
 errorReporting.setTags({
   app_version: "1.0.0",
   platform: Platform.OS,
@@ -249,28 +249,28 @@ errorReporting.setTags({
   feature: "checkout",
 });
 
-// Tag individual
+// Individual tag
 errorReporting.setTag("user_plan", "premium");
 ```
 
-### Establecer Contexto
+### Set Context
 
 ```typescript
-// Contexto de la aplicación
+// Application context
 errorReporting.setContext("app", {
   version: "1.0.0",
   build: "123",
   environment: "production",
 });
 
-// Contexto de dispositivo
+// Device context
 errorReporting.setContext("device", {
   model: Device.modelName,
   os: Platform.OS,
   osVersion: Platform.Version,
 });
 
-// Contexto de navegación
+// Navigation context
 errorReporting.setContext("navigation", {
   currentScreen: "ProductDetail",
   previousScreen: "ProductList",
@@ -278,9 +278,9 @@ errorReporting.setContext("navigation", {
 });
 ```
 
-## Casos de Uso Comunes
+## Common Use Cases
 
-### Error Boundary Global
+### Global Error Boundary
 
 ```typescript
 import { ErrorBoundary } from "@sentry/react-native";
@@ -303,7 +303,7 @@ function App() {
 }
 ```
 
-### Capturar Errores en UseCase
+### Capture Errors in UseCase
 
 ```typescript
 import { ErrorReportingPort, HttpClientPort } from "@natify/core";
@@ -315,7 +315,7 @@ export class PurchaseProductUseCase {
   ) {}
 
   async execute(productId: string): Promise<void> {
-    // Agregar breadcrumb antes de la operación
+    // Add breadcrumb before operation
     this.errorReporting.addBreadcrumb({
       message: "Starting purchase",
       category: "business-logic",
@@ -331,7 +331,7 @@ export class PurchaseProductUseCase {
         data: { orderId: response.data.orderId },
       });
     } catch (error) {
-      // Capturar error con contexto completo
+      // Capture error with full context
       this.errorReporting.captureException(error as Error, {
         useCase: "PurchaseProduct",
         productId,
@@ -343,7 +343,7 @@ export class PurchaseProductUseCase {
 }
 ```
 
-### Tracking de Performance
+### Performance Tracking
 
 ```typescript
 const trackPerformance = async (operation: string, fn: () => Promise<void>) => {
@@ -354,7 +354,7 @@ const trackPerformance = async (operation: string, fn: () => Promise<void>) => {
     await fn();
     const duration = Date.now() - startTime;
 
-    // Si es muy lento, reportar como warning
+    // If too slow, report as warning
     if (duration > 5000) {
       errorReporting.captureMessage(
         `Slow operation: ${operation}`,
@@ -374,7 +374,7 @@ const trackPerformance = async (operation: string, fn: () => Promise<void>) => {
 };
 ```
 
-### Integración con BaseViewModel
+### Integration with BaseViewModel
 
 ```typescript
 import { useBaseViewModel } from "@natify/core";
@@ -386,8 +386,8 @@ function useMyViewModel() {
 
   const loadData = useCallback(async () => {
     const result = await execute(async () => {
-      // Si hay error, BaseViewModel lo captura
-      // Pero podemos agregar contexto adicional
+      // If there's an error, BaseViewModel captures it
+      // But we can add additional context
       try {
         return await fetchData();
       } catch (error) {
@@ -404,16 +404,16 @@ function useMyViewModel() {
 }
 ```
 
-### Capturar Errores de Red
+### Capture Network Errors
 
 ```typescript
 import { NatifyError, NatifyErrorCode } from "@natify/core";
 
-// En un interceptor HTTP
+// In an HTTP interceptor
 const httpAdapter = new AxiosHttpAdapter("https://api.example.com", {}, {
   onResponseError: async (error) => {
     if (error.response?.status >= 500) {
-      // Capturar errores del servidor
+      // Capture server errors
       errorReporting.captureException(error, {
         endpoint: error.config?.url,
         status: error.response?.status,
@@ -425,7 +425,7 @@ const httpAdapter = new AxiosHttpAdapter("https://api.example.com", {}, {
 });
 ```
 
-## Integración con Módulos
+## Module Integration
 
 ```typescript
 import { createModule } from "@natify/core";
@@ -443,28 +443,28 @@ export const ProductsModule = createModule("products", "Products")
 
 ### ErrorReportingPort
 
-| Método | Descripción |
+| Method | Description |
 |--------|-------------|
-| `init(dsn?, options?)` | Inicializa el servicio |
-| `captureException(error, context?, level?)` | Captura una excepción |
-| `captureMessage(message, level?, context?)` | Captura un mensaje |
-| `setUser(user)` | Establece contexto del usuario |
-| `getUser()` | Obtiene contexto del usuario |
-| `addBreadcrumb(breadcrumb)` | Agrega breadcrumb |
-| `setTags(tags)` | Establece tags |
-| `setTag(key, value)` | Establece un tag |
-| `setContext(key, context)` | Establece contexto |
-| `clearUser()` | Limpia contexto del usuario |
-| `clearBreadcrumbs()` | Limpia breadcrumbs |
+| `init(dsn?, options?)` | Initializes the service |
+| `captureException(error, context?, level?)` | Captures an exception |
+| `captureMessage(message, level?, context?)` | Captures a message |
+| `setUser(user)` | Sets user context |
+| `getUser()` | Gets user context |
+| `addBreadcrumb(breadcrumb)` | Adds breadcrumb |
+| `setTags(tags)` | Sets tags |
+| `setTag(key, value)` | Sets a tag |
+| `setContext(key, context)` | Sets context |
+| `clearUser()` | Clears user context |
+| `clearBreadcrumbs()` | Clears breadcrumbs |
 
 ### SeverityLevel
 
 ```typescript
 enum SeverityLevel {
-  FATAL = 'fatal',    // Error crítico que causa crash
-  ERROR = 'error',    // Error que necesita atención
-  WARNING = 'warning', // Advertencia
-  INFO = 'info',      // Información
+  FATAL = 'fatal',    // Critical error causing crash
+  ERROR = 'error',    // Error requiring attention
+  WARNING = 'warning', // Warning
+  INFO = 'info',      // Information
   DEBUG = 'debug',    // Debug
 }
 ```
@@ -492,20 +492,20 @@ interface Breadcrumb {
 }
 ```
 
-## Mejores Prácticas
+## Best Practices
 
-### No Capturar Información Sensible
+### Don't Capture Sensitive Information
 
-❌ **Evitar:**
+❌ **Avoid:**
 ```typescript
 errorReporting.captureException(error, {
-  password: userPassword, // ❌ NUNCA
-  credit_card: cardNumber, // ❌ NUNCA
-  ssn: userSSN, // ❌ NUNCA
+  password: userPassword, // ❌ NEVER
+  credit_card: cardNumber, // ❌ NEVER
+  ssn: userSSN, // ❌ NEVER
 });
 ```
 
-✅ **Usar:**
+✅ **Use:**
 ```typescript
 errorReporting.captureException(error, {
   user_id: userId, // ✅ OK
@@ -514,10 +514,10 @@ errorReporting.captureException(error, {
 });
 ```
 
-### Agregar Contexto Relevante
+### Add Relevant Context
 
 ```typescript
-// Siempre incluir contexto útil
+// Always include useful context
 errorReporting.captureException(error, {
   screen: currentScreen,
   action: "purchase",
@@ -527,10 +527,10 @@ errorReporting.captureException(error, {
 });
 ```
 
-### Usar Breadcrumbs para Debugging
+### Use Breadcrumbs for Debugging
 
 ```typescript
-// Agregar breadcrumbs antes de operaciones críticas
+// Add breadcrumbs before critical operations
 errorReporting.addBreadcrumb({
   message: "User entered payment details",
   category: "user-flow",
@@ -542,13 +542,13 @@ errorReporting.addBreadcrumb({
   category: "business-logic",
 });
 
-// Si hay error, verás todo el flujo en Sentry
+// If there's an error, you'll see the entire flow in Sentry
 ```
 
-### Establecer Usuario Después del Login
+### Set User After Login
 
 ```typescript
-// Inmediatamente después de login exitoso
+// Immediately after successful login
 errorReporting.setUser({
   id: user.id,
   email: user.email,
@@ -556,14 +556,13 @@ errorReporting.setUser({
 });
 ```
 
-## Notas
+## Notes
 
-- **Inicialización**: Siempre llama `init()` antes de usar el adapter
-- **DSN**: Obtén el DSN desde el dashboard de Sentry
-- **Environment**: Usa diferentes DSNs o environments para dev/staging/prod
-- **Release**: Establece la versión para tracking de releases
-- **Performance**: Habilita `enableTracing` para performance monitoring
-- **Screenshots**: `attachScreenshot` captura screenshots automáticamente en errores
-- **iOS**: Requiere `pod install` después de instalar
-- **Android**: El wizard configura automáticamente
-
+- **Initialization**: Always call `init()` before using the adapter
+- **DSN**: Get the DSN from Sentry dashboard
+- **Environment**: Use different DSNs or environments for dev/staging/prod
+- **Release**: Set the version for release tracking
+- **Performance**: Enable `enableTracing` for performance monitoring
+- **Screenshots**: `attachScreenshot` automatically captures screenshots on errors
+- **iOS**: Requires `pod install` after installation
+- **Android**: Wizard configures automatically

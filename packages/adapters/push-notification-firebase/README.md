@@ -1,10 +1,10 @@
 # @natify/push-notification-firebase
 
-Adapter de Push Notifications usando `@react-native-firebase/messaging` para recibir notificaciones remotas y manejar tokens FCM.
+Push Notifications adapter using `@react-native-firebase/messaging` to receive remote notifications and handle FCM tokens.
 
-> **Nota:** Este adapter se enfoca en notificaciones remotas. Para mostrar notificaciones locales, usa `@natify/push-notification-notifee`.
+> **Note:** This adapter focuses on remote notifications. To display local notifications, use `@natify/push-notification-notifee`.
 
-## Instalación
+## Installation
 
 ```bash
 pnpm add @natify/push-notification-firebase @react-native-firebase/messaging
@@ -12,21 +12,21 @@ pnpm add @natify/push-notification-firebase @react-native-firebase/messaging
 
 ### iOS
 
-1. Configura Firebase en tu proyecto iOS (agrega `GoogleService-Info.plist`)
-2. Instala pods:
+1. Configure Firebase in your iOS project (add `GoogleService-Info.plist`)
+2. Install pods:
 ```bash
 cd ios && pod install
 ```
 
 ### Android
 
-1. Configura Firebase en tu proyecto Android (agrega `google-services.json`)
-2. Configura el archivo `android/app/build.gradle`:
+1. Configure Firebase in your Android project (add `google-services.json`)
+2. Configure `android/app/build.gradle`:
 ```gradle
 apply plugin: 'com.google.gms.google-services'
 ```
 
-## Uso
+## Usage
 
 ```typescript
 import { FirebasePushAdapter } from '@natify/push-notification-firebase';
@@ -36,22 +36,22 @@ const pushAdapter = new FirebasePushAdapter();
 
 const adapters = {
   pushNotification: pushAdapter,
-  // ... otros adapters
+  // ... other adapters
 };
 
 <NatifyApp adapters={adapters} modules={modules} />
 ```
 
-## Características
+## Features
 
-- ✅ Notificaciones remotas (FCM)
-- ✅ Tokens FCM/APNS
-- ✅ Manejo de eventos (recibido, presionado, token refresh)
-- ✅ Permisos de notificación
-- ❌ Notificaciones locales (usa `@natify/push-notification-notifee`)
-- ❌ Canales de notificación (usa `@natify/push-notification-notifee`)
+- ✅ Remote notifications (FCM)
+- ✅ FCM/APNS tokens
+- ✅ Event handling (received, pressed, token refresh)
+- ✅ Notification permissions
+- ❌ Local notifications (use `@natify/push-notification-notifee`)
+- ❌ Notification channels (use `@natify/push-notification-notifee`)
 
-## Ejemplo
+## Example
 
 ```typescript
 import { useAdapter } from '@natify/core';
@@ -60,14 +60,14 @@ import { PushNotificationPort } from '@natify/core';
 function MyComponent() {
   const push = useAdapter<PushNotificationPort>('pushNotification');
 
-  // Solicitar permisos y obtener token
+  // Request permissions and get token
   const setupPush = async () => {
     const granted = await push.requestPermission();
     if (granted) {
       const token = await push.getToken();
-      console.log('Token FCM:', token?.token);
+      console.log('FCM Token:', token?.token);
       
-      // Enviar token al servidor
+      // Send token to server
       await fetch('/api/register-device', {
         method: 'POST',
         body: JSON.stringify({ token: token?.token }),
@@ -75,38 +75,38 @@ function MyComponent() {
     }
   };
 
-  // Escuchar cuando se recibe una notificación remota
+  // Listen when a remote notification is received
   useEffect(() => {
     const unsubscribe = push.onNotificationReceived(notification => {
-      console.log('Notificación remota recibida:', notification);
-      // Para mostrar la notificación localmente, usa @natify/push-notification-notifee
+      console.log('Remote notification received:', notification);
+      // To display the notification locally, use @natify/push-notification-notifee
     });
     return unsubscribe;
   }, [push]);
 
-  // Escuchar cuando se presiona una notificación
+  // Listen when a notification is pressed
   useEffect(() => {
     const unsubscribe = push.onNotificationPressed(notification => {
-      console.log('Notificación presionada:', notification);
-      // Navegar a una pantalla específica
+      console.log('Notification pressed:', notification);
+      // Navigate to a specific screen
     });
     return unsubscribe;
   }, [push]);
 
-  // Escuchar cuando se actualiza el token
+  // Listen when token is refreshed
   useEffect(() => {
     const unsubscribe = push.onTokenRefresh(token => {
-      console.log('Token actualizado:', token.token);
-      // Actualizar token en el servidor
+      console.log('Token refreshed:', token.token);
+      // Update token on server
     });
     return unsubscribe;
   }, [push]);
 }
 ```
 
-## Combinar con Notifee
+## Combining with Notifee
 
-Para mostrar notificaciones locales cuando recibes notificaciones remotas, puedes usar ambos adapters:
+To display local notifications when receiving remote notifications, you can use both adapters:
 
 ```typescript
 import { FirebasePushAdapter } from '@natify/push-notification-firebase';
@@ -115,30 +115,30 @@ import { NotifeePushAdapter } from '@natify/push-notification-notifee';
 const firebaseAdapter = new FirebasePushAdapter();
 const notifeeAdapter = new NotifeePushAdapter();
 
-// Escuchar notificaciones remotas y mostrarlas localmente
+// Listen to remote notifications and display them locally
 firebaseAdapter.onNotificationReceived(async (notification) => {
-  // Mostrar usando Notifee
+  // Display using Notifee
   await notifeeAdapter.displayNotification(notification);
 });
 
 const adapters = {
-  pushNotification: firebaseAdapter, // Para tokens y notificaciones remotas
-  pushNotificationLocal: notifeeAdapter, // Para notificaciones locales
+  pushNotification: firebaseAdapter, // For tokens and remote notifications
+  pushNotificationLocal: notifeeAdapter, // For local notifications
 };
 ```
 
-## Configuración de Firebase
+## Firebase Configuration
 
 ### iOS
 
-1. Descarga `GoogleService-Info.plist` desde Firebase Console
-2. Agrégalo a `ios/Examples/GoogleService-Info.plist`
+1. Download `GoogleService-Info.plist` from Firebase Console
+2. Add it to `ios/Examples/GoogleService-Info.plist`
 
 ### Android
 
-1. Descarga `google-services.json` desde Firebase Console
-2. Agrégalo a `android/app/google-services.json`
-3. Agrega el plugin en `android/build.gradle`:
+1. Download `google-services.json` from Firebase Console
+2. Add it to `android/app/google-services.json`
+3. Add plugin in `android/build.gradle`:
 ```gradle
 buildscript {
   dependencies {

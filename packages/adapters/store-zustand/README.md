@@ -1,23 +1,23 @@
 # @natify/store-zustand
 
-Adapter de gestión de estado para Natify Framework usando `zustand`.
+State management adapter for Natify Framework using `zustand`.
 
-## Instalación
+## Installation
 
 ```bash
 pnpm add @natify/store-zustand zustand
 ```
 
-## Por Qué Zustand
+## Why Zustand
 
-- **Mínimo boilerplate**: No requiere Providers ni reducers complejos
-- **TypeScript first**: Tipado completo sin configuración extra
-- **Rendimiento**: Solo re-renderiza componentes que usan el estado que cambió
-- **Flexibilidad**: Funciona dentro y fuera de React
+- **Minimal boilerplate**: No Providers or complex reducers required
+- **TypeScript first**: Full typing without extra configuration
+- **Performance**: Only re-renders components using the changed state
+- **Flexibility**: Works inside and outside React
 
-## Uso
+## Usage
 
-### Configuración del Provider
+### Provider Configuration
 
 ```typescript
 import { NatifyProvider } from "@natify/core";
@@ -25,7 +25,7 @@ import { ZustandStoreAdapter } from "@natify/store-zustand";
 
 const config = {
   stateManager: new ZustandStoreAdapter(),
-  // ... otros adapters
+  // ... other adapters
 };
 
 function App() {
@@ -37,12 +37,12 @@ function App() {
 }
 ```
 
-### Crear una Store
+### Create a Store
 
 ```typescript
 import { useAdapter, StateManagerPort } from "@natify/core";
 
-// Definir el tipo del estado
+// Define state type
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
@@ -50,28 +50,28 @@ interface AuthState {
   logout: () => void;
 }
 
-// Crear la store
+// Create store
 function createAuthStore(stateManager: StateManagerPort) {
   return stateManager.createStore<AuthState>((set, get) => ({
-    // Estado inicial
+    // Initial state
     user: null,
     isAuthenticated: false,
 
-    // Acciones
+    // Actions
     login: (user) => set({ user, isAuthenticated: true }),
     logout: () => set({ user: null, isAuthenticated: false }),
   }));
 }
 
-// Exportar para uso global
+// Export for global use
 export const authStore = createAuthStore(stateManagerAdapter);
 ```
 
-### Uso en Componentes
+### Usage in Components
 
 ```typescript
 function UserProfile() {
-  // Selector específico - solo re-renderiza si 'user' cambia
+  // Specific selector - only re-renders if 'user' changes
   const user = authStore.useStore((state) => state.user);
   const logout = authStore.useStore((state) => state.logout);
 
@@ -81,40 +81,40 @@ function UserProfile() {
 
   return (
     <View>
-      <Text>Hola, {user.name}</Text>
-      <Button title="Cerrar Sesión" onPress={logout} />
+      <Text>Hello, {user.name}</Text>
+      <Button title="Logout" onPress={logout} />
     </View>
   );
 }
 
 function AuthStatus() {
-  // Otro componente, mismo store
+  // Another component, same store
   const isAuthenticated = authStore.useStore((state) => state.isAuthenticated);
   
-  return <Text>{isAuthenticated ? "Conectado" : "Desconectado"}</Text>;
+  return <Text>{isAuthenticated ? "Connected" : "Disconnected"}</Text>;
 }
 ```
 
-### Uso Fuera de React
+### Usage Outside React
 
 ```typescript
-// En servicios, utilidades, etc.
+// In services, utilities, etc.
 function checkAuth() {
   const { isAuthenticated, user } = authStore.getState();
   
   if (!isAuthenticated) {
-    throw new Error("No autenticado");
+    throw new Error("Not authenticated");
   }
   
   return user;
 }
 
-// Actualizar estado desde cualquier lugar
+// Update state from anywhere
 function handleTokenExpired() {
   authStore.setState({ user: null, isAuthenticated: false });
 }
 
-// Suscribirse a cambios
+// Subscribe to changes
 const unsubscribe = authStore.subscribe((state, prevState) => {
   if (state.isAuthenticated !== prevState.isAuthenticated) {
     console.log("Auth status changed:", state.isAuthenticated);
@@ -122,7 +122,7 @@ const unsubscribe = authStore.subscribe((state, prevState) => {
 });
 ```
 
-### Ejemplo: Store de Carrito
+### Example: Cart Store
 
 ```typescript
 interface CartItem {
@@ -160,7 +160,7 @@ function createCartStore(stateManager: StateManagerPort) {
         set({ items: [...items, { ...item, quantity: 1 }] });
       }
 
-      // Recalcular total
+      // Recalculate total
       const newItems = get().items;
       set({ total: newItems.reduce((sum, i) => sum + i.price * i.quantity, 0) });
     },
@@ -195,7 +195,7 @@ function createCartStore(stateManager: StateManagerPort) {
 }
 ```
 
-### Ejemplo: Store con Persistencia
+### Example: Store with Persistence
 
 ```typescript
 interface SettingsState {
@@ -214,7 +214,7 @@ function createSettingsStore(
 ) {
   const store = stateManager.createStore<SettingsState>((set, get) => ({
     theme: "light",
-    language: "es",
+    language: "en",
     notifications: true,
 
     setTheme: async (theme) => {
@@ -240,7 +240,7 @@ function createSettingsStore(
 
       set({
         theme: theme || "light",
-        language: language || "es",
+        language: language || "en",
         notifications: notifications ?? true,
       });
     },
@@ -254,42 +254,41 @@ function createSettingsStore(
 
 ### StateManagerPort
 
-| Método | Retorno | Descripción |
-|--------|---------|-------------|
-| `createStore<T>(setup)` | `StoreApi<T>` | Crea una nueva store |
+| Method | Return | Description |
+|--------|--------|-------------|
+| `createStore<T>(setup)` | `StoreApi<T>` | Creates a new store |
 
 ### StoreApi
 
-| Propiedad/Método | Tipo | Descripción |
-|------------------|------|-------------|
-| `useStore(selector?)` | Hook | Selector reactivo para componentes |
-| `getState()` | `T` | Obtiene el estado actual |
-| `setState(partial)` | `void` | Actualiza el estado |
-| `subscribe(listener)` | `() => void` | Suscribe a cambios, retorna unsubscribe |
+| Property/Method | Type | Description |
+|-----------------|------|-------------|
+| `useStore(selector?)` | Hook | Reactive selector for components |
+| `getState()` | `T` | Gets current state |
+| `setState(partial)` | `void` | Updates state |
+| `subscribe(listener)` | `() => void` | Subscribes to changes, returns unsubscribe |
 
-### Selectores
+### Selectors
 
 ```typescript
-// Selector completo (re-renderiza en cualquier cambio)
+// Complete selector (re-renders on any change)
 const state = store.useStore();
 
-// Selector específico (solo re-renderiza si ese valor cambia)
+// Specific selector (only re-renders if that value changes)
 const user = store.useStore((s) => s.user);
 
-// Selector derivado
+// Derived selector
 const itemCount = store.useStore((s) => s.items.length);
 
-// Múltiples valores (usar shallow comparison)
+// Multiple values (use shallow comparison)
 const { user, isLoading } = store.useStore(
   (s) => ({ user: s.user, isLoading: s.isLoading }),
   shallow
 );
 ```
 
-## Mejores Prácticas
+## Best Practices
 
-1. **Un store por dominio**: AuthStore, CartStore, SettingsStore
-2. **Selectores específicos**: Evita seleccionar todo el estado
-3. **Acciones en el store**: Mantén la lógica de mutación dentro del store
-4. **Tipado fuerte**: Define interfaces para todo el estado
-
+1. **One store per domain**: AuthStore, CartStore, SettingsStore
+2. **Specific selectors**: Avoid selecting the entire state
+3. **Actions in store**: Keep mutation logic inside the store
+4. **Strong typing**: Define interfaces for all state

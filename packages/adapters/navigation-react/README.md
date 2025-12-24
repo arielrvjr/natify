@@ -1,8 +1,8 @@
 # @natify/navigation-react
 
-Adapter de navegación para Natify Framework usando `@react-navigation/native`.
+Navigation adapter for Natify Framework using `@react-navigation/native`.
 
-## Instalación
+## Installation
 
 ```bash
 pnpm add @natify/navigation-react @react-navigation/native @react-navigation/native-stack react-native-screens react-native-safe-area-context
@@ -16,11 +16,11 @@ cd ios && pod install
 
 ### Android
 
-No requiere configuración adicional.
+No additional configuration required.
 
-## Uso
+## Usage
 
-### 1. Definir Tipos de Rutas
+### 1. Define Route Types
 
 ```typescript
 // types/navigation.ts
@@ -33,16 +33,16 @@ export type RootStackParamList = {
 };
 ```
 
-### 2. Configurar el Adapter
+### 2. Configure the Adapter
 
-#### Con NatifyApp (Recomendado)
+#### With NatifyApp (Recommended)
 
 ```typescript
 // App.tsx
 import { NatifyApp } from "@natify/core";
 import { createReactNavigationAdapter } from "@natify/navigation-react";
 
-// Crear adapter con configuración
+// Create adapter with configuration
 const navigationAdapter = createReactNavigationAdapter({
   theme: 'dark',
   screenOptions: {
@@ -64,7 +64,7 @@ export default function App() {
 }
 ```
 
-#### Con NatifyProvider (Nivel 1 - Solo Abstracción)
+#### With NatifyProvider (Level 1 - Abstraction Only)
 
 ```typescript
 // App.tsx
@@ -73,7 +73,7 @@ import { createReactNavigationAdapter } from "@natify/navigation-react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-// Crear el adapter con configuración
+// Create adapter with configuration
 const navigationAdapter = createReactNavigationAdapter({
   theme: 'light',
   screenOptions: {
@@ -97,7 +97,7 @@ function App() {
 }
 ```
 
-### 3. Uso en Componentes
+### 3. Usage in Components
 
 ```typescript
 import { useAdapter, NavigationPort } from "@natify/core";
@@ -115,16 +115,16 @@ function HomeScreen() {
 
   return (
     <View>
-      <Button title="Ver Perfil" onPress={goToProfile} />
-      <Button title="Configuración" onPress={goToSettings} />
+      <Button title="View Profile" onPress={goToProfile} />
+      <Button title="Settings" onPress={goToSettings} />
     </View>
   );
 }
 ```
 
-### 4. Uso Fuera de React (Servicios, Interceptors)
+### 4. Usage Outside React (Services, Interceptors)
 
-Una de las ventajas principales del adapter es poder navegar desde cualquier lugar:
+One of the main advantages of the adapter is being able to navigate from anywhere:
 
 ```typescript
 // services/auth.service.ts
@@ -134,19 +134,19 @@ class AuthService {
   async logout() {
     await this.clearTokens();
 
-    // Navegar al login desde un servicio
+    // Navigate to login from a service
     navigationAdapter.reset([{ name: "Login" }]);
   }
 }
 
-// En un interceptor HTTP
+// In an HTTP interceptor
 const httpAdapter = new AxiosHttpAdapter(
   "https://api.example.com",
   {},
   {
     onResponseError: async (error) => {
       if (error.response?.status === 401) {
-        // Navegar al login cuando el token expira
+        // Navigate to login when token expires
         navigationAdapter.reset([{ name: "Login" }]);
       }
       return Promise.reject(error);
@@ -159,57 +159,57 @@ const httpAdapter = new AxiosHttpAdapter(
 
 ### NavigationPort
 
-| Método | Retorno | Descripción |
-|--------|---------|-------------|
-| `navigate(route, params?, options?)` | `void` | Navega a una pantalla |
-| `goBack()` | `boolean` | Regresa a la pantalla anterior |
-| `popToTop()` | `void` | Regresa al inicio del stack |
-| `replace(route, params?)` | `void` | Reemplaza la pantalla actual |
-| `reset(routes)` | `void` | Reinicia el stack de navegación |
-| `getCurrentRoute()` | `string \| undefined` | Obtiene la ruta actual |
-| `getCurrentParams()` | `T \| undefined` | Obtiene los parámetros actuales |
-| `canGoBack()` | `boolean` | Verifica si puede regresar |
-| `setOptions(options)` | `void` | Configura opciones de la pantalla |
-| `addListener(event, callback)` | `() => void` | Agrega listener de eventos |
+| Method | Return | Description |
+|--------|--------|-------------|
+| `navigate(route, params?, options?)` | `void` | Navigates to a screen |
+| `goBack()` | `boolean` | Goes back to previous screen |
+| `popToTop()` | `void` | Goes back to the beginning of the stack |
+| `replace(route, params?)` | `void` | Replaces current screen |
+| `reset(routes)` | `void` | Resets navigation stack |
+| `getCurrentRoute()` | `string \| undefined` | Gets current route |
+| `getCurrentParams()` | `T \| undefined` | Gets current parameters |
+| `canGoBack()` | `boolean` | Checks if can go back |
+| `setOptions(options)` | `void` | Configures screen options |
+| `addListener(event, callback)` | `() => void` | Adds event listener |
 
-### Ejemplos de Navegación
+### Navigation Examples
 
 ```typescript
 const navigation = useAdapter<NavigationPort>("navigation");
 
-// Navegación simple
+// Simple navigation
 navigation.navigate("Home");
 
-// Con parámetros
+// With parameters
 navigation.navigate("Profile", { userId: "123" });
 
-// Reemplazar (no agrega al historial)
+// Replace (doesn't add to history)
 navigation.replace("Home");
 
-// Regresar
+// Go back
 if (navigation.canGoBack()) {
   navigation.goBack();
 }
 
-// Reset completo (útil después de login/logout)
+// Complete reset (useful after login/logout)
 navigation.reset([
   { name: "Home" },
   { name: "Profile", params: { userId: "123" } },
 ]);
 
-// Configurar header dinámicamente
+// Configure header dynamically
 navigation.setOptions({
-  title: "Nuevo Título",
+  title: "New Title",
   headerShown: true,
 });
 ```
 
-### Escuchar Eventos
+### Listening to Events
 
 ```typescript
 useEffect(() => {
   const unsubscribe = navigation.addListener("focus", () => {
-    console.log("Pantalla enfocada - recargar datos");
+    console.log("Screen focused - reload data");
     fetchData();
   });
 
@@ -217,9 +217,9 @@ useEffect(() => {
 }, []);
 ```
 
-## Patrones Comunes
+## Common Patterns
 
-### Flujo de Autenticación
+### Authentication Flow
 
 ```typescript
 function useAuthNavigation() {
@@ -229,14 +229,14 @@ function useAuthNavigation() {
   const onLoginSuccess = async (token: string) => {
     await secureStorage.setItem("auth_token", token);
 
-    // Resetear stack para que no pueda volver al login
+    // Reset stack so user can't go back to login
     navigation.reset([{ name: "Home" }]);
   };
 
   const onLogout = async () => {
     await secureStorage.clear();
 
-    // Resetear al login
+    // Reset to login
     navigation.reset([{ name: "Login" }]);
   };
 
@@ -246,27 +246,27 @@ function useAuthNavigation() {
 
 ### Deep Linking
 
-El adapter soporta deeplinks de forma automática. Configura los prefijos al crear el adapter:
+The adapter supports deeplinks automatically. Configure prefixes when creating the adapter:
 
 ```typescript
 // App.tsx
 import { createReactNavigationAdapter } from '@natify/navigation-react';
 
-// Crear adapter con deeplinks
+// Create adapter with deeplinks
 const navigationAdapter = createReactNavigationAdapter({
   deeplinkConfig: {
     prefixes: ['myapp://', 'https://myapp.com'],
   },
 });
 
-// En NatifyApp (se pasa automáticamente)
+// In NatifyApp (passed automatically)
 <NatifyApp
   adapters={{ navigation: navigationAdapter }}
   modules={[AuthModule, ProductsModule]}
 />
 ```
 
-**Con theme y screenOptions:**
+**With theme and screenOptions:**
 
 ```typescript
 const navigationAdapter = createReactNavigationAdapter({
@@ -282,9 +282,9 @@ const navigationAdapter = createReactNavigationAdapter({
 });
 ```
 
-**Configuración por pantalla (Recomendado):**
+**Per-screen configuration (Recommended):**
 
-Define la configuración de deeplink en cada pantalla al crear el módulo:
+Define deeplink configuration for each screen when creating the module:
 
 ```typescript
 import { createModule } from "@natify/core";
@@ -293,7 +293,7 @@ export const ProductsModule = createModule("products", "Products")
   .screen({
     name: "ProductList",
     component: ProductListScreen,
-    // Sin deeplink → se genera automáticamente: "products/productlist"
+    // No deeplink → automatically generated: "products/productlist"
   })
   .screen({
     name: "ProductDetail",
@@ -301,27 +301,27 @@ export const ProductsModule = createModule("products", "Products")
     deeplink: {
       path: "product/:productId",
       parse: {
-        productId: Number, // Convierte a número
+        productId: Number, // Converts to number
       },
     },
   })
   .build();
 
-// URLs resultantes:
-// myapp://products/productlist (automático)
-// myapp://product/123 (personalizado) → ProductDetail con { productId: 123 }
+// Resulting URLs:
+// myapp://products/productlist (automatic)
+// myapp://product/123 (custom) → ProductDetail with { productId: 123 }
 ```
 
-**URLs generadas automáticamente (sin configuración):**
+**Automatically generated URLs (without configuration):**
 - `myapp://auth/login` → `auth/Login`
 - `myapp://products/productlist` → `products/ProductList`
 
-**Con configuración personalizada por pantalla:**
-- `myapp://product/123` → `products/ProductDetail` con `{ productId: 123 }`
+**With custom per-screen configuration:**
+- `myapp://product/123` → `products/ProductDetail` with `{ productId: 123 }`
 
-Ver `DEEPLINKS.md` para documentación completa sobre deeplinks.
+See `DEEPLINKS.md` for complete deeplink documentation.
 
-### Navegación Condicional
+### Conditional Navigation
 
 ```typescript
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -342,9 +342,9 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 ```
 
-## Tipado Avanzado
+## Advanced Typing
 
-Para tipado completo de parámetros, puedes usar el hook nativo de React Navigation:
+For complete parameter typing, you can use React Navigation's native hook:
 
 ```typescript
 import { useNavigation } from "@natify/navigation-react";
@@ -357,24 +357,24 @@ type ProfileScreenNavigationProp = NativeStackNavigationProp<
 >;
 
 function ProfileScreen() {
-  // Tipado completo de rutas y parámetros
+  // Complete route and parameter typing
   const navigation = useNavigation<ProfileScreenNavigationProp>();
 
   navigation.navigate("ProductDetail", {
     productId: "123",
-    name: "Producto", // TypeScript valida los parámetros
+    name: "Product", // TypeScript validates parameters
   });
 }
 ```
 
-## Configuración del Adapter
+## Adapter Configuration
 
-### Opciones de Configuración
+### Configuration Options
 
 ```typescript
 interface ReactNavigationAdapterConfig {
   /**
-   * Configuración de deeplinks (opcional)
+   * Deeplink configuration (optional)
    */
   deeplinkConfig?: {
     prefixes: string[];
@@ -385,30 +385,30 @@ interface ReactNavigationAdapterConfig {
   };
 
   /**
-   * Tema de navegación ('light' | 'dark' | Theme object de React Navigation)
+   * Navigation theme ('light' | 'dark' | React Navigation Theme object)
    */
   theme?: 'light' | 'dark' | Theme;
 
   /**
-   * Opciones globales de pantallas
-   * Se aplican a todas las pantallas del stack navigator
+   * Global screen options
+   * Applied to all screens in the stack navigator
    */
   screenOptions?: ScreenOptions;
 }
 ```
 
-### Ejemplos de Configuración
+### Configuration Examples
 
 ```typescript
-// Configuración mínima
+// Minimal configuration
 const adapter1 = createReactNavigationAdapter();
 
-// Solo theme
+// Theme only
 const adapter2 = createReactNavigationAdapter({
   theme: 'dark',
 });
 
-// Theme y screenOptions
+// Theme and screenOptions
 const adapter3 = createReactNavigationAdapter({
   theme: 'dark',
   screenOptions: {
@@ -418,7 +418,7 @@ const adapter3 = createReactNavigationAdapter({
   },
 });
 
-// Configuración completa
+// Complete configuration
 const adapter4 = createReactNavigationAdapter({
   theme: 'dark',
   screenOptions: {
@@ -431,9 +431,8 @@ const adapter4 = createReactNavigationAdapter({
 });
 ```
 
-## Consideraciones
+## Considerations
 
-1. **Crear el adapter fuera de componentes**: Debe ser una instancia global
-2. **Configuración en el adapter**: `theme` y `screenOptions` se configuran al crear el adapter, no en `NatifyApp`
-3. **Verificar isReady**: El adapter maneja esto internamente, pero ten en cuenta que la navegación no funciona antes de que el container esté montado
-
+1. **Create adapter outside components**: Must be a global instance
+2. **Configuration in adapter**: `theme` and `screenOptions` are configured when creating the adapter, not in `NatifyApp`
+3. **Verify isReady**: The adapter handles this internally, but keep in mind that navigation doesn't work before the container is mounted
