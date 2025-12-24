@@ -38,12 +38,32 @@ jobs:
         run: pnpm build
 
       - name: Test
-        run: pnpm test
+        run: pnpm test:coverage
 
-      - name: Upload coverage
-        uses: codecov/codecov-action@v3
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          files: ./coverage/coverage-final.json
+          token: ${{ secrets.CODECOV_TOKEN }}
+          # Codecov agrupa automáticamente los archivos del mismo commit
+          files: |
+            ./coverage/core/lcov.info
+            ./coverage/http-axios/lcov.info
+            ./coverage/storage-mmkv/lcov.info
+            ./coverage/storage-async/lcov.info
+            ./coverage/storage-keychain/lcov.info
+            ./coverage/file-system-rn/lcov.info
+            ./coverage/graphql-apollo/lcov.info
+            ./coverage/geolocation-rn/lcov.info
+            ./coverage/analytics-mixpanel/lcov.info
+            ./coverage/feature-flag-growthbook/lcov.info
+            ./coverage/error-reporting-sentry/lcov.info
+            ./coverage/push-notification-firebase/lcov.info
+            ./coverage/push-notification-notifee/lcov.info
+            ./coverage/biometrics-rn/lcov.info
+            ./coverage/permissions-rn/lcov.info
+            ./coverage/image-picker-rn/lcov.info
+            ./coverage/store-zustand/lcov.info
           flags: unittests
-          name: codecov-umbrella
-        if: matrix.node-version == '20.x'
+          name: codecov-monorepo
+          fail_ci_if_error: false
+          verbose: true

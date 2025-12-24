@@ -47,7 +47,7 @@
         "tsconfig.json",
         "package.json"
       ],
-      "outputs": ["../../coverage/**/*"],
+      "outputs": ["../../coverage/**/*", "../../../coverage/**/*"],
       "cache": true
     },
     "test:watch": {
