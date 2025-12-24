@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Discussions
+    url: https://github.com/arielrvjr/natify/discussions
+    about: General questions and discussions about the framework
+  - name: Documentation
+    url: https://github.com/arielrvjr/natify#readme
+    about: Read the project documentation
+  - name: Question
+    url: https://github.com/arielrvjr/natify/issues/new?template=question.md
+    about: Ask a question about the framework
