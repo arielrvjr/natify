@@ -24,7 +24,7 @@
     "react-native-mmkv": "^4.0.1"
   },
   "peerDependencies": {
-    "@natify/core": "*",
+    "@natify/core": ">=1.0.0",
     "react-native-mmkv": "^4.0.1"
   }
 }

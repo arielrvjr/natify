@@ -29,7 +29,7 @@
     "react-native-image-picker": "^7.1.2"
   },
   "peerDependencies": {
-    "@natify/core": "*",
+    "@natify/core": ">=1.0.0",
     "react": "*",
     "react-native": "*",
     "react-native-image-picker": "^7.1.2"

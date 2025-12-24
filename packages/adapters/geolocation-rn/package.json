@@ -23,7 +23,7 @@
     "typescript": "*"
   },
   "peerDependencies": {
-    "@natify/core": "*",
+    "@natify/core": ">=1.0.0",
     "@react-native-community/geolocation": "^3.4.0"
   }
 }

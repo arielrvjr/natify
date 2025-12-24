@@ -16,7 +16,7 @@
     "lint:fix": "eslint src/ --fix"
   },
   "peerDependencies": {
-    "@natify/core": "*",
+    "@natify/core": ">=1.0.0",
     "@notifee/react-native": ">=7.0.0"
   },
   "devDependencies": {
