@@ -16,6 +16,10 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\""
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arielrvjr/natify.git"
+  },
   "devDependencies": {
     "@natify/core": "workspace:*",
     "typescript": "*"
