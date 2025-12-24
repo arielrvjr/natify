@@ -187,7 +187,12 @@ export class GrowthBookFeatureFlagAdapter implements FeatureFlagPort {
         value: (result.value as T) ?? null,
         enabled: result.on ?? false,
         exists: true,
-        variant: result.source === 'experiment' ? result.experimentResult?.inExperiment ? result.experimentResult?.variationId?.toString() : undefined : undefined,
+        variant:
+          result.source === 'experiment'
+            ? result.experimentResult?.inExperiment
+              ? result.experimentResult?.variationId?.toString()
+              : undefined
+            : undefined,
         source: result.source,
       };
     } catch (error) {
@@ -316,4 +321,3 @@ export class GrowthBookFeatureFlagAdapter implements FeatureFlagPort {
     };
   }
 }
-

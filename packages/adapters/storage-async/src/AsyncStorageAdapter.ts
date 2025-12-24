@@ -34,4 +34,3 @@ export class AsyncStorageAdapter implements StoragePort {
     await this.storage.removeItem(key);
   }
 }
-

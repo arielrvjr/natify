@@ -102,9 +102,9 @@ export class ApolloGraphQLAdapter implements GraphQLPort {
     });
 
     // Link de manejo de errores
-    const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
+    const errorLink = onError(({ graphQLErrors, networkError }) => {
       if (graphQLErrors) {
-        graphQLErrors.forEach(({ message, locations, path, extensions }) => {
+        graphQLErrors.forEach(({ message, locations, path }) => {
           console.error(
             `[GraphQL Error] Message: ${message}, Location: ${locations}, Path: ${path}`,
           );
@@ -217,7 +217,9 @@ export class ApolloGraphQLAdapter implements GraphQLPort {
         mutation: mutationDocument,
         variables: options?.variables,
         context: options?.context,
-        fetchPolicy: (options?.fetchPolicy === 'cache-and-network' ? 'network-only' : options?.fetchPolicy || 'network-only') as any,
+        fetchPolicy: (options?.fetchPolicy === 'cache-and-network'
+          ? 'network-only'
+          : options?.fetchPolicy || 'network-only') as any,
         errorPolicy: options?.errorPolicy || 'none',
       });
 
@@ -272,7 +274,10 @@ export class ApolloGraphQLAdapter implements GraphQLPort {
     subscription: string,
     options?: GraphQLSubscriptionOptions,
   ): {
-    subscribe: (onNext: (result: GraphQLResult<T>) => void, onError?: (error: Error) => void) => {
+    subscribe: (
+      onNext: (result: GraphQLResult<T>) => void,
+      onError?: (error: Error) => void,
+    ) => {
       unsubscribe: () => void;
     };
   } {
@@ -286,11 +291,8 @@ export class ApolloGraphQLAdapter implements GraphQLPort {
     });
 
     return {
-      subscribe: (
-        onNext: (result: GraphQLResult<T>) => void,
-        onError?: (error: Error) => void,
-      ) => {
-        const subscription = observable.subscribe({
+      subscribe: (onNext: (result: GraphQLResult<T>) => void, onError?: (error: Error) => void) => {
+        const apolloSubscription = observable.subscribe({
           next: (result: FetchResult<T>) => {
             onNext({
               data: result.data as T,
@@ -310,7 +312,7 @@ export class ApolloGraphQLAdapter implements GraphQLPort {
 
         return {
           unsubscribe: () => {
-            subscription.unsubscribe();
+            apolloSubscription.unsubscribe();
           },
         };
       },
@@ -361,4 +363,3 @@ export class ApolloGraphQLAdapter implements GraphQLPort {
     return this.client;
   }
 }
-

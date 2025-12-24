@@ -4,13 +4,7 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from 'axios';
-import {
-  HttpClientPort,
-  HttpRequestConfig,
-  HttpResponse,
-  NatifyErrorCode,
-  NatifyError,
-} from '@natify/core';
+import { HttpClientPort, HttpRequestConfig, HttpResponse } from '@natify/core';
 import { handleAxiosError } from './utils/errorHandler';
 
 export class AxiosHttpAdapter implements HttpClientPort {
@@ -131,4 +125,3 @@ export class AxiosHttpAdapter implements HttpClientPort {
     return handleAxiosError(error);
   }
 }
-

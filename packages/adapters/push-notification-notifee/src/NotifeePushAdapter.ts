@@ -90,13 +90,16 @@ export class NotifeePushAdapter implements PushNotificationPort {
    */
   private mapAndroidImportanceToPriority(importance?: AndroidImportance): PushNotificationPriority {
     const importanceMap: Record<AndroidImportance, PushNotificationPriority> = {
+      [AndroidImportance.NONE]: PushNotificationPriority.Min,
       [AndroidImportance.MIN]: PushNotificationPriority.Min,
       [AndroidImportance.LOW]: PushNotificationPriority.Low,
       [AndroidImportance.HIGH]: PushNotificationPriority.High,
       [AndroidImportance.DEFAULT]: PushNotificationPriority.Default,
     };
 
-    return importance ? importanceMap[importance] ?? PushNotificationPriority.Default : PushNotificationPriority.Default;
+    return importance
+      ? (importanceMap[importance] ?? PushNotificationPriority.Default)
+      : PushNotificationPriority.Default;
   }
 
   /**
@@ -310,11 +313,7 @@ export class NotifeePushAdapter implements PushNotificationPort {
         importance: importanceMap[options?.importance || 'default'] || AndroidImportance.DEFAULT,
       });
     } catch (error) {
-      throw new NatifyError(
-        NatifyErrorCode.UNKNOWN,
-        'Error al crear canal de notificación',
-        error,
-      );
+      throw new NatifyError(NatifyErrorCode.UNKNOWN, 'Error al crear canal de notificación', error);
     }
   }
 
@@ -334,4 +333,3 @@ export class NotifeePushAdapter implements PushNotificationPort {
     }
   }
 }
-

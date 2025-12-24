@@ -50,10 +50,10 @@ describe('DIProvider', () => {
         return null;
       };
 
-      React.createElement(
-        DIProvider,
-        { container: mockContainer, children: React.createElement(TestComponent) },
-      );
+      React.createElement(DIProvider, {
+        container: mockContainer,
+        children: React.createElement(TestComponent),
+      });
     });
   });
 
@@ -151,50 +151,50 @@ describe('DIProvider', () => {
       expect(useCases.register).toBe(registerUseCase);
     });
 
-      it('should throw error if used outside DIProvider', () => {
-        contextValue = null;
-        expect(() => useUseCases(['auth:login'])).toThrow(
-          'useUseCases must be used within DIProvider',
-        );
+    it('should throw error if used outside DIProvider', () => {
+      contextValue = null;
+      expect(() => useUseCases(['auth:login'])).toThrow(
+        'useUseCases must be used within DIProvider',
+      );
+    });
+  });
+
+  describe('DIProvider component (duplicate)', () => {
+    it('should provide container to children', () => {
+      const TestComponent = () => {
+        const container = useDIContainer();
+        expect(container).toBe(mockContainer);
+        return <div>Test</div>;
+      };
+
+      contextValue = mockContainer;
+      React.createElement(DIProvider, {
+        container: mockContainer,
+        children: React.createElement(TestComponent),
       });
     });
+  });
 
-    describe('DIProvider component', () => {
-      it('should provide container to children', () => {
-        const TestComponent = () => {
-          const container = useDIContainer();
-          expect(container).toBe(mockContainer);
-          return <div>Test</div>;
-        };
-
-        contextValue = mockContainer;
-        React.createElement(
-          DIProvider,
-          { container: mockContainer, children: React.createElement(TestComponent) },
-        );
+  describe('useAdapter with GetAdapterUseCase', () => {
+    it('should use GetAdapterUseCase when available', () => {
+      const mockAdapter: Port = {
+        capability: 'httpclient',
+      };
+      const mockGetAdapterUseCase = {
+        execute: jest.fn(() => mockAdapter),
+      };
+      mockContainer.tryResolve.mockImplementation((key: string) => {
+        if (key === 'usecase:GetAdapterUseCase') {
+          return mockGetAdapterUseCase;
+        }
+        return null;
       });
+      contextValue = mockContainer;
+
+      const result = useAdapter<Port>('http');
+
+      expect(mockGetAdapterUseCase.execute).toHaveBeenCalledWith('http');
+      expect(result).toBe(mockAdapter);
     });
-
-    describe('useAdapter with GetAdapterUseCase', () => {
-      it('should use GetAdapterUseCase when available', () => {
-        const mockAdapter: Port = {
-          capability: 'httpclient',
-        };
-        const mockGetAdapterUseCase = {
-          execute: jest.fn(() => mockAdapter),
-        };
-        mockContainer.tryResolve.mockImplementation((key: string) => {
-          if (key === 'usecase:GetAdapterUseCase') {
-            return mockGetAdapterUseCase;
-          }
-          return null;
-        });
-        contextValue = mockContainer;
-
-        const result = useAdapter<Port>('http');
-
-        expect(mockGetAdapterUseCase.execute).toHaveBeenCalledWith('http');
-        expect(result).toBe(mockAdapter);
-      });
-    });
+  });
 });

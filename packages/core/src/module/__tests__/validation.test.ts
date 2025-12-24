@@ -1,5 +1,4 @@
 import { validateAdaptersConfig, ValidateAdapters, AdaptersFor } from '../validation';
-import { Port } from '../../ports/Port';
 import { HttpClientPort } from '../../ports/HttpClientPort';
 import { StoragePort } from '../../ports/StoragePort';
 
@@ -93,4 +92,3 @@ describe('module/validation', () => {
     });
   });
 });
-

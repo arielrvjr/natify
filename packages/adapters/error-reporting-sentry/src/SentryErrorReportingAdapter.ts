@@ -106,12 +106,9 @@ export class SentryErrorReportingAdapter implements ErrorReportingPort {
 
       this.isInitialized = true;
     } catch (error) {
-      throw new NatifyError(
-        NatifyErrorCode.UNKNOWN,
-        'Failed to initialize Sentry',
-        error,
-        { dsn: dsn || this.config.dsn },
-      );
+      throw new NatifyError(NatifyErrorCode.UNKNOWN, 'Failed to initialize Sentry', error, {
+        dsn: dsn || this.config.dsn,
+      });
     }
   }
 
@@ -131,7 +128,7 @@ export class SentryErrorReportingAdapter implements ErrorReportingPort {
     try {
       const sentryLevel = this.mapSeverityToSentry(level);
 
-      Sentry.withScope((scope) => {
+      Sentry.withScope(scope => {
         scope.setLevel(sentryLevel);
 
         if (context) {
@@ -161,7 +158,7 @@ export class SentryErrorReportingAdapter implements ErrorReportingPort {
     try {
       const sentryLevel = this.mapSeverityToSentry(level);
 
-      Sentry.withScope((scope) => {
+      Sentry.withScope(scope => {
         scope.setLevel(sentryLevel);
 
         if (context) {
@@ -299,7 +296,7 @@ export class SentryErrorReportingAdapter implements ErrorReportingPort {
     try {
       // Sentry no tiene un método directo para limpiar breadcrumbs,
       // pero podemos crear un nuevo scope sin breadcrumbs
-      Sentry.withScope((scope) => {
+      Sentry.withScope(scope => {
         scope.clearBreadcrumbs();
       });
     } catch (error) {
@@ -310,7 +307,9 @@ export class SentryErrorReportingAdapter implements ErrorReportingPort {
   /**
    * Mapea SeverityLevel del framework a Sentry.SeverityLevel
    */
-  private mapSeverityToSentry(level: SeverityLevel): 'fatal' | 'error' | 'warning' | 'info' | 'debug' {
+  private mapSeverityToSentry(
+    level: SeverityLevel,
+  ): 'fatal' | 'error' | 'warning' | 'info' | 'debug' {
     const severityMap: Record<SeverityLevel, 'fatal' | 'error' | 'warning' | 'info' | 'debug'> = {
       [SeverityLevel.FATAL]: 'fatal',
       [SeverityLevel.ERROR]: 'error',
@@ -329,4 +328,3 @@ export class SentryErrorReportingAdapter implements ErrorReportingPort {
     return Sentry;
   }
 }
-

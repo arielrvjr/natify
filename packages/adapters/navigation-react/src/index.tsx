@@ -128,7 +128,7 @@ function createAppNavigator(
 ): ComponentType<AppNavigatorProps> {
   return function AppNavigator({ initialModule, screenOptions }: AppNavigatorProps) {
     const { modules, isLoading } = useModules();
-    
+
     // Usar screenOptions del prop si está disponible, sino usar el default del adapter
     const finalScreenOptions = screenOptions || defaultScreenOptions;
 
@@ -156,7 +156,10 @@ function createAppNavigator(
     }
 
     return (
-      <Stack.Navigator initialRouteName={initialRouteName} screenOptions={finalScreenOptions as any}>
+      <Stack.Navigator
+        initialRouteName={initialRouteName}
+        screenOptions={finalScreenOptions as any}
+      >
         {modulesWithScreens.map(module =>
           module.screens.map(screen => (
             <Stack.Screen

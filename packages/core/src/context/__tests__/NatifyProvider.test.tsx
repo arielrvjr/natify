@@ -40,10 +40,10 @@ describe('NatifyProvider', () => {
 
   it('should render children', () => {
     const TestComponent = () => <div>Test Content</div>;
-    const result = React.createElement(
-      NatifyProvider,
-      { adapters: { http: mockAdapter }, children: React.createElement(TestComponent) },
-    );
+    const result = React.createElement(NatifyProvider, {
+      adapters: { http: mockAdapter },
+      children: React.createElement(TestComponent),
+    });
 
     expect(result).toBeDefined();
   });
@@ -65,10 +65,10 @@ describe('NatifyProvider', () => {
     const { AdapterRegistry } = require('../../components/AdapterRegistry');
 
     const TestComponent = () => <div>Test Content</div>;
-    const result = React.createElement(
-      NatifyProvider,
-      { adapters: { http: mockAdapter }, children: React.createElement(TestComponent) },
-    );
+    const result = React.createElement(NatifyProvider, {
+      adapters: { http: mockAdapter },
+      children: React.createElement(TestComponent),
+    });
 
     expect(result).toBeDefined();
     // Verificar que UseCaseProvider y AdapterRegistry están siendo usados

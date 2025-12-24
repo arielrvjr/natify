@@ -1,2 +1,4 @@
-export { GrowthBookFeatureFlagAdapter, type GrowthBookAdapterConfig } from './GrowthBookFeatureFlagAdapter';
-
+export {
+  GrowthBookFeatureFlagAdapter,
+  type GrowthBookAdapterConfig,
+} from './GrowthBookFeatureFlagAdapter';

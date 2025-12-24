@@ -3,10 +3,7 @@ import { NatifyError, NatifyErrorCode } from '../../errors';
 
 // Mock React hooks
 let mockState: [boolean, (value: boolean) => void] = [false, jest.fn()];
-let mockErrorState: [NatifyError | null, (value: NatifyError | null) => void] = [
-  null,
-  jest.fn(),
-];
+let mockErrorState: [NatifyError | null, (value: NatifyError | null) => void] = [null, jest.fn()];
 let mockRef = { current: true };
 let mockUseEffectCallback: (() => void | (() => void)) | null = null;
 

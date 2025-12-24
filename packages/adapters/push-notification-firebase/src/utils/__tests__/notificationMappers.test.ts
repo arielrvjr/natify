@@ -21,6 +21,7 @@ describe('notificationMappers', () => {
           },
         },
         data: { key: 'value' },
+        fcmOptions: {},
       };
 
       const result = mapFirebaseMessageToData(remoteMessage);
@@ -35,6 +36,7 @@ describe('notificationMappers', () => {
       const remoteMessage: FirebaseMessagingTypes.RemoteMessage = {
         messageId: 'msg1',
         data: { key: 'value' },
+        fcmOptions: {},
       };
 
       const result = mapFirebaseMessageToData(remoteMessage);
@@ -55,6 +57,7 @@ describe('notificationMappers', () => {
             sound: 'custom.wav',
           },
         },
+        fcmOptions: {},
       };
 
       const result = mapFirebaseMessageToData(remoteMessage);
@@ -72,6 +75,7 @@ describe('notificationMappers', () => {
             sound: 'default',
           },
         },
+        fcmOptions: {},
       };
 
       const result = mapFirebaseMessageToData(remoteMessage);

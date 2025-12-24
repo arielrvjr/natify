@@ -44,4 +44,3 @@ export class KeychainStorageAdapter implements StoragePort {
     }
   }
 }
-

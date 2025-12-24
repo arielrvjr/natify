@@ -112,7 +112,7 @@ export class RnFileSystemAdapter implements FileSystemPort {
   async exists(filePath: string): Promise<boolean> {
     try {
       return await this.fs.exists(filePath);
-    } catch (error) {
+    } catch {
       return false;
     }
   }
@@ -191,7 +191,7 @@ export class RnFileSystemAdapter implements FileSystemPort {
   /**
    * Elimina un directorio y su contenido
    */
-  async rmdir(dirPath: string, recursive: boolean = true): Promise<void> {
+  async rmdir(dirPath: string, _recursive: boolean = true): Promise<void> {
     try {
       const exists = await this.fs.exists(dirPath);
       if (!exists) {
@@ -257,14 +257,11 @@ export class RnFileSystemAdapter implements FileSystemPort {
         ...(options?.timeout && { timeout: options.timeout }),
       };
 
-      let totalBytes = 0;
-
-      const response = await ReactNativeBlobUtil.config(config)
+      await ReactNativeBlobUtil.config(config)
         .fetch('GET', url)
         .progress((received: string, total: string) => {
           const receivedNum = parseInt(received, 10);
           const totalNum = parseInt(total, 10);
-          totalBytes = totalNum;
           options?.onProgress?.(receivedNum, totalNum);
         });
 
@@ -287,30 +284,20 @@ export class RnFileSystemAdapter implements FileSystemPort {
   /**
    * Sube un archivo local a un servidor
    */
-  async uploadFile(
-    filePath: string,
-    url: string,
-    options?: UploadOptions,
-  ): Promise<UploadResult> {
+  async uploadFile(filePath: string, url: string, options?: UploadOptions): Promise<UploadResult> {
     try {
       const exists = await this.fs.exists(filePath);
       if (!exists) {
-        throw new NatifyError(
-          NatifyErrorCode.NOT_FOUND,
-          `File not found: ${filePath}`,
-          undefined,
-          { filePath },
-        );
+        throw new NatifyError(NatifyErrorCode.NOT_FOUND, `File not found: ${filePath}`, undefined, {
+          filePath,
+        });
       }
 
       const fileInfo = await this.getFileInfo(filePath);
       if (!fileInfo) {
-        throw new NatifyError(
-          NatifyErrorCode.NOT_FOUND,
-          `File not found: ${filePath}`,
-          undefined,
-          { filePath },
-        );
+        throw new NatifyError(NatifyErrorCode.NOT_FOUND, `File not found: ${filePath}`, undefined, {
+          filePath,
+        });
       }
 
       const fieldName = options?.fieldName || 'file';
@@ -421,4 +408,3 @@ export class RnFileSystemAdapter implements FileSystemPort {
     return mimeTypes[ext];
   }
 }
-

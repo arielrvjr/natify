@@ -1,2 +1,4 @@
-export { SentryErrorReportingAdapter, type SentryAdapterConfig } from './SentryErrorReportingAdapter';
-
+export {
+  SentryErrorReportingAdapter,
+  type SentryAdapterConfig,
+} from './SentryErrorReportingAdapter';

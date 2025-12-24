@@ -29,4 +29,3 @@ export function handleAxiosError(error: unknown): never {
     error,
   );
 }
-

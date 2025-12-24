@@ -14,7 +14,7 @@ describe('errorHandler', () => {
         config: { url: '/api/test', method: 'GET' },
       };
 
-      (axios.isAxiosError as jest.Mock).mockReturnValue(true);
+      (axios.isAxiosError as unknown as jest.Mock).mockReturnValue(true);
 
       expect(() => handleAxiosError(error)).toThrow(NatifyError);
       try {
@@ -32,7 +32,7 @@ describe('errorHandler', () => {
         config: { url: '/api/test', method: 'GET' },
       };
 
-      (axios.isAxiosError as jest.Mock).mockReturnValue(true);
+      (axios.isAxiosError as unknown as jest.Mock).mockReturnValue(true);
 
       try {
         handleAxiosError(error);
@@ -49,7 +49,7 @@ describe('errorHandler', () => {
         config: { url: '/api/test', method: 'GET' },
       };
 
-      (axios.isAxiosError as jest.Mock).mockReturnValue(true);
+      (axios.isAxiosError as unknown as jest.Mock).mockReturnValue(true);
 
       try {
         handleAxiosError(error);
@@ -66,7 +66,7 @@ describe('errorHandler', () => {
         config: { url: '/api/test', method: 'GET' },
       };
 
-      (axios.isAxiosError as jest.Mock).mockReturnValue(true);
+      (axios.isAxiosError as unknown as jest.Mock).mockReturnValue(true);
 
       try {
         handleAxiosError(error);
@@ -83,7 +83,7 @@ describe('errorHandler', () => {
         config: { url: '/api/test', method: 'GET' },
       };
 
-      (axios.isAxiosError as jest.Mock).mockReturnValue(true);
+      (axios.isAxiosError as unknown as jest.Mock).mockReturnValue(true);
 
       try {
         handleAxiosError(error);
@@ -95,7 +95,7 @@ describe('errorHandler', () => {
     it('should map unknown error to UNKNOWN', () => {
       const error = new Error('Unknown error');
 
-      (axios.isAxiosError as jest.Mock).mockReturnValue(false);
+      (axios.isAxiosError as unknown as jest.Mock).mockReturnValue(false);
 
       try {
         handleAxiosError(error);
@@ -106,4 +106,3 @@ describe('errorHandler', () => {
     });
   });
 });
-

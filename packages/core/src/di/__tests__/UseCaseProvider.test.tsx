@@ -125,4 +125,3 @@ describe('UseCaseProvider', () => {
     expect(mockContainer.has('usecase:GetAdapterUseCase')).toBe(true);
   });
 });
-

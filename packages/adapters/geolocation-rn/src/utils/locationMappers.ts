@@ -56,4 +56,3 @@ export function mapErrorToNatifyError(error: {
     message: error.message,
   });
 }
-

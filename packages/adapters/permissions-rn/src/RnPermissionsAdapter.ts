@@ -1,12 +1,4 @@
-import { Platform } from 'react-native';
-import {
-  check,
-  request,
-  openSettings,
-  PERMISSIONS,
-  RESULTS,
-  Permission,
-} from 'react-native-permissions';
+import { check, request, openSettings } from 'react-native-permissions';
 import {
   PermissionPort,
   PermissionType,
@@ -75,6 +67,4 @@ export class RnPermissionsAdapter implements PermissionPort {
       );
     }
   }
-
 }
-

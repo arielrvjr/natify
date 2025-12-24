@@ -5,8 +5,6 @@ import {
   LocationOptions,
   WatchLocationOptions,
   Coordinates,
-  NatifyError,
-  NatifyErrorCode,
 } from '@natify/core';
 import { mapPositionToLocation, mapErrorToNatifyError } from './utils/locationMappers';
 import { toRadians, toDegrees } from './utils/mathUtils';
@@ -59,10 +57,10 @@ export class RnGeolocationAdapter implements GeolocationPort {
       };
 
       Geolocation.getCurrentPosition(
-        (position) => {
+        position => {
           resolve(mapPositionToLocation(position));
         },
-        (error) => {
+        error => {
           reject(mapErrorToNatifyError(error));
         },
         defaultOptions,
@@ -87,10 +85,10 @@ export class RnGeolocationAdapter implements GeolocationPort {
     };
 
     const watchId = Geolocation.watchPosition(
-      (position) => {
+      position => {
         callback(mapPositionToLocation(position));
       },
-      (error) => {
+      error => {
         // No rechazar la promesa, solo loguear el error
         console.error('[Location] Watch error:', error);
       },
@@ -110,7 +108,7 @@ export class RnGeolocationAdapter implements GeolocationPort {
    * Verifica si el servicio de ubicación está habilitado
    */
   async isLocationEnabled(): Promise<boolean> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       // Intentar obtener ubicación con timeout corto
       Geolocation.getCurrentPosition(
         () => {
@@ -155,9 +153,7 @@ export class RnGeolocationAdapter implements GeolocationPort {
     const lat2 = toRadians(to.latitude);
 
     const y = Math.sin(dLon) * Math.cos(lat2);
-    const x =
-      Math.cos(lat1) * Math.sin(lat2) -
-      Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+    const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
 
     let bearing = Math.atan2(y, x);
     bearing = toDegrees(bearing);
@@ -170,11 +166,9 @@ export class RnGeolocationAdapter implements GeolocationPort {
    * Limpia todas las observaciones activas
    */
   clearAllWatchers(): void {
-    this.watchIds.forEach((watchId) => {
+    this.watchIds.forEach(watchId => {
       Geolocation.clearWatch(watchId);
     });
     this.watchIds.clear();
   }
-
 }
-

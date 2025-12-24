@@ -1,9 +1,5 @@
 import Mixpanel from 'mixpanel-react-native';
-import {
-  AnalyticsPort,
-  NatifyError,
-  NatifyErrorCode,
-} from '@natify/core';
+import { AnalyticsPort, NatifyError, NatifyErrorCode } from '@natify/core';
 
 /**
  * Configuración para el adapter de Mixpanel
@@ -65,7 +61,7 @@ export class MixpanelAnalyticsAdapter implements AnalyticsPort {
     this.mixpanel = Mixpanel;
 
     if (this.config.autoInit) {
-      this.init().catch((error) => {
+      this.init().catch(error => {
         console.error('[MixpanelAdapter] Error during auto-init:', error);
       });
     }
@@ -80,22 +76,16 @@ export class MixpanelAnalyticsAdapter implements AnalyticsPort {
     }
 
     try {
-      await this.mixpanel.init(
-        this.config.token,
-        {
-          optOutTrackingByDefault: this.config.optOutTrackingByDefault,
-          trackAutomaticEvents: this.config.trackAutomaticEvents,
-        },
-      );
+      await this.mixpanel.init(this.config.token, {
+        optOutTrackingByDefault: this.config.optOutTrackingByDefault,
+        trackAutomaticEvents: this.config.trackAutomaticEvents,
+      });
 
       this.isInitialized = true;
     } catch (error) {
-      throw new NatifyError(
-        NatifyErrorCode.UNKNOWN,
-        'Failed to initialize Mixpanel',
-        error,
-        { token: this.config.token },
-      );
+      throw new NatifyError(NatifyErrorCode.UNKNOWN, 'Failed to initialize Mixpanel', error, {
+        token: this.config.token,
+      });
     }
   }
 
@@ -251,4 +241,3 @@ export class MixpanelAnalyticsAdapter implements AnalyticsPort {
     return this.mixpanel;
   }
 }
-

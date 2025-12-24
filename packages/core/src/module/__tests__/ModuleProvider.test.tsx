@@ -146,7 +146,6 @@ describe('ModuleProvider', () => {
       expect(typeof props.onError).toBe('function');
     });
 
-
     it('should call registerModule.execute when loading modules', async () => {
       const mockModule: ModuleDefinition = {
         id: 'test',
