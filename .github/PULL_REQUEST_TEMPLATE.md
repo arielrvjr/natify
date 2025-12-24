@@ -1,35 +1,34 @@
-## Descripción
-Breve descripción de los cambios realizados.
+## Description
+Brief description of the changes made.
 
-## Tipo de Cambio
-- [ ] Bug fix (cambio que corrige un issue)
-- [ ] Nueva funcionalidad (cambio que agrega funcionalidad)
-- [ ] Breaking change (fix o feature que causa incompatibilidad)
-- [ ] Documentación (cambios solo en documentación)
-- [ ] Refactorización (cambios que no corrigen bugs ni agregan features)
-- [ ] Performance (mejoras de rendimiento)
-- [ ] Test (agregar o modificar tests)
+## Type of Change
+- [ ] Bug fix (change that fixes an issue)
+- [ ] New feature (change that adds functionality)
+- [ ] Breaking change (fix or feature that causes incompatibility)
+- [ ] Documentation (documentation-only changes)
+- [ ] Refactoring (changes that don't fix bugs or add features)
+- [ ] Performance (performance improvements)
+- [ ] Test (add or modify tests)
 
 ## Checklist
-- [ ] Mi código sigue las convenciones del proyecto
-- [ ] He realizado un self-review de mi código
-- [ ] He comentado código complejo donde sea necesario
-- [ ] He actualizado la documentación si es necesario
-- [ ] Mis cambios no generan warnings
-- [ ] He agregado tests que prueban mi fix/feature
-- [ ] Los tests nuevos y existentes pasan localmente
-- [ ] He actualizado el CHANGELOG.md (si existe)
-- [ ] He actualizado la versión en package.json si es necesario
+- [ ] My code follows the project's conventions
+- [ ] I have performed a self-review of my code
+- [ ] I have commented complex code where necessary
+- [ ] I have updated the documentation if necessary
+- [ ] My changes don't generate warnings
+- [ ] I have added tests that test my fix/feature
+- [ ] New and existing tests pass locally
+- [ ] I have updated CHANGELOG.md (if it exists)
+- [ ] I have updated the version in package.json if necessary
 
 ## Testing
-Describe los tests que ejecutaste para verificar tus cambios.
+Describe the tests you ran to verify your changes.
 
-## Screenshots (si aplica)
-Si los cambios afectan la UI, agrega screenshots.
+## Screenshots (if applicable)
+If the changes affect the UI, add screenshots.
 
-## Información Adicional
-Cualquier otra información relevante para los revisores.
+## Additional Information
+Any other relevant information for reviewers.
 
-## Issues Relacionados
-Closes #(número de issue)
-
+## Related Issues
+Closes #(issue number)

@@ -1,40 +1,39 @@
 ---
 name: Bug Report
-about: Reportar un error o problema
+about: Report a bug or problem
 title: '[BUG] '
 labels: bug
 assignees: ''
 ---
 
-## Descripción del Bug
-Descripción clara y concisa del bug.
+## Bug Description
+Clear and concise description of the bug.
 
-## Pasos para Reproducir
-1. Ir a '...'
-2. Hacer click en '...'
-3. Ver error
+## Steps to Reproduce
+1. Go to '...'
+2. Click on '...'
+3. See error
 
-## Comportamiento Esperado
-Qué debería pasar.
+## Expected Behavior
+What should happen.
 
-## Comportamiento Actual
-Qué está pasando actualmente.
+## Actual Behavior
+What is currently happening.
 
 ## Screenshots
-Si aplica, agrega screenshots.
+If applicable, add screenshots.
 
-## Entorno
-- Versión de Natify: [ej: 0.0.1]
-- Versión de React Native: [ej: 0.82.1]
-- Versión de Node: [ej: 18.17.0]
-- OS: [ej: iOS 17, Android 13]
-- Dispositivo: [ej: iPhone 14, Pixel 7]
+## Environment
+- Natify Version: [e.g. 1.0.0]
+- React Native Version: [e.g. 0.72.0]
+- Node Version: [e.g. 18.17.0]
+- OS: [e.g. iOS 17, Android 13]
+- Device: [e.g. iPhone 14, Pixel 7]
 
-## Información Adicional
-Cualquier otra información relevante.
+## Additional Information
+Any other relevant information.
 
 ## Logs
 ```
-Pega logs relevantes aquí
+Paste relevant logs here
 ```
-

@@ -1,20 +1,19 @@
 ---
 name: Question
-about: Hacer una pregunta sobre el framework
+about: Ask a question about the framework
 title: '[QUESTION] '
 labels: question
 assignees: ''
 ---
 
-## Pregunta
-Tu pregunta aquí.
+## Question
+Your question here.
 
-## Contexto
-Contexto adicional sobre tu pregunta.
+## Context
+Additional context about your question.
 
-## Lo que has Intentado
-Qué has probado o investigado.
+## What You've Tried
+What you have tried or investigated.
 
-## Información Adicional
-Cualquier otra información relevante.
-
+## Additional Information
+Any other relevant information.

@@ -1,36 +1,35 @@
 ---
 name: Feature Request
-about: Sugerir una nueva funcionalidad
+about: Suggest a new feature
 title: '[FEATURE] '
 labels: enhancement
 assignees: ''
 ---
 
-## Descripción de la Funcionalidad
-Descripción clara de la funcionalidad que te gustaría ver.
+## Feature Description
+Clear description of the feature you would like to see.
 
-## Problema que Resuelve
-¿Qué problema resuelve esta funcionalidad? Ej: "Actualmente es difícil hacer X porque..."
+## Problem it Solves
+What problem does this feature solve? E.g., "Currently it's difficult to do X because..."
 
-## Solución Propuesta
-Cómo te gustaría que funcionara.
+## Proposed Solution
+How you would like it to work.
 
-## Alternativas Consideradas
-Otras soluciones que consideraste.
+## Alternatives Considered
+Other solutions you considered.
 
-## Casos de Uso
-Ejemplos de cómo se usaría esta funcionalidad:
+## Use Cases
+Examples of how this feature would be used:
 ```typescript
-// Ejemplo de código
+// Code example
 const adapter = useAdapter<NewPort>('new-capability');
 ```
 
-## Impacto
-- [ ] Requiere cambios en el core
-- [ ] Requiere nuevo adapter
-- [ ] Requiere cambios en documentación
+## Impact
+- [ ] Requires changes in core
+- [ ] Requires new adapter
+- [ ] Requires documentation changes
 - [ ] Breaking change
 
-## Información Adicional
-Cualquier otra información relevante.
-
+## Additional Information
+Any other relevant information.
