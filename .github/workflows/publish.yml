@@ -54,12 +54,14 @@ jobs:
           cd packages/core
           npm version ${{ github.event.inputs.version || 'patch' }} --no-git-tag-version
           npm publish --access public --provenance
-
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
       - name: Publish adapters
         run: |
           pnpm -r --filter '@natify/*' --filter '!@natify/core' exec npm version ${{ github.event.inputs.version || 'patch' }} --no-git-tag-version
           pnpm -r --filter '@natify/*' --filter '!@natify/core' exec npm publish --access public --provenance
-
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
       - name: Create git tag and push
         if: github.event_name == 'workflow_dispatch'
         run: |
