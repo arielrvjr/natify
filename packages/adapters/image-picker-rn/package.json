@@ -1,0 +1,37 @@
+{
+  "name": "@natify/image-picker-rn",
+  "version": "1.0.0",
+  "description": "Image Picker adapter using react-native-image-picker",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\""
+  },
+  "keywords": [],
+  "author": "Ariel Rodríguez",
+  "license": "MIT",
+  "packageManager": "pnpm@10.24.0",
+  "devDependencies": {
+    "@natify/core": "workspace:*",
+    "react": "*",
+    "react-native": "*",
+    "typescript": "*",
+    "react-native-image-picker": "^7.1.2"
+  },
+  "peerDependencies": {
+    "@natify/core": ">=1.0.0",
+    "react": "*",
+    "react-native": "*",
+    "react-native-image-picker": "^7.1.2"
+  }
+}

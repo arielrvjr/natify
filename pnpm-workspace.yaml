@@ -1,0 +1,7 @@
+packages:
+  - apps/*
+  - packages/*
+  - packages/adapters/*
+
+onlyBuiltDependencies:
+  - react-native-nitro-modules

@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10.24.0
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Build
+        run: pnpm build
+
+      - name: Test
+        run: pnpm test:coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          # Codecov agrupa automáticamente los archivos del mismo commit
+          files: |
+            ./coverage/core/lcov.info
+            ./coverage/http-axios/lcov.info
+            ./coverage/storage-mmkv/lcov.info
+            ./coverage/storage-async/lcov.info
+            ./coverage/storage-keychain/lcov.info
+            ./coverage/file-system-rn/lcov.info
+            ./coverage/graphql-apollo/lcov.info
+            ./coverage/geolocation-rn/lcov.info
+            ./coverage/analytics-mixpanel/lcov.info
+            ./coverage/feature-flag-growthbook/lcov.info
+            ./coverage/error-reporting-sentry/lcov.info
+            ./coverage/push-notification-firebase/lcov.info
+            ./coverage/push-notification-notifee/lcov.info
+            ./coverage/biometrics-rn/lcov.info
+            ./coverage/permissions-rn/lcov.info
+            ./coverage/image-picker-rn/lcov.info
+            ./coverage/store-zustand/lcov.info
+          flags: unittests
+          name: codecov-monorepo
+          fail_ci_if_error: false
+          verbose: true

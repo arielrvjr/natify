@@ -1,0 +1,670 @@
+# Natify Framework - Cursor Rules
+
+## Descripción del Proyecto
+
+**Natify Framework** es un framework de arquitectura hexagonal (Ports & Adapters) para React Native que abstrae las dependencias de librerías nativas y proporciona una API unificada y tipada.
+
+### Propósito
+
+- Desacoplar la lógica de negocio de las implementaciones nativas
+- Facilitar el testing mediante inyección de dependencias
+- Permitir cambiar librerías subyacentes sin afectar el código de la aplicación
+- Proporcionar manejo de errores tipado y consistente
+- Establecer governance sobre las capacidades nativas
+
+---
+
+## Arquitectura Hexagonal (Ports & Adapters)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        APLICACIÓN                            │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │                    @natify/core                    │    │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │    │
+│  │  │   PORTS     │  │   ERRORS    │  │  PROVIDER   │  │    │
+│  │  │ (Interfaces)│  │(NatifyErr)│  │  (Context)  │  │    │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘  │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                            ▲                                 │
+│                            │ implements                      │
+│  ┌─────────────────────────┴───────────────────────────┐    │
+│  │               @natify/*                    │    │
+│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────┐  │    │
+│  │  │http-axios│ │storage-  │ │biometrics│ │store-  │  │    │
+│  │  │          │ │mmkv      │ │-rn       │ │zustand │  │    │
+│  │  └──────────┘ └──────────┘ └──────────┘ └────────┘  │    │
+│  └─────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Flujo de Dependencias
+
+1. **Core** define las interfaces (Ports)
+2. **Adapters** implementan las interfaces usando librerías específicas
+3. **Apps** consumen los adapters a través del NatifyProvider
+4. Los componentes usan `useAdapter<Port>()` para obtener implementaciones
+
+---
+
+## Estructura del Monorepo
+
+```
+natify-framework/
+├── apps/
+│   └── DemoApp/                 # App de demostración React Native
+├── packages/
+│   ├── core/                    # @natify/core
+│   │   └── src/
+│   │       ├── ports/           # Interfaces (contratos)
+│   │       ├── errors/          # Sistema de errores tipados
+│   │       ├── context/         # NatifyProvider y hooks
+│   │       ├── adapters/        # Adapters por defecto (logger)
+│   │       ├── di/              # Inyección de dependencias
+│   │       ├── module/          # Sistema de módulos
+│   │       ├── viewmodel/       # BaseViewModel
+│   │       └── app/             # NatifyApp
+│   └── adapters/                # @natify/*
+│       ├── http-axios/          # HttpClientPort → Axios
+│       ├── storage-mmkv/        # StoragePort → MMKV
+│       ├── storage-async/       # StoragePort → AsyncStorage
+│       ├── storage-keychain/    # StoragePort → Keychain
+│       ├── biometrics-rn/       # BiometricPort → RN Biometrics
+│       ├── permissions-rn/      # PermissionPort → RN Permissions
+│       ├── navigation-react/    # NavigationPort → React Navigation
+│       └── store-zustand/       # StateManagerPort → Zustand
+├── package.json
+├── pnpm-workspace.yaml
+└── turbo.json
+```
+
+---
+
+## Stack Tecnológico
+
+| Herramienta | Versión | Propósito |
+|-------------|---------|-----------|
+| **pnpm** | 10.24.0 | Package manager (workspaces) |
+| **Turbo** | 2.6.2 | Build system monorepo |
+| **TypeScript** | 5.9.3 | Tipado estático |
+| **React Native** | 0.72+ | Framework móvil |
+| **React** | 18.2+ | UI library |
+
+---
+
+## Puertos (Interfaces) Disponibles
+
+### HttpClientPort
+```typescript
+interface HttpClientPort extends Port {
+  readonly capability: "httpclient";
+  setHeader(key: string, value: string): void;
+  removeHeader(key: string): void;
+  get<T>(url: string, config?: HttpRequestConfig): Promise<HttpResponse<T>>;
+  post<T>(url: string, body?: unknown, config?: HttpRequestConfig): Promise<HttpResponse<T>>;
+  put<T>(url: string, body?: unknown, config?: HttpRequestConfig): Promise<HttpResponse<T>>;
+  patch<T>(url: string, body?: unknown, config?: HttpRequestConfig): Promise<HttpResponse<T>>;
+  delete<T>(url: string, config?: HttpRequestConfig): Promise<HttpResponse<T>>;
+}
+```
+
+### StoragePort
+```typescript
+interface StoragePort extends Port {
+  readonly capability: "storage";
+  getItem<T = string>(key: string): Promise<T | null>;
+  setItem<T = string>(key: string, value: T): Promise<void>;
+  removeItem(key: string): Promise<void>;
+  clear(): Promise<void>;
+}
+```
+
+### BiometricPort
+```typescript
+interface BiometricPort extends Port {
+  readonly capability: "biometrics";
+  isAvailable(): Promise<boolean>;
+  getBiometryType(): Promise<BiometryType>;
+  authenticate(promptTitle: string, cancelText?: string): Promise<{ success: boolean; error?: string }>;
+}
+```
+
+### LoggerPort
+```typescript
+interface LoggerPort extends Port {
+  readonly capability: "logger";
+  log(level: LogLevel, message: string, metadata?: object): void;
+  debug(message: string, metadata?: object): void;
+  info(message: string, metadata?: object): void;
+  warn(message: string, metadata?: object): void;
+  error(message: string, error?: Error, metadata?: object): void;
+}
+```
+
+### StateManagerPort
+```typescript
+interface StateManagerPort extends Port {
+  readonly capability: "state-management";
+  createStore<T>(setup: (set: SetState<T>, get: GetState<T>) => T): StoreApi<T>;
+}
+```
+
+### AnalyticsPort
+```typescript
+interface AnalyticsPort {
+  init(): Promise<void>;
+  identify(userId: string, traits?: Record<string, unknown>): void;
+  track(event: string, properties?: Record<string, unknown>): void;
+  screen(name: string, properties?: Record<string, unknown>): void;
+  reset(): void;
+}
+```
+
+---
+
+## Cómo Crear un Nuevo Port
+
+1. Crear archivo en `packages/core/src/ports/`:
+
+```typescript
+// packages/core/src/ports/MyNewPort.ts
+import { Port } from "./Port";
+
+export interface MyNewPort extends Port {
+  readonly capability: "my-capability"; // Identificador único
+  
+  // Definir métodos abstractos
+  doSomething(): Promise<void>;
+  getSomething(): string;
+}
+```
+
+2. Exportar desde el index:
+
+```typescript
+// packages/core/src/ports/index.ts
+export * from "./MyNewPort";
+```
+
+### Reglas para Ports
+
+- ✅ Extender siempre de `Port`
+- ✅ Definir `capability` como readonly con valor literal
+- ✅ Usar tipos genéricos cuando sea posible
+- ✅ Métodos async para operaciones I/O
+- ❌ NO incluir lógica de implementación
+- ❌ NO importar librerías externas
+
+---
+
+## Cómo Crear un Nuevo Adapter
+
+1. Crear paquete en `packages/adapters/`:
+
+```bash
+mkdir -p packages/adapters/my-adapter/src
+```
+
+2. Crear `package.json`:
+
+```json
+{
+  "name": "@natify/my-adapter",
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "peerDependencies": {
+    "@natify/core": "*"
+  },
+  "dependencies": {
+    "libreria-nativa": "^x.x.x"
+  }
+}
+```
+
+3. Implementar el adapter:
+
+```typescript
+// packages/adapters/my-adapter/src/index.ts
+import { MyNewPort } from "@natify/core";
+import { LibreriaNativa } from "libreria-nativa";
+
+export class MyNewAdapter implements MyNewPort {
+  readonly capability = "my-capability";
+  
+  private nativeLib = new LibreriaNativa();
+
+  async doSomething(): Promise<void> {
+    await this.nativeLib.action();
+  }
+
+  getSomething(): string {
+    return this.nativeLib.getValue();
+  }
+}
+```
+
+### Reglas para Adapters
+
+- ✅ Implementar TODA la interfaz del Port
+- ✅ Definir `capability` con el mismo valor del Port
+- ✅ Convertir errores nativos a `NatifyError`
+- ✅ Encapsular completamente la librería nativa
+- ❌ NO exponer tipos de la librería nativa
+- ❌ NO lanzar errores no tipados
+
+---
+
+## Sistema de Errores
+
+### NatifyError
+
+```typescript
+class NatifyError extends Error {
+  public readonly code: NatifyErrorCode;
+  public readonly originalError?: unknown;
+  public readonly context?: Record<string, any>;
+}
+```
+
+### Códigos de Error Disponibles
+
+| Código | Descripción |
+|--------|-------------|
+| `NETWORK_ERROR` | Error de red genérico |
+| `TIMEOUT` | Timeout de petición |
+| `UNAUTHORIZED` | HTTP 401 |
+| `FORBIDDEN` | HTTP 403 |
+| `NOT_FOUND` | HTTP 404 |
+| `SERVER_ERROR` | HTTP 500+ |
+| `STORAGE_READ_ERROR` | Error leyendo storage |
+| `STORAGE_WRITE_ERROR` | Error escribiendo storage |
+| `VALIDATION_ERROR` | Error de validación |
+| `UNKNOWN` | Error desconocido |
+
+### Uso en Adapters
+
+```typescript
+import { NatifyError, NatifyErrorCode } from "@natify/core";
+
+// En el adapter
+try {
+  await nativeOperation();
+} catch (error) {
+  throw new NatifyError(
+    NatifyErrorCode.NETWORK_ERROR,
+    "Falló la operación",
+    error,
+    { url: "/api/users" }
+  );
+}
+```
+
+### Manejo en Componentes
+
+```typescript
+import { NatifyError, NatifyErrorCode } from "@natify/core";
+
+try {
+  await http.get("/users");
+} catch (error) {
+  if (error instanceof NatifyError) {
+    switch (error.code) {
+      case NatifyErrorCode.UNAUTHORIZED:
+        // Redirigir a login
+        break;
+      case NatifyErrorCode.NETWORK_ERROR:
+        // Mostrar "Sin conexión"
+        break;
+    }
+  }
+}
+```
+
+---
+
+## NatifyApp (Configuración Simplificada)
+
+### Uso Básico
+
+```typescript
+// App.tsx
+import { NatifyApp } from "@natify/core";
+import { AxiosHttpAdapter } from "@natify/http-axios";
+import { MMKVStorageAdapter } from "@natify/storage-mmkv";
+import { KeychainStorageAdapter } from "@natify/storage-keychain";
+import { RnBiometricAdapter } from "@natify/biometrics-rn";
+import { createReactNavigationAdapter } from "@natify/navigation-react";
+
+import { AuthModule } from "./modules/auth";
+import { ProductsModule } from "./modules/products";
+
+export default function App() {
+  return (
+    <NatifyApp
+      adapters={{
+        http: new AxiosHttpAdapter("https://api.example.com"),
+        storage: new MMKVStorageAdapter(),
+        secureStorage: new KeychainStorageAdapter(),
+        biometrics: new RnBiometricAdapter(),
+        navigation: createReactNavigationAdapter(),
+      }}
+      modules={[AuthModule, ProductsModule]}
+      initialModule="auth"
+    />
+  );
+}
+```
+
+---
+
+## Sistema de Módulos
+
+### Crear un Módulo
+
+```typescript
+// modules/auth/index.ts
+import { createModule } from "@natify/core";
+import { LoginScreen } from "./screens/LoginScreen";
+import { RegisterScreen } from "./screens/RegisterScreen";
+import { LoginUseCase } from "./usecases/LoginUseCase";
+
+export const AuthModule = createModule("auth", "Authentication")
+  // Capacidades requeridas
+  .requires("http", "secureStorage", "biometrics", "navigation")
+
+  // Pantallas
+  .screen({ name: "Login", component: LoginScreen })
+  .screen({ name: "Register", component: RegisterScreen })
+
+  // UseCases
+  .useCase("login", (adapters) =>
+    new LoginUseCase(adapters.http, adapters.secureStorage)
+  )
+
+  // Ruta inicial
+  .initialRoute("Login")
+
+  // Inicialización (opcional)
+  .onInit(async (adapters) => {
+    console.log("Auth module loaded");
+  })
+
+  .build();
+```
+
+### Estructura de un Módulo
+
+```
+modules/
+└── auth/
+    ├── index.ts              # Definición del módulo
+    ├── screens/
+    │   ├── LoginScreen.tsx
+    │   └── RegisterScreen.tsx
+    ├── viewmodels/
+    │   ├── useLoginViewModel.ts
+    │   └── useRegisterViewModel.ts
+    └── usecases/
+        ├── LoginUseCase.ts
+        └── RegisterUseCase.ts
+```
+
+---
+
+## UseCases
+
+### Crear un UseCase
+
+```typescript
+// modules/auth/usecases/LoginUseCase.ts
+import { HttpClientPort, StoragePort, NatifyError, NatifyErrorCode } from "@natify/core";
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export class LoginUseCase {
+  constructor(
+    private readonly http: HttpClientPort,
+    private readonly secureStorage: StoragePort,
+  ) {}
+
+  async execute(credentials: LoginCredentials): Promise<User> {
+    // Validación de negocio
+    if (!credentials.email.includes("@")) {
+      throw new NatifyError(NatifyErrorCode.VALIDATION_ERROR, "Email inválido");
+    }
+
+    // Llamar API
+    const response = await this.http.post<AuthResponse>("/auth/login", credentials);
+
+    // Guardar token
+    await this.secureStorage.setItem("auth_token", response.data.token);
+
+    // Configurar header
+    this.http.setHeader("Authorization", `Bearer ${response.data.token}`);
+
+    return response.data.user;
+  }
+}
+```
+
+---
+
+## ViewModels
+
+### BaseViewModel
+
+```typescript
+import { useBaseViewModel, useUseCase, useAdapter, NavigationPort } from "@natify/core";
+import { useState, useCallback } from "react";
+import { LoginUseCase } from "../usecases/LoginUseCase";
+
+export function useLoginViewModel() {
+  // Estado base (loading, error)
+  const [baseState, { execute, clearError }] = useBaseViewModel();
+
+  // Estado del formulario
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // UseCase inyectado (prefijo: moduleId:useCaseKey)
+  const loginUseCase = useUseCase<LoginUseCase>("auth:login");
+
+  // Navigation
+  const navigation = useAdapter<NavigationPort>("navigation");
+
+  const login = useCallback(async () => {
+    const result = await execute(() =>
+      loginUseCase.execute({ email, password })
+    );
+
+    if (result) {
+      navigation.reset([{ name: "products/ProductList" }]);
+    }
+  }, [email, password, loginUseCase, navigation, execute]);
+
+  return {
+    state: {
+      ...baseState,
+      email,
+      password,
+    },
+    actions: {
+      setEmail,
+      setPassword,
+      login,
+      clearError,
+    },
+  };
+}
+```
+
+### Screen (Vista)
+
+```typescript
+// modules/auth/screens/LoginScreen.tsx
+import { View, TextInput, Button, Text, ActivityIndicator } from "react-native";
+import { useLoginViewModel } from "../viewmodels/useLoginViewModel";
+
+export function LoginScreen() {
+  const { state, actions } = useLoginViewModel();
+
+  return (
+    <View>
+      <TextInput
+        value={state.email}
+        onChangeText={actions.setEmail}
+        placeholder="Email"
+        editable={!state.isLoading}
+      />
+
+      <TextInput
+        value={state.password}
+        onChangeText={actions.setPassword}
+        secureTextEntry
+        editable={!state.isLoading}
+      />
+
+      {state.error && <Text style={{ color: "red" }}>{state.error.message}</Text>}
+
+      {state.isLoading ? (
+        <ActivityIndicator />
+      ) : (
+        <Button title="Iniciar Sesión" onPress={actions.login} />
+      )}
+    </View>
+  );
+}
+```
+
+---
+
+## Inyección de Dependencias
+
+### useUseCase
+
+```typescript
+// Obtener un UseCase registrado en un módulo
+const loginUseCase = useUseCase<LoginUseCase>("auth:login");
+const getProductsUseCase = useUseCase<GetProductsUseCase>("products:getProducts");
+```
+
+### useAdapter
+
+```typescript
+// Obtener un adapter por nombre o capability
+const http = useAdapter<HttpClientPort>("http");
+const navigation = useAdapter<NavigationPort>("navigation");
+```
+
+---
+
+## Navegación entre Módulos
+
+```typescript
+const navigation = useAdapter<NavigationPort>("navigation");
+
+// Navegar a una pantalla de otro módulo
+navigation.navigate("products/ProductDetail", { productId: "123" });
+
+// Reset del stack (útil después de login)
+navigation.reset([{ name: "products/ProductList" }]);
+
+// Regresar
+navigation.goBack();
+```
+
+---
+
+## Convenciones de Código
+
+### Naming
+
+| Tipo | Convención | Ejemplo |
+|------|------------|---------|
+| Port | `{Capability}Port` | `HttpClientPort`, `StoragePort` |
+| Adapter | `{Implementación}{Capability}Adapter` | `AxiosHttpAdapter`, `MMKVStorageAdapter` |
+| Capability | `kebab-case` | `"httpclient"`, `"state-management"` |
+| Paquete adapter | `@natify/{capability}-{implementation}` | `@natify/http-axios` |
+
+### Estructura de Archivos
+
+```
+packages/adapters/my-adapter/
+├── src/
+│   └── index.ts        # Exporta el adapter
+├── package.json
+└── README.md           # Documentación del adapter
+```
+
+### TypeScript
+
+- Usar `readonly` para propiedades inmutables
+- Preferir interfaces sobre types para Ports
+- Usar generics para tipado flexible
+- Exportar todos los tipos necesarios
+
+---
+
+## Comandos Útiles
+
+```bash
+# Instalar dependencias
+pnpm install
+
+# Desarrollo (todos los paquetes)
+pnpm dev
+
+# Ejecutar DemoApp en Android
+pnpm android
+
+# Ejecutar DemoApp en iOS
+pnpm ios
+
+# Build de todos los paquetes
+pnpm turbo run build
+```
+
+---
+
+## Roadmap de Capacidades
+
+### Implementadas ✅
+- Storage (MMKV, AsyncStorage, Keychain)
+- HTTP Client (Axios)
+- Biometrics (RN Biometrics)
+- State Management (Zustand)
+- Logger (Console)
+- Analytics (Composite adapter)
+- Permissions (react-native-permissions)
+- Navigation (React Navigation)
+
+### Planificadas 📋
+- Camera/Media (react-native-image-picker)
+- Location (react-native-geolocation-service)
+- File System (react-native-blob-util)
+- Theme Engine (@shopify/restyle)
+- Toast/Alerts (react-native-toast-message)
+- Crash Reporting (Sentry)
+- Validation (Zod)
+
+---
+
+## Anti-Patrones a Evitar
+
+❌ **NO** importar librerías nativas directamente en componentes
+❌ **NO** lanzar errores sin convertirlos a `NatifyError`
+❌ **NO** exponer tipos de librerías nativas fuera del adapter
+❌ **NO** crear adapters sin implementar toda la interfaz del Port
+❌ **NO** usar `any` en las interfaces de Ports
+❌ **NO** acoplar lógica de negocio a implementaciones específicas
+
+✅ **SÍ** usar `useAdapter<Port>()` para obtener implementaciones
+✅ **SÍ** tipar correctamente las respuestas y errores
+✅ **SÍ** documentar cada adapter con README
+✅ **SÍ** mantener los Ports agnósticos de implementación
+✅ **SÍ** usar el sistema de errores tipado
+

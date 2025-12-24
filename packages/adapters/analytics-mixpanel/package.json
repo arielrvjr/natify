@@ -1,0 +1,30 @@
+{
+  "name": "@natify/analytics-mixpanel",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:coverage:watch": "jest --coverage --watch",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\""
+  },
+  "devDependencies": {
+    "@natify/core": "workspace:*",
+    "typescript": "*"
+  },
+  "peerDependencies": {
+    "@natify/core": ">=1.0.0",
+    "mixpanel-react-native": "^2.0.0"
+  }
+}
+

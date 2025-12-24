@@ -1,0 +1,38 @@
+{
+  "name": "@natify/ui",
+  "version": "1.0.0",
+  "description": "Componentes UI para Natify Framework",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\""
+  },
+  "peerDependencies": {
+    "lucide-react-native": ">=0.400.0",
+    "react-native-svg": "^15.15.1",
+    "react": ">=19.0.0",
+    "react-native": ">=0.80.0"
+  },
+  "devDependencies": {
+    "lucide-react-native": "^0.561.0",
+    "react-native-svg": "^15.15.1",
+    "react": "*",
+    "react-native": "*",
+    "typescript": "*"
+  },
+  "keywords": [
+    "react-native",
+    "ui",
+    "components",
+    "natify"
+  ],
+  "license": "MIT"
+}

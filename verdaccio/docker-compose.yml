@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  verdaccio:
+    build: .
+    container_name: nativefy-registry
+    ports:
+      - "4873:4873"
+    volumes:
+      - ./storage:/verdaccio/storage
+      - ./plugins:/verdaccio/plugins
+      - ./config.yaml:/verdaccio/conf/config.yaml
+    restart: unless-stopped
+    environment:
+      - VERDACCIO_PROTOCOL=http
+      - VERDACCIO_PORT=4873
+

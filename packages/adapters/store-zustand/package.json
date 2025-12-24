@@ -1,0 +1,27 @@
+{
+  "name": "@natify/store-zustand",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\""
+  },
+  "devDependencies": {
+    "@natify/core": "workspace:*",
+    "typescript": "*"
+  },
+  "peerDependencies": {
+    "@natify/core": ">=1.0.0",
+    "zustand": "^5.0.9"
+  }
+}

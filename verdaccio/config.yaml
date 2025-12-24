@@ -1,0 +1,60 @@
+# Configuración de Verdaccio para Nativefy Framework
+# Documentación: https://verdaccio.org/docs/configuration
+
+storage: ./storage
+plugins: ./plugins
+
+# Configuración web UI
+web:
+  title: Nativefy Framework Registry
+  enable: true
+  gravatar: false
+  scope: '@nativefy'
+
+# Autenticación (opcional, puedes habilitarlo después)
+auth:
+  htpasswd:
+    file: ./htpasswd
+    max_users: 1000
+    # Para deshabilitar registro público, descomenta:
+    # max_users: -1
+
+# Upstreams (paquetes que no están en este registry)
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/
+    cache: true
+
+# Paquetes y permisos
+packages:
+  # Paquetes del scope @nativefy (privados)
+  '@nativefy/*':
+    access: $all
+    publish: $all
+    unpublish: $all
+    proxy: npmjs
+
+  # Todos los demás paquetes (públicos de npm)
+  '**':
+    access: $all
+    publish: $all
+    unpublish: $all
+    proxy: npmjs
+
+# Logs
+logs:
+  - { type: stdout, format: pretty, level: http }
+
+# Configuración de seguridad
+security:
+  api:
+    legacy: true
+    jwt:
+      sign:
+        expiresIn: 7d
+      verify:
+        someProp: [test]
+
+# Configuración de servidor
+listen: 0.0.0.0:4873
+

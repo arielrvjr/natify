@@ -1,0 +1,72 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "lib/**"],
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "tsconfig.json", "package.json"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"],
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "tsconfig.json", "package.json"],
+      "outputs": []
+    },
+    "lint:fix": {
+      "dependsOn": ["^lint:fix"],
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "tsconfig.json", "package.json"],
+      "outputs": []
+    },
+    "format": {
+      "outputs": []
+    },
+    "format:check": {
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": [],
+      "inputs": [
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "__tests__/**/*.test.ts",
+        "__tests__/**/*.test.tsx",
+        "jest.config.js",
+        "tsconfig.json",
+        "package.json"
+      ],
+      "outputs": [],
+      "cache": true
+    },
+    "test:coverage": {
+      "dependsOn": [],
+      "inputs": [
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "__tests__/**/*.test.ts",
+        "__tests__/**/*.test.tsx",
+        "jest.config.js",
+        "tsconfig.json",
+        "package.json"
+      ],
+      "outputs": ["../../coverage/**/*", "../../../coverage/**/*"],
+      "cache": true
+    },
+    "test:watch": {
+      "cache": false,
+      "persistent": true
+    },
+    "test:coverage:watch": {
+      "cache": false,
+      "persistent": true
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  },
+  "globalDependencies": [
+    "tsconfig.base.json",
+    "tsconfig.json",
+    "jest.config.base.js",
+    "jest.setup.js"
+  ]
+}

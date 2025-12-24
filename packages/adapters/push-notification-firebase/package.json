@@ -1,0 +1,36 @@
+{
+  "name": "@natify/push-notification-firebase",
+  "version": "1.0.0",
+  "description": "Push Notification adapter using @react-native-firebase/messaging",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix"
+  },
+  "peerDependencies": {
+    "@natify/core": ">=1.0.0",
+    "@react-native-firebase/messaging": ">=20.0.0"
+  },
+  "devDependencies": {
+    "@natify/core": "workspace:*",
+    "@react-native-firebase/messaging": "^20.0.0",
+    "typescript": "*"
+  },
+  "keywords": [
+    "react-native",
+    "push-notification",
+    "firebase",
+    "fcm",
+    "natify"
+  ],
+  "license": "MIT"
+}
+

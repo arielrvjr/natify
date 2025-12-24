@@ -1,0 +1,33 @@
+{
+  "name": "@natify/permissions-rn",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\""
+  },
+  "devDependencies": {
+    "@natify/core": "workspace:*",
+    "react": "*",
+    "react-native": "*",
+    "typescript": "*",
+    "react-native-permissions": "^5.4.0"
+  },
+  "peerDependencies": {
+    "@natify/core": ">=1.0.0",
+    "react": "*",
+    "react-native": "*",
+    "react-native-permissions": "^5.4.0"
+  }
+}
+

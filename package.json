@@ -1,0 +1,58 @@
+{
+  "name": "natify-framework",
+  "version": "1.0.0",
+  "description": "Hexagonal architecture framework for React Native applications",
+  "main": "index.js",
+  "scripts": {
+    "test": "turbo run test",
+    "test:watch": "turbo run test:watch",
+    "test:coverage": "turbo run test:coverage",
+    "test:coverage:watch": "turbo run test:coverage:watch",
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "format": "turbo run format",
+    "format:check": "turbo run format:check",
+    "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' + && rm -f pnpm-lock.yaml",
+    "clean:coverage": "rm -rf coverage",
+    "clean:install": "pnpm clean && pnpm install",
+    "android": "turbo run android --filter=examples",
+    "ios": "pnpm --filter examples ios",
+    "registry:start": "docker-compose -f verdaccio/docker-compose.yml up -d",
+    "registry:stop": "docker-compose -f verdaccio/docker-compose.yml down",
+    "registry:logs": "docker-compose -f verdaccio/docker-compose.yml logs -f",
+    "registry:publish": "pnpm build && pnpm -r --filter '@natify*' publish --registry http://localhost:4873 --no-git-checks",
+    "registry:publish:all": "pnpm build && pnpm -r --filter '@natify*' publish --registry http://localhost:4873 --no-git-checks --force",
+    "pack:check": "pnpm -r --filter '@natify/*' exec pnpm pack --dry-run",
+    "clean:build": "pnpm -r exec rm -rf dist",
+    "prepublishOnly": "pnpm build"
+  },
+  "keywords": ["react-native", "framework", "natify", "natify-framework", "hexagonal-architecture", "ports-adapters"],
+  "author": "Ariel Rodríguez",
+  "license": "MIT",
+  "packageManager": "pnpm@10.24.0",
+  "pnpm": {
+    "overrides": {
+      "react": "19.1.1"
+    }
+  },
+  "devDependencies": {
+    "@react-native/eslint-config": "^0.83.0",
+    "@react-native/typescript-config": "0.83.0",
+    "@types/jest": "^29.5.13",
+    "@types/react": "^19.1.1",
+    "@typescript-eslint/eslint-plugin": "^8.49.0",
+    "@typescript-eslint/parser": "^8.49.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-prettier": "^5.2.1",
+    "jest": "^29.6.3",
+    "prettier": "^3.0.3",
+    "react": "^19.1.1",
+    "react-native": "^0.82.1",
+    "ts-jest": "^29.1.2",
+    "turbo": "^2.7.1",
+    "typescript": "^5.9.3"
+  }
+}
