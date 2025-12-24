@@ -62,31 +62,31 @@ importers:
 
   apps/examples:
     dependencies:
-      '@nativefy/biometrics-rn':
+      '@natify/biometrics-rn':
         specifier: workspace:*
         version: link:../../packages/adapters/biometrics-rn
-      '@nativefy/core':
+      '@natify/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@nativefy/http-axios':
+      '@natify/http-axios':
         specifier: workspace:*
         version: link:../../packages/adapters/http-axios
-      '@nativefy/image-picker-rn':
+      '@natify/image-picker-rn':
         specifier: workspace:*
         version: link:../../packages/adapters/image-picker-rn
-      '@nativefy/navigation-react':
+      '@natify/navigation-react':
         specifier: workspace:*
         version: link:../../packages/adapters/navigation-react
-      '@nativefy/permissions-rn':
+      '@natify/permissions-rn':
         specifier: workspace:*
         version: link:../../packages/adapters/permissions-rn
-      '@nativefy/storage-keychain':
+      '@natify/storage-keychain':
         specifier: workspace:*
         version: link:../../packages/adapters/storage-keychain
-      '@nativefy/storage-mmkv':
+      '@natify/storage-mmkv':
         specifier: workspace:*
         version: link:../../packages/adapters/storage-mmkv
-      '@nativefy/ui':
+      '@natify/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       '@react-navigation/native':
@@ -199,7 +199,7 @@ importers:
         specifier: ^2.0.0
         version: 2.4.1
     devDependencies:
-      '@nativefy/core':
+      '@natify/core':
         specifier: workspace:*
         version: link:../../core
       typescript:
@@ -208,7 +208,7 @@ importers:
 
   packages/adapters/biometrics-rn:
     devDependencies:
-      '@nativefy/core':
+      '@natify/core':
         specifier: workspace:*
         version: link:../../core
       react-native-biometrics:
@@ -224,7 +224,7 @@ importers:
         specifier: ^5.0.0
         version: 5.36.0(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.83.0(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1)
     devDependencies:
-      '@nativefy/core':
+      '@natify/core':
         specifier: workspace:*
         version: link:../../core
       typescript:
@@ -237,7 +237,7 @@ importers:
         specifier: ^1.0.0
         version: 1.6.2(react@19.1.1)
     devDependencies:
-      '@nativefy/core':
+      '@natify/core':
         specifier: workspace:*
         version: link:../../core
       typescript:
@@ -250,7 +250,7 @@ importers:
         specifier: ^0.19.0
         version: 0.19.11(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.83.0(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1)
     devDependencies:
-      '@nativefy/core':
+      '@natify/core':
         specifier: workspace:*
         version: link:../../core
       typescript:
@@ -263,7 +263,7 @@ importers:
         specifier: ^3.4.0
         version: 3.4.0(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.83.0(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1)
     devDependencies:
-      '@nativefy/core':
+      '@natify/core':
         specifier: workspace:*
         version: link:../../core
       typescript:
@@ -279,7 +279,7 @@ importers:
         specifier: ^16.8.0
         version: 16.12.0
     devDependencies:
-      '@nativefy/core':
+      '@natify/core':
         specifier: workspace:*
         version: link:../../core
       typescript:
@@ -288,7 +288,7 @@ importers:
 
   packages/adapters/http-axios:
     devDependencies:
-      '@nativefy/core':
+      '@natify/core':
         specifier: workspace:*
         version: link:../../core
       axios:
@@ -300,7 +300,7 @@ importers:
 
   packages/adapters/image-picker-rn:
     devDependencies:
-      '@nativefy/core':
+      '@natify/core':
         specifier: workspace:*
         version: link:../../core
       react:
@@ -318,7 +318,7 @@ importers:
 
   packages/adapters/navigation-react:
     devDependencies:
-      '@nativefy/core':
+      '@natify/core':
         specifier: workspace:*
         version: link:../../core
       '@react-navigation/native':
@@ -345,7 +345,7 @@ importers:
 
   packages/adapters/permissions-rn:
     devDependencies:
-      '@nativefy/core':
+      '@natify/core':
         specifier: workspace:*
         version: link:../../core
       react:
@@ -363,12 +363,9 @@ importers:
 
   packages/adapters/push-notification-firebase:
     devDependencies:
-      '@nativefy/core':
+      '@natify/core':
         specifier: workspace:*
         version: link:../../core
-      '@notifee/react-native':
-        specifier: ^7.8.2
-        version: 7.9.0(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.83.0(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))
       '@react-native-firebase/messaging':
         specifier: ^20.0.0
         version: 20.5.0(@react-native-firebase/app@20.5.0(@react-native-async-storage/async-storage@1.24.0(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.83.0(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1)))(react-native@0.82.1(@babel/core@7.28.5)(@react-native-community/cli@20.0.0(typescript@5.9.3))(@react-native/metro-config@0.83.0(@babel/core@7.28.5))(@types/react@19.2.7)(react@19.1.1))(react@19.1.1))
@@ -378,7 +375,7 @@ importers:
 
   packages/adapters/push-notification-notifee:
     devDependencies:
-      '@nativefy/core':
+      '@natify/core':
         specifier: workspace:*
         version: link:../../core
       '@notifee/react-native':
@@ -393,7 +390,7 @@ importers:
 
   packages/adapters/storage-async:
     dependencies:
-      '@nativefy/core':
+      '@natify/core':
         specifier: workspace:*
         version: link:../../core
       '@react-native-async-storage/async-storage':
@@ -402,7 +399,7 @@ importers:
 
   packages/adapters/storage-keychain:
     dependencies:
-      '@nativefy/core':
+      '@natify/core':
         specifier: workspace:*
         version: link:../../core
       react-native-keychain:
@@ -411,7 +408,7 @@ importers:
 
   packages/adapters/storage-mmkv:
     devDependencies:
-      '@nativefy/core':
+      '@natify/core':
         specifier: workspace:*
         version: link:../../core
       react-native-mmkv:
@@ -420,7 +417,7 @@ importers:
 
   packages/adapters/store-zustand:
     dependencies:
-      '@nativefy/core':
+      '@natify/core':
         specifier: workspace:*
         version: link:../../core
       zustand:
