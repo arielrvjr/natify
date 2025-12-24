@@ -42,6 +42,7 @@ coverage/
 .nyc_output/
 *.lcov
 .jest/
+test-results/
 
 # IDEs and editors
 .idea/
