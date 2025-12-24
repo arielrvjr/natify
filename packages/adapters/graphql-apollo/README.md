@@ -1,8 +1,8 @@
 # @natify/graphql-apollo
 
-Adapter de GraphQL para Natify Framework usando `@apollo/client`.
+GraphQL adapter for Natify Framework using `@apollo/client`.
 
-## Instalación
+## Installation
 
 ```bash
 pnpm add @natify/graphql-apollo @apollo/client graphql
@@ -16,11 +16,11 @@ cd ios && pod install && cd ..
 
 ### Android
 
-No requiere configuración adicional.
+No additional configuration required.
 
-## Uso
+## Usage
 
-### Configuración Básica
+### Basic Configuration
 
 ```typescript
 import { NatifyProvider } from "@natify/core";
@@ -32,7 +32,7 @@ const graphqlAdapter = new ApolloGraphQLAdapter({
 
 const config = {
   graphql: graphqlAdapter,
-  // ... otros adapters
+  // ... other adapters
 };
 
 function App() {
@@ -44,7 +44,7 @@ function App() {
 }
 ```
 
-### Configuración Avanzada
+### Advanced Configuration
 
 ```typescript
 const graphqlAdapter = new ApolloGraphQLAdapter({
@@ -56,20 +56,20 @@ const graphqlAdapter = new ApolloGraphQLAdapter({
   cacheEnabled: true,
   timeout: 30000,
   onAuthError: async () => {
-    // Redirigir a login cuando hay error 401
+    // Redirect to login when there's a 401 error
     await logout();
     navigation.reset([{ name: "auth/Login" }]);
   },
   onNetworkError: (error) => {
     console.error("Network error:", error);
-    // Mostrar notificación de error
+    // Show error notification
   },
 });
 ```
 
-## Autenticación con Token
+## Authentication with Token
 
-### Establecer Token Después del Login
+### Set Token After Login
 
 ```typescript
 import { useAdapter, GraphQLPort, StoragePort } from "@natify/core";
@@ -79,23 +79,23 @@ function useAuth() {
   const secureStorage = useAdapter<StoragePort>("secureStorage");
 
   const login = async (email: string, password: string) => {
-    // Login usando HTTP (o GraphQL mutation)
+    // Login using HTTP (or GraphQL mutation)
     const response = await http.post("/auth/login", { email, password });
 
-    // Guardar token
+    // Save token
     const token = response.data.token;
     await secureStorage.setItem("auth_token", token);
 
-    // Inyectar token en GraphQL
+    // Inject token into GraphQL
     graphql.setAuthToken(token);
   };
 
   const logout = async () => {
-    // Limpiar token
+    // Clear token
     graphql.clearAuthToken();
     await secureStorage.removeItem("auth_token");
     
-    // Limpiar caché
+    // Clear cache
     await graphql.clearCache();
   };
 
@@ -103,7 +103,7 @@ function useAuth() {
 }
 ```
 
-### Restaurar Token al Iniciar la App
+### Restore Token on App Start
 
 ```typescript
 import { useEffect } from "react";
@@ -130,7 +130,7 @@ function AppInitializer() {
 
 ## Queries
 
-### Query Simple
+### Simple Query
 
 ```typescript
 import { useAdapter, GraphQLPort } from "@natify/core";
@@ -168,7 +168,7 @@ function UserList() {
 }
 ```
 
-### Query con Variables
+### Query with Variables
 
 ```typescript
 const GET_USER = `
@@ -194,20 +194,20 @@ const loadUser = async (userId: string) => {
 };
 ```
 
-### Query con Opciones de Caché
+### Query with Cache Options
 
 ```typescript
-// Siempre obtener datos frescos del servidor
+// Always get fresh data from server
 const result = await graphql.query(GET_USERS, {
   fetchPolicy: "network-only",
 });
 
-// Usar caché si está disponible, sino hacer petición
+// Use cache if available, otherwise make request
 const result = await graphql.query(GET_USERS, {
   fetchPolicy: "cache-and-network",
 });
 
-// Solo usar caché (no hacer petición)
+// Only use cache (don't make request)
 const result = await graphql.query(GET_USERS, {
   fetchPolicy: "cache-only",
 });
@@ -215,7 +215,7 @@ const result = await graphql.query(GET_USERS, {
 
 ## Mutations
 
-### Mutation Simple
+### Simple Mutation
 
 ```typescript
 const CREATE_USER = `
@@ -239,7 +239,7 @@ const createUser = async (name: string, email: string) => {
 };
 ```
 
-### Mutation con Manejo de Errores
+### Mutation with Error Handling
 
 ```typescript
 const UPDATE_PROFILE = `
@@ -256,11 +256,11 @@ const updateProfile = async (input: UpdateProfileInput) => {
   try {
     const result = await graphql.mutate<{ updateProfile: User }>(UPDATE_PROFILE, {
       variables: { input },
-      errorPolicy: "all", // Retornar datos incluso si hay errores
+      errorPolicy: "all", // Return data even if there are errors
     });
 
     if (result.errors && result.errors.length > 0) {
-      // Manejar errores de GraphQL
+      // Handle GraphQL errors
       result.errors.forEach(error => {
         console.error("GraphQL Error:", error.message);
       });
@@ -269,7 +269,7 @@ const updateProfile = async (input: UpdateProfileInput) => {
     return result.data.updateProfile;
   } catch (error) {
     if (error instanceof NatifyError) {
-      // Manejar errores de red o validación
+      // Handle network or validation errors
       console.error("Error:", error.message);
     }
     throw error;
@@ -279,7 +279,7 @@ const updateProfile = async (input: UpdateProfileInput) => {
 
 ## Subscriptions
 
-### Subscription Simple
+### Simple Subscription
 
 ```typescript
 const MESSAGE_SUBSCRIPTION = `
@@ -310,7 +310,7 @@ function ChatScreen({ chatId }: { chatId: string }) {
 
     const { unsubscribe } = subscription.subscribe(
       (result) => {
-        // Agregar nuevo mensaje
+        // Add new message
         setMessages(prev => [...prev, result.data.onNewMessage]);
       },
       (error) => {
@@ -333,7 +333,7 @@ function ChatScreen({ chatId }: { chatId: string }) {
 }
 ```
 
-## UseCase con GraphQL
+## UseCase with GraphQL
 
 ```typescript
 import { GraphQLPort } from "@natify/core";
@@ -362,9 +362,9 @@ export class GetProductsUseCase {
 }
 ```
 
-## Casos de Uso Comunes
+## Common Use Cases
 
-### Login con GraphQL
+### Login with GraphQL
 
 ```typescript
 const LOGIN_MUTATION = `
@@ -390,43 +390,43 @@ const login = async (email: string, password: string) => {
 
   const { token, user } = result.data.login;
 
-  // Guardar token
+  // Save token
   await secureStorage.setItem("auth_token", token);
 
-  // Inyectar token en GraphQL
+  // Inject token into GraphQL
   graphql.setAuthToken(token);
 
   return user;
 };
 ```
 
-### Refrescar Token Automáticamente
+### Automatically Refresh Token
 
 ```typescript
 const graphqlAdapter = new ApolloGraphQLAdapter({
   uri: "https://api.example.com/graphql",
   onAuthError: async () => {
-    // Intentar refrescar token
+    // Try to refresh token
     const refreshToken = await secureStorage.getItem<string>("refresh_token");
     if (refreshToken) {
       const response = await http.post("/auth/refresh", { refreshToken });
       const newToken = response.data.token;
       
-      // Actualizar token
+      // Update token
       await secureStorage.setItem("auth_token", newToken);
       graphql.setAuthToken(newToken);
       
-      // Reintentar la petición original
+      // Retry original request
       return;
     }
 
-    // Si no hay refresh token, hacer logout
+    // If no refresh token, logout
     await logout();
   },
 });
 ```
 
-### Paginación con Cursor
+### Cursor Pagination
 
 ```typescript
 const GET_PRODUCTS_PAGINATED = `
@@ -460,16 +460,16 @@ const loadMoreProducts = async (cursor?: string) => {
 
 ### GraphQLPort
 
-| Método | Descripción |
+| Method | Description |
 |--------|-------------|
-| `query<T>(query, options?)` | Ejecuta una query GraphQL |
-| `mutate<T>(mutation, options?)` | Ejecuta una mutation |
-| `subscribe<T>(subscription, options?)` | Suscribe a una subscription |
-| `setAuthToken(token)` | Establece token de autenticación |
-| `getAuthToken()` | Obtiene token actual |
-| `clearAuthToken()` | Limpia token |
-| `clearCache()` | Limpia caché |
-| `resetClient()` | Resetea cliente |
+| `query<T>(query, options?)` | Executes a GraphQL query |
+| `mutate<T>(mutation, options?)` | Executes a mutation |
+| `subscribe<T>(subscription, options?)` | Subscribes to a subscription |
+| `setAuthToken(token)` | Sets authentication token |
+| `getAuthToken()` | Gets current token |
+| `clearAuthToken()` | Clears token |
+| `clearCache()` | Clears cache |
+| `resetClient()` | Resets client |
 
 ### GraphQLOptions
 
@@ -497,15 +497,15 @@ interface GraphQLResult<T> {
 }
 ```
 
-## Notas
+## Notes
 
-- **Token de Autenticación**: Se inyecta automáticamente en todas las peticiones cuando se establece con `setAuthToken()`
-- **Caché**: Apollo Client maneja el caché automáticamente. Usa `clearCache()` después de logout
-- **Errores**: Todos los errores se convierten a `NatifyError` con códigos apropiados
-- **Subscriptions**: Requieren un servidor GraphQL que soporte WebSockets o Server-Sent Events
-- **TypeScript**: Las queries/mutations pueden ser tipadas usando generics
+- **Authentication Token**: Automatically injected into all requests when set with `setAuthToken()`
+- **Cache**: Apollo Client handles cache automatically. Use `clearCache()` after logout
+- **Errors**: All errors are converted to `NatifyError` with appropriate codes
+- **Subscriptions**: Require a GraphQL server that supports WebSockets or Server-Sent Events
+- **TypeScript**: Queries/mutations can be typed using generics
 
-## Integración con Módulos
+## Module Integration
 
 ```typescript
 import { createModule } from "@natify/core";
@@ -518,4 +518,3 @@ export const ProductsModule = createModule("products", "Products")
   })
   .build();
 ```
-

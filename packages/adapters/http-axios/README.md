@@ -1,25 +1,25 @@
 # @natify/http-axios
 
-Adapter HTTP para Natify Framework usando `axios`.
+HTTP adapter for Natify Framework using `axios`.
 
-## Instalación
+## Installation
 
 ```bash
 pnpm add @natify/http-axios axios
 ```
 
-## Uso
+## Usage
 
-### Configuración del Provider
+### Provider Configuration
 
 ```typescript
 import { NatifyProvider } from "@natify/core";
 import { AxiosHttpAdapter } from "@natify/http-axios";
 
-// Configuración básica
+// Basic configuration
 const httpAdapter = new AxiosHttpAdapter("https://api.example.com");
 
-// Configuración avanzada con interceptors
+// Advanced configuration with interceptors
 const httpAdapterAdvanced = new AxiosHttpAdapter(
   "https://api.example.com",
   {
@@ -30,7 +30,7 @@ const httpAdapterAdvanced = new AxiosHttpAdapter(
   },
   {
     onRequest: (config) => {
-      // Agregar token a todas las peticiones
+      // Add token to all requests
       const token = getAuthToken();
       if (token) {
         config.headers.set("Authorization", `Bearer ${token}`);
@@ -39,7 +39,7 @@ const httpAdapterAdvanced = new AxiosHttpAdapter(
       return config;
     },
     onResponseError: async (error) => {
-      // Manejar errores globalmente (ej: refresh token)
+      // Handle errors globally (e.g., refresh token)
       if (error.response?.status === 401) {
         await refreshToken();
         return axios.request(error.config);
@@ -51,7 +51,7 @@ const httpAdapterAdvanced = new AxiosHttpAdapter(
 
 const config = {
   http: httpAdapterAdvanced,
-  // ... otros adapters
+  // ... other adapters
 };
 
 function App() {
@@ -63,7 +63,7 @@ function App() {
 }
 ```
 
-### Uso en Componentes
+### Usage in Components
 
 ```typescript
 import { useAdapter, HttpClientPort, NatifyError, NatifyErrorCode } from "@natify/core";
@@ -89,10 +89,10 @@ function UserList() {
             navigateToLogin();
             break;
           case NatifyErrorCode.NETWORK_ERROR:
-            showToast("Sin conexión a internet");
+            showToast("No internet connection");
             break;
           case NatifyErrorCode.SERVER_ERROR:
-            showToast("Error del servidor, intenta más tarde");
+            showToast("Server error, please try again later");
             break;
         }
       }
@@ -103,7 +103,7 @@ function UserList() {
 }
 ```
 
-### Operaciones CRUD
+### CRUD Operations
 
 ```typescript
 const http = useAdapter<HttpClientPort>("http");
@@ -132,10 +132,10 @@ const { data: patchedUser } = await http.patch<User>("/users/1", {
 await http.delete("/users/1");
 ```
 
-### Configuración por Petición
+### Per-Request Configuration
 
 ```typescript
-// Headers personalizados
+// Custom headers
 const response = await http.get<Data>("/protected", {
   headers: {
     "X-Custom-Header": "value",
@@ -151,28 +151,28 @@ const response = await http.get<User[]>("/users", {
   },
 });
 
-// Timeout específico
+// Specific timeout
 const response = await http.get<Data>("/slow-endpoint", {
   timeout: 30000,
 });
 
-// Cancelación con AbortController
+// Cancellation with AbortController
 const controller = new AbortController();
 const response = await http.get<Data>("/data", {
   signal: controller.signal,
 });
-// Para cancelar: controller.abort();
+// To cancel: controller.abort();
 ```
 
-### Headers Globales
+### Global Headers
 
 ```typescript
 const http = useAdapter<HttpClientPort>("http");
 
-// Agregar header global (ej: después de login)
+// Add global header (e.g., after login)
 http.setHeader("Authorization", `Bearer ${token}`);
 
-// Remover header global (ej: después de logout)
+// Remove global header (e.g., after logout)
 http.removeHeader("Authorization");
 ```
 
@@ -193,15 +193,15 @@ new AxiosHttpAdapter(
 
 ### HttpClientPort
 
-| Método | Retorno | Descripción |
-|--------|---------|-------------|
-| `get<T>(url, config?)` | `Promise<HttpResponse<T>>` | Petición GET |
-| `post<T>(url, body?, config?)` | `Promise<HttpResponse<T>>` | Petición POST |
-| `put<T>(url, body?, config?)` | `Promise<HttpResponse<T>>` | Petición PUT |
-| `patch<T>(url, body?, config?)` | `Promise<HttpResponse<T>>` | Petición PATCH |
-| `delete<T>(url, config?)` | `Promise<HttpResponse<T>>` | Petición DELETE |
-| `setHeader(key, value)` | `void` | Agrega header global |
-| `removeHeader(key)` | `void` | Remueve header global |
+| Method | Return | Description |
+|--------|--------|-------------|
+| `get<T>(url, config?)` | `Promise<HttpResponse<T>>` | GET request |
+| `post<T>(url, body?, config?)` | `Promise<HttpResponse<T>>` | POST request |
+| `put<T>(url, body?, config?)` | `Promise<HttpResponse<T>>` | PUT request |
+| `patch<T>(url, body?, config?)` | `Promise<HttpResponse<T>>` | PATCH request |
+| `delete<T>(url, config?)` | `Promise<HttpResponse<T>>` | DELETE request |
+| `setHeader(key, value)` | `void` | Adds global header |
+| `removeHeader(key)` | `void` | Removes global header |
 
 ### HttpResponse
 
@@ -214,16 +214,15 @@ interface HttpResponse<T> {
 }
 ```
 
-## Manejo de Errores
+## Error Handling
 
-El adapter convierte automáticamente los errores HTTP a `NatifyError`:
+The adapter automatically converts HTTP errors to `NatifyError`:
 
-| Código HTTP | NatifyErrorCode |
-|-------------|-------------------|
+| HTTP Code | NatifyErrorCode |
+|-----------|-----------------|
 | 401 | `UNAUTHORIZED` |
 | 403 | `FORBIDDEN` |
 | 404 | `NOT_FOUND` |
 | 500+ | `SERVER_ERROR` |
 | Timeout | `TIMEOUT` |
-| Sin conexión | `NETWORK_ERROR` |
-
+| No connection | `NETWORK_ERROR` |

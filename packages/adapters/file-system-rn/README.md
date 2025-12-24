@@ -1,8 +1,8 @@
 # @natify/file-system-rn
 
-Adapter de sistema de archivos para Natify Framework usando `react-native-blob-util`.
+File system adapter for Natify Framework using `react-native-blob-util`.
 
-## Instalación
+## Installation
 
 ```bash
 pnpm add @natify/file-system-rn react-native-blob-util
@@ -16,11 +16,11 @@ cd ios && pod install && cd ..
 
 ### Android
 
-No requiere configuración adicional.
+No additional configuration required.
 
-## Uso
+## Usage
 
-### Configuración del Provider
+### Provider Configuration
 
 ```typescript
 import { NatifyProvider } from "@natify/core";
@@ -28,7 +28,7 @@ import { RnFileSystemAdapter } from "@natify/file-system-rn";
 
 const config = {
   filesystem: new RnFileSystemAdapter(),
-  // ... otros adapters
+  // ... other adapters
 };
 
 function App() {
@@ -40,9 +40,9 @@ function App() {
 }
 ```
 
-## Operaciones Locales
+## Local Operations
 
-### Leer Archivo
+### Read File
 
 ```typescript
 import { useAdapter, FileSystemPort } from "@natify/core";
@@ -52,11 +52,11 @@ function MyComponent() {
 
   const readFile = async () => {
     try {
-      // Leer como texto
+      // Read as text
       const content = await fileSystem.readFile("/path/to/file.txt", "utf8");
       console.log(content);
 
-      // Leer como base64 (para imágenes, PDFs, etc.)
+      // Read as base64 (for images, PDFs, etc.)
       const imageBase64 = await fileSystem.readFile("/path/to/image.png", "base64");
     } catch (error) {
       console.error("Error reading file:", error);
@@ -65,19 +65,19 @@ function MyComponent() {
 }
 ```
 
-### Escribir Archivo
+### Write File
 
 ```typescript
 const writeFile = async () => {
-  // Escribir texto
+  // Write text
   await fileSystem.writeFile("/path/to/file.txt", "Hello World", "utf8");
 
-  // Escribir base64
+  // Write base64
   await fileSystem.writeFile("/path/to/image.png", base64String, "base64");
 };
 ```
 
-### Verificar Existencia
+### Check Existence
 
 ```typescript
 const checkFile = async () => {
@@ -88,7 +88,7 @@ const checkFile = async () => {
 };
 ```
 
-### Obtener Información del Archivo
+### Get File Information
 
 ```typescript
 const getInfo = async () => {
@@ -101,7 +101,7 @@ const getInfo = async () => {
 };
 ```
 
-### Listar Archivos en Directorio
+### List Files in Directory
 
 ```typescript
 const listFiles = async () => {
@@ -110,32 +110,32 @@ const listFiles = async () => {
 };
 ```
 
-### Operaciones de Directorios
+### Directory Operations
 
 ```typescript
-// Crear directorio
+// Create directory
 await fileSystem.mkdir("/path/to/new/directory");
 
-// Eliminar directorio (recursivo por defecto)
+// Delete directory (recursive by default)
 await fileSystem.rmdir("/path/to/directory", true);
 ```
 
-## Rutas de Directorios
+## Directory Paths
 
 ```typescript
-// Obtener rutas de directorios del sistema
+// Get system directory paths
 const documentsPath = fileSystem.getDocumentsPath();
 const cachePath = fileSystem.getCachePath();
 const tempPath = fileSystem.getTempPath();
 
-// Guardar archivo en documentos
+// Save file in documents
 const filePath = `${documentsPath}/myfile.txt`;
 await fileSystem.writeFile(filePath, "Content", "utf8");
 ```
 
-## Descarga de Archivos
+## File Download
 
-### Descarga Simple
+### Simple Download
 
 ```typescript
 const downloadFile = async () => {
@@ -152,7 +152,7 @@ const downloadFile = async () => {
 };
 ```
 
-### Descarga con Progreso
+### Download with Progress
 
 ```typescript
 const downloadWithProgress = async () => {
@@ -169,13 +169,13 @@ const downloadWithProgress = async () => {
       headers: {
         Authorization: "Bearer token",
       },
-      timeout: 30000, // 30 segundos
+      timeout: 30000, // 30 seconds
     }
   );
 };
 ```
 
-### Descarga con Headers Personalizados
+### Download with Custom Headers
 
 ```typescript
 await fileSystem.downloadFile(url, destinationPath, {
@@ -186,9 +186,9 @@ await fileSystem.downloadFile(url, destinationPath, {
 });
 ```
 
-## Subida de Archivos
+## File Upload
 
-### Subida Simple
+### Simple Upload
 
 ```typescript
 const uploadFile = async () => {
@@ -204,7 +204,7 @@ const uploadFile = async () => {
 };
 ```
 
-### Subida con Progreso
+### Upload with Progress
 
 ```typescript
 const uploadWithProgress = async () => {
@@ -218,7 +218,7 @@ const uploadWithProgress = async () => {
     headers: {
       Authorization: "Bearer token",
     },
-    fieldName: "video", // Nombre del campo en el formulario
+    fieldName: "video", // Form field name
     formData: {
       title: "My Video",
       description: "Video description",
@@ -227,7 +227,7 @@ const uploadWithProgress = async () => {
 };
 ```
 
-### Subida con FormData Adicional
+### Upload with Additional FormData
 
 ```typescript
 await fileSystem.uploadFile(filePath, uploadUrl, {
@@ -243,9 +243,9 @@ await fileSystem.uploadFile(filePath, uploadUrl, {
 });
 ```
 
-## Casos de Uso Comunes
+## Common Use Cases
 
-### Descargar y Guardar PDF
+### Download and Save PDF
 
 ```typescript
 const downloadPDF = async (url: string, filename: string) => {
@@ -254,7 +254,7 @@ const downloadPDF = async (url: string, filename: string) => {
 
   await fileSystem.downloadFile(url, filePath, {
     onProgress: (downloaded, total) => {
-      // Actualizar UI con progreso
+      // Update UI with progress
       updateProgressBar((downloaded / total) * 100);
     },
   });
@@ -263,7 +263,7 @@ const downloadPDF = async (url: string, filename: string) => {
 };
 ```
 
-### Subir Imagen desde Galería
+### Upload Image from Gallery
 
 ```typescript
 import { useAdapter, FileSystemPort, ImagePickerPort } from "@natify/core";
@@ -273,14 +273,14 @@ function ImageUploader() {
   const imagePicker = useAdapter<ImagePickerPort>("imagepicker");
 
   const uploadImage = async () => {
-    // 1. Seleccionar imagen
+    // 1. Select image
     const image = await imagePicker.pickImage({
       quality: 0.8,
     });
 
     if (!image) return;
 
-    // 2. Subir imagen
+    // 2. Upload image
     const result = await fileSystem.uploadFile(image.uri, "https://api.example.com/upload", {
       fieldName: "image",
       formData: {
@@ -296,7 +296,7 @@ function ImageUploader() {
 }
 ```
 
-### Leer y Procesar JSON
+### Read and Process JSON
 
 ```typescript
 const loadConfig = async () => {
@@ -307,8 +307,8 @@ const loadConfig = async () => {
     const config = JSON.parse(content);
     return config;
   } catch (error) {
-    // Si no existe, crear uno por defecto
-    const defaultConfig = { theme: "light", language: "es" };
+    // If doesn't exist, create default one
+    const defaultConfig = { theme: "light", language: "en" };
     await fileSystem.writeFile(
       configPath,
       JSON.stringify(defaultConfig, null, 2),
@@ -319,20 +319,20 @@ const loadConfig = async () => {
 };
 ```
 
-### Cache de Archivos
+### File Cache
 
 ```typescript
 const getCachedFile = async (url: string, filename: string) => {
   const cachePath = fileSystem.getCachePath();
   const filePath = `${cachePath}/${filename}`;
 
-  // Verificar si ya está en caché
+  // Check if already cached
   const exists = await fileSystem.exists(filePath);
   if (exists) {
     return filePath;
   }
 
-  // Descargar y guardar en caché
+  // Download and save to cache
   await fileSystem.downloadFile(url, filePath);
   return filePath;
 };
@@ -342,23 +342,23 @@ const getCachedFile = async (url: string, filename: string) => {
 
 ### FileSystemPort
 
-| Método | Descripción |
+| Method | Description |
 |--------|-------------|
-| `readFile(path, encoding?)` | Lee contenido de archivo |
-| `writeFile(path, content, encoding?)` | Escribe contenido en archivo |
-| `deleteFile(path)` | Elimina archivo |
-| `exists(path)` | Verifica si archivo existe |
-| `getFileInfo(path)` | Obtiene información del archivo |
-| `listFiles(dirPath)` | Lista archivos en directorio |
-| `mkdir(dirPath)` | Crea directorio |
-| `rmdir(dirPath, recursive?)` | Elimina directorio |
-| `downloadFile(url, destination, options?)` | Descarga archivo desde URL |
-| `uploadFile(filePath, url, options?)` | Sube archivo a servidor |
-| `getDocumentsPath()` | Ruta de directorio de documentos |
-| `getCachePath()` | Ruta de directorio de caché |
-| `getTempPath()` | Ruta de directorio temporal |
+| `readFile(path, encoding?)` | Reads file content |
+| `writeFile(path, content, encoding?)` | Writes content to file |
+| `deleteFile(path)` | Deletes file |
+| `exists(path)` | Checks if file exists |
+| `getFileInfo(path)` | Gets file information |
+| `listFiles(dirPath)` | Lists files in directory |
+| `mkdir(dirPath)` | Creates directory |
+| `rmdir(dirPath, recursive?)` | Deletes directory |
+| `downloadFile(url, destination, options?)` | Downloads file from URL |
+| `uploadFile(filePath, url, options?)` | Uploads file to server |
+| `getDocumentsPath()` | Documents directory path |
+| `getCachePath()` | Cache directory path |
+| `getTempPath()` | Temp directory path |
 
-## Tipos
+## Types
 
 ### DownloadOptions
 
@@ -395,10 +395,9 @@ interface FileInfo {
 }
 ```
 
-## Notas
+## Notes
 
-- **Encoding**: Usa `'utf8'` para texto y `'base64'` para binarios (imágenes, PDFs, etc.)
-- **Rutas**: Usa `getDocumentsPath()`, `getCachePath()`, o `getTempPath()` para obtener rutas del sistema
-- **Progreso**: Los callbacks de progreso se ejecutan en el hilo principal, ideal para actualizar UI
-- **Errores**: Todos los errores se convierten a `NatifyError` con códigos apropiados
-
+- **Encoding**: Use `'utf8'` for text and `'base64'` for binaries (images, PDFs, etc.)
+- **Paths**: Use `getDocumentsPath()`, `getCachePath()`, or `getTempPath()` to get system paths
+- **Progress**: Progress callbacks run on main thread, ideal for updating UI
+- **Errors**: All errors are converted to `NatifyError` with appropriate codes

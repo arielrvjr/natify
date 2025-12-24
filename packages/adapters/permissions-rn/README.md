@@ -1,39 +1,39 @@
 # @natify/permissions-rn
 
-Adapter de permisos para Natify Framework usando `react-native-permissions`.
+Permissions adapter for Natify Framework using `react-native-permissions`.
 
-## Instalación
+## Installation
 
 ```bash
 pnpm add @natify/permissions-rn react-native-permissions
 ```
 
-## Configuración Nativa
+## Native Configuration
 
 ### iOS
 
-Agrega los permisos necesarios en `ios/YourApp/Info.plist`:
+Add required permissions in `ios/YourApp/Info.plist`:
 
 ```xml
 <key>NSCameraUsageDescription</key>
-<string>Necesitamos acceso a la cámara para tomar fotos</string>
+<string>We need camera access to take photos</string>
 
 <key>NSPhotoLibraryUsageDescription</key>
-<string>Necesitamos acceso a tus fotos</string>
+<string>We need access to your photos</string>
 
 <key>NSLocationWhenInUseUsageDescription</key>
-<string>Necesitamos tu ubicación para mostrarte lugares cercanos</string>
+<string>We need your location to show nearby places</string>
 
 <key>NSMicrophoneUsageDescription</key>
-<string>Necesitamos acceso al micrófono para grabar audio</string>
+<string>We need microphone access to record audio</string>
 
 <key>NSFaceIDUsageDescription</key>
-<string>Usamos Face ID para autenticación segura</string>
+<string>We use Face ID for secure authentication</string>
 ```
 
 ### Android
 
-Agrega los permisos en `android/app/src/main/AndroidManifest.xml`:
+Add permissions in `android/app/src/main/AndroidManifest.xml`:
 
 ```xml
 <uses-permission android:name="android.permission.CAMERA" />
@@ -44,9 +44,9 @@ Agrega los permisos en `android/app/src/main/AndroidManifest.xml`:
 <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 ```
 
-## Uso
+## Usage
 
-### Configuración del Provider
+### Provider Configuration
 
 ```typescript
 import { NatifyProvider } from "@natify/core";
@@ -54,7 +54,7 @@ import { RnPermissionsAdapter } from "@natify/permissions-rn";
 
 const config = {
   permissions: new RnPermissionsAdapter(),
-  // ... otros adapters
+  // ... other adapters
 };
 
 function App() {
@@ -66,7 +66,7 @@ function App() {
 }
 ```
 
-### Uso en Componentes
+### Usage in Components
 
 ```typescript
 import { useAdapter, PermissionPort, PermissionStatus } from "@natify/core";
@@ -75,7 +75,7 @@ function CameraButton() {
   const permissions = useAdapter<PermissionPort>("permissions");
 
   const handlePress = async () => {
-    // 1. Verificar estado actual
+    // 1. Check current status
     const status = await permissions.check("camera");
 
     if (status === PermissionStatus.GRANTED) {
@@ -84,19 +84,19 @@ function CameraButton() {
     }
 
     if (status === PermissionStatus.BLOCKED) {
-      // El usuario bloqueó el permiso, necesita ir a settings
+      // User blocked the permission, needs to go to settings
       Alert.alert(
-        "Permiso Requerido",
-        "Por favor habilita el acceso a la cámara en Configuración",
+        "Permission Required",
+        "Please enable camera access in Settings",
         [
-          { text: "Cancelar" },
-          { text: "Abrir Configuración", onPress: () => permissions.openSettings() },
+          { text: "Cancel" },
+          { text: "Open Settings", onPress: () => permissions.openSettings() },
         ]
       );
       return;
     }
 
-    // 2. Solicitar permiso
+    // 2. Request permission
     const result = await permissions.request("camera");
     
     if (result === PermissionStatus.GRANTED) {
@@ -104,11 +104,11 @@ function CameraButton() {
     }
   };
 
-  return <Button title="Abrir Cámara" onPress={handlePress} />;
+  return <Button title="Open Camera" onPress={handlePress} />;
 }
 ```
 
-## Permisos Soportados
+## Supported Permissions
 
 | PermissionType | iOS | Android |
 |----------------|-----|---------|
@@ -119,16 +119,15 @@ function CameraButton() {
 | `microphone` | MICROPHONE | RECORD_AUDIO |
 | `biometrics` | FACE_ID | N/A** |
 
-> **\* Notificaciones**: Las notificaciones push en iOS/Android se manejan de forma diferente y típicamente requieren librerías como `notifee` o `@react-native-firebase/messaging`. Este adapter proporciona un fallback básico.
+> **\* Notifications**: Push notifications on iOS/Android are handled differently and typically require libraries like `notifee` or `@react-native-firebase/messaging`. This adapter provides a basic fallback.
 
-> **\*\* Biometrics en Android**: La autenticación biométrica en Android no requiere un permiso runtime explícito. Usa el `BiometricPort` con `@natify/biometrics-rn` para esta funcionalidad.
+> **\*\* Biometrics on Android**: Biometric authentication on Android does not require an explicit runtime permission. Use the `BiometricPort` with `@natify/biometrics-rn` for this functionality.
 
-## Estados de Permiso
+## Permission Statuses
 
-| PermissionStatus | Descripción |
+| PermissionStatus | Description |
 |------------------|-------------|
-| `GRANTED` | Permiso concedido |
-| `DENIED` | Permiso denegado (se puede volver a solicitar) |
-| `BLOCKED` | Bloqueado permanentemente (requiere ir a Settings) |
-| `UNAVAILABLE` | El hardware/funcionalidad no está disponible |
-
+| `GRANTED` | Permission granted |
+| `DENIED` | Permission denied (can be requested again) |
+| `BLOCKED` | Permanently blocked (requires going to Settings) |
+| `UNAVAILABLE` | Hardware/functionality not available |

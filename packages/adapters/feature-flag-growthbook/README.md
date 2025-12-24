@@ -1,16 +1,16 @@
 # @natify/feature-flag-growthbook
 
-Adapter de Feature Flags para Natify Framework usando GrowthBook.
+Feature Flags adapter for Natify Framework using GrowthBook.
 
-## Instalación
+## Installation
 
 ```bash
 pnpm add @natify/feature-flag-growthbook @growthbook/growthbook-react
 ```
 
-### Para Streaming en Tiempo Real (Opcional)
+### For Real-Time Streaming (Optional)
 
-Si quieres habilitar actualizaciones en tiempo real de feature flags:
+If you want to enable real-time feature flag updates:
 
 ```bash
 pnpm add react-native-sse
@@ -24,19 +24,19 @@ cd ios && pod install && cd ..
 
 ### Android
 
-No requiere configuración adicional.
+No additional configuration required.
 
-## Configuración
+## Configuration
 
-### Obtener Client Key de GrowthBook
+### Get GrowthBook Client Key
 
-1. Crea una cuenta en [GrowthBook](https://www.growthbook.io)
-2. Crea un nuevo proyecto
-3. Copia el **Client Key** desde Settings → API Keys
+1. Create an account on [GrowthBook](https://www.growthbook.io)
+2. Create a new project
+3. Copy the **Client Key** from Settings → API Keys
 
-## Uso
+## Usage
 
-### Configuración Básica
+### Basic Configuration
 
 ```typescript
 import { NatifyProvider } from "@natify/core";
@@ -48,7 +48,7 @@ const featureFlags = new GrowthBookFeatureFlagAdapter({
 
 const config = {
   featureflags: featureFlags,
-  // ... otros adapters
+  // ... other adapters
 };
 
 function App() {
@@ -60,15 +60,15 @@ function App() {
 }
 ```
 
-### Configuración Avanzada
+### Advanced Configuration
 
 ```typescript
 const featureFlags = new GrowthBookFeatureFlagAdapter({
   clientKey: "YOUR_GROWTHBOOK_CLIENT_KEY",
-  apiHost: "https://cdn.growthbook.io", // Opcional
-  enableDevMode: true, // Para desarrollo
-  enableStreaming: true, // Actualizaciones en tiempo real
-  enableRemoteEval: false, // Evaluación remota (requiere servidor proxy)
+  apiHost: "https://cdn.growthbook.io", // Optional
+  enableDevMode: true, // For development
+  enableStreaming: true, // Real-time updates
+  enableRemoteEval: false, // Remote evaluation (requires proxy server)
   initialAttributes: {
     id: currentUserId,
     email: userEmail,
@@ -76,17 +76,17 @@ const featureFlags = new GrowthBookFeatureFlagAdapter({
   },
 });
 
-// Inicializar
+// Initialize
 await featureFlags.init();
 ```
 
-### Con Streaming (Actualizaciones en Tiempo Real)
+### With Streaming (Real-Time Updates)
 
 ```typescript
 import { setPolyfills } from "@growthbook/growthbook";
 import EventSource from "react-native-sse";
 
-// Configurar polyfill para SSE en React Native
+// Configure SSE polyfill for React Native
 setPolyfills({
   EventSource: EventSource,
 });
@@ -99,9 +99,9 @@ const featureFlags = new GrowthBookFeatureFlagAdapter({
 await featureFlags.init();
 ```
 
-## Verificar Feature Flags
+## Check Feature Flags
 
-### Verificar Si Está Habilitado
+### Check If Enabled
 
 ```typescript
 import { useAdapter, FeatureFlagPort } from "@natify/core";
@@ -119,20 +119,20 @@ function PremiumFeature() {
 }
 ```
 
-### Obtener Valor de Flag
+### Get Flag Value
 
 ```typescript
 function ThemeSelector() {
   const featureFlags = useAdapter<FeatureFlagPort>("featureflags");
 
-  // Obtener tema desde feature flag
+  // Get theme from feature flag
   const theme = featureFlags.getValue<string>("app-theme", "light");
 
   return <ThemeProvider theme={theme}>...</ThemeProvider>;
 }
 ```
 
-### Obtener Resultado Completo
+### Get Complete Result
 
 ```typescript
 function FeatureBanner() {
@@ -154,7 +154,7 @@ function FeatureBanner() {
 }
 ```
 
-### Obtener Múltiples Flags
+### Get Multiple Flags
 
 ```typescript
 function FeatureGate() {
@@ -176,9 +176,9 @@ function FeatureGate() {
 }
 ```
 
-## Atributos del Usuario
+## User Attributes
 
-### Establecer Atributos (Identificar Usuario)
+### Set Attributes (Identify User)
 
 ```typescript
 import { useAdapter, FeatureFlagPort } from "@natify/core";
@@ -187,7 +187,7 @@ function useAuth() {
   const featureFlags = useAdapter<FeatureFlagPort>("featureflags");
 
   const login = async (user: User) => {
-    // Establecer atributos del usuario para targeting
+    // Set user attributes for targeting
     featureFlags.setAttributes({
       id: user.id,
       email: user.email,
@@ -199,7 +199,7 @@ function useAuth() {
   };
 
   const logout = async () => {
-    // Limpiar atributos
+    // Clear attributes
     featureFlags.clearAttributes();
   };
 
@@ -207,22 +207,22 @@ function useAuth() {
 }
 ```
 
-### Actualizar Atributos
+### Update Attributes
 
 ```typescript
-// Cuando el usuario actualiza su plan
+// When user updates their plan
 featureFlags.setAttributes({
   ...featureFlags.getAttributes(),
   plan: "premium",
 });
 
-// Refrescar flags para aplicar nuevos targeting rules
+// Refresh flags to apply new targeting rules
 await featureFlags.refresh();
 ```
 
-## Casos de Uso Comunes
+## Common Use Cases
 
-### Feature Gate Simple
+### Simple Feature Gate
 
 ```typescript
 function NewFeatureScreen() {
@@ -236,13 +236,13 @@ function NewFeatureScreen() {
 }
 ```
 
-### Variantes de UI
+### UI Variants
 
 ```typescript
 function CheckoutButton() {
   const featureFlags = useAdapter<FeatureFlagPort>("featureflags");
 
-  // Obtener variante del botón
+  // Get button variant
   const buttonVariant = featureFlags.getValue<string>("checkout-button-variant", "default");
 
   return (
@@ -253,7 +253,7 @@ function CheckoutButton() {
 }
 ```
 
-### Configuración Dinámica
+### Dynamic Configuration
 
 ```typescript
 function AppConfig() {
@@ -291,14 +291,14 @@ function ProductList() {
 }
 ```
 
-### Rollout Gradual
+### Gradual Rollout
 
 ```typescript
 function NewFeature() {
   const featureFlags = useAdapter<FeatureFlagPort>("featureflags");
 
-  // GrowthBook maneja el rollout gradual automáticamente
-  // basado en los atributos del usuario (id, email, etc.)
+  // GrowthBook handles gradual rollout automatically
+  // based on user attributes (id, email, etc.)
   const isEnabled = featureFlags.isEnabled("new-feature-rollout");
 
   if (isEnabled) {
@@ -309,7 +309,7 @@ function NewFeature() {
 }
 ```
 
-### UseCase con Feature Flags
+### UseCase with Feature Flags
 
 ```typescript
 import { FeatureFlagPort, HttpClientPort } from "@natify/core";
@@ -321,7 +321,7 @@ export class GetProductsUseCase {
   ) {}
 
   async execute(): Promise<Product[]> {
-    // Verificar si usar nuevo endpoint
+    // Check if use new endpoint
     const useNewAPI = this.featureFlags.isEnabled("new-products-api");
 
     const endpoint = useNewAPI ? "/api/v2/products" : "/api/v1/products";
@@ -332,7 +332,7 @@ export class GetProductsUseCase {
 }
 ```
 
-### Inicialización con Atributos
+### Initialization with Attributes
 
 ```typescript
 import { useEffect } from "react";
@@ -344,18 +344,18 @@ function AppInitializer() {
 
   useEffect(() => {
     const initializeFlags = async () => {
-      // Obtener usuario guardado
+      // Get saved user
       const user = await storage.getItem<User>("user");
 
       if (user) {
-        // Inicializar con atributos del usuario
+        // Initialize with user attributes
         await featureFlags.init({
           id: user.id,
           email: user.email,
           plan: user.plan,
         });
       } else {
-        // Inicializar sin atributos (usuario anónimo)
+        // Initialize without attributes (anonymous user)
         await featureFlags.init();
       }
     };
@@ -367,7 +367,7 @@ function AppInitializer() {
 }
 ```
 
-### Refrescar Flags Manualmente
+### Manually Refresh Flags
 
 ```typescript
 function RefreshFlagsButton() {
@@ -386,7 +386,7 @@ function RefreshFlagsButton() {
 }
 ```
 
-## Integración con Módulos
+## Module Integration
 
 ```typescript
 import { createModule } from "@natify/core";
@@ -404,27 +404,27 @@ export const ProductsModule = createModule("products", "Products")
 
 ### FeatureFlagPort
 
-| Método | Descripción |
+| Method | Description |
 |--------|-------------|
-| `init(attributes?)` | Inicializa el servicio |
-| `getValue<T>(key, defaultValue?)` | Obtiene valor del flag |
-| `isEnabled(key)` | Verifica si está habilitado |
-| `getFeatureFlag<T>(key)` | Obtiene resultado completo |
-| `getFeatureFlags(keys)` | Obtiene múltiples flags |
-| `setAttributes(attributes)` | Actualiza atributos del usuario |
-| `getAttributes()` | Obtiene atributos actuales |
-| `refresh()` | Refresca flags desde servidor |
-| `clearAttributes()` | Limpia atributos (logout) |
+| `init(attributes?)` | Initializes the service |
+| `getValue<T>(key, defaultValue?)` | Gets flag value |
+| `isEnabled(key)` | Checks if enabled |
+| `getFeatureFlag<T>(key)` | Gets complete result |
+| `getFeatureFlags(keys)` | Gets multiple flags |
+| `setAttributes(attributes)` | Updates user attributes |
+| `getAttributes()` | Gets current attributes |
+| `refresh()` | Refreshes flags from server |
+| `clearAttributes()` | Clears attributes (logout) |
 
 ### FeatureFlagResult
 
 ```typescript
 interface FeatureFlagResult<T> {
-  value: T | null;        // Valor del flag
-  enabled: boolean;       // Si está habilitado
-  exists: boolean;        // Si el flag existe
-  variant?: string;       // Variante asignada
-  source?: string;        // Fuente de evaluación
+  value: T | null;        // Flag value
+  enabled: boolean;       // If enabled
+  exists: boolean;        // If flag exists
+  variant?: string;       // Assigned variant
+  source?: string;        // Evaluation source
 }
 ```
 
@@ -438,61 +438,60 @@ interface UserAttributes {
   roles?: string[];
   plan?: string;
   country?: string;
-  [key: string]: unknown; // Atributos personalizados
+  [key: string]: unknown; // Custom attributes
 }
 ```
 
-## Mejores Prácticas
+## Best Practices
 
-### Nombres de Feature Flags
+### Feature Flag Names
 
-✅ **Buenos nombres:**
+✅ **Good names:**
 - `premium-feature`
 - `new-checkout-flow`
 - `dark-mode-toggle`
 - `product-grid-layout`
 
-❌ **Evitar:**
-- `feature1`, `flag1` (muy genéricos)
-- `PremiumFeature` (usar kebab-case)
-- `new_feature` (usar kebab-case, no snake_case)
+❌ **Avoid:**
+- `feature1`, `flag1` (too generic)
+- `PremiumFeature` (use kebab-case)
+- `new_feature` (use kebab-case, not snake_case)
 
-### Valores por Defecto
+### Default Values
 
 ```typescript
-// Siempre proporcionar valores por defecto
+// Always provide default values
 const theme = featureFlags.getValue<string>("app-theme", "light");
 const maxItems = featureFlags.getValue<number>("max-items", 10);
-const enabled = featureFlags.isEnabled("new-feature"); // false por defecto
+const enabled = featureFlags.isEnabled("new-feature"); // false by default
 ```
 
-### Atributos del Usuario
+### User Attributes
 
 ```typescript
-// Establecer atributos relevantes para targeting
+// Set relevant attributes for targeting
 featureFlags.setAttributes({
-  id: user.id,           // Para rollout gradual
-  email: user.email,      // Para targeting por email
-  plan: user.plan,       // Para features premium
-  country: user.country, // Para features geográficas
-  roles: user.roles,     // Para features por rol
+  id: user.id,           // For gradual rollout
+  email: user.email,      // For email targeting
+  plan: user.plan,       // For premium features
+  country: user.country, // For geographic features
+  roles: user.roles,     // For role-based features
 });
 ```
 
-### Refrescar Después de Cambios
+### Refresh After Changes
 
 ```typescript
-// Después de actualizar atributos importantes
+// After updating important attributes
 featureFlags.setAttributes({ plan: "premium" });
-await featureFlags.refresh(); // Aplicar nuevos targeting rules
+await featureFlags.refresh(); // Apply new targeting rules
 ```
 
-## Notas
+## Notes
 
-- **Inicialización**: Siempre llama `init()` antes de usar los flags
-- **Atributos**: Los atributos del usuario se usan para targeting y rollout gradual
-- **Streaming**: Requiere `react-native-sse` para actualizaciones en tiempo real
-- **Evaluación Remota**: Requiere servidor proxy para mayor seguridad
-- **Valores por Defecto**: Siempre proporciona valores por defecto para evitar errores
-- **Errores**: Los errores se loguean pero no lanzan excepciones para no interrumpir el flujo
-
+- **Initialization**: Always call `init()` before using flags
+- **Attributes**: User attributes are used for targeting and gradual rollout
+- **Streaming**: Requires `react-native-sse` for real-time updates
+- **Remote Evaluation**: Requires proxy server for better security
+- **Default Values**: Always provide default values to avoid errors
+- **Errors**: Errors are logged but don't throw exceptions to avoid interrupting flow

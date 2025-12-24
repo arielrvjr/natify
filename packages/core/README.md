@@ -1,64 +1,64 @@
 # @natify/core
 
-Núcleo del framework Natify. Proporciona la arquitectura hexagonal, sistema de módulos, inyección de dependencias y herramientas para construir aplicaciones React Native desacopladas.
+Core of the Natify framework. Provides hexagonal architecture, module system, dependency injection, and tools for building decoupled React Native applications.
 
-## Instalación
+## Installation
 
 ```bash
 pnpm add @natify/core
 ```
 
-## Características
+## Features
 
-- **Arquitectura Hexagonal** - Ports & Adapters pattern
-- **Sistema de Módulos** - Organiza tu app en mini-apps independientes
-- **Inyección de Dependencias** - Container DI con singletons y factories
-- **ActionBus** - Comunicación inter-módulo estilo MediatR
-- **Tipos Genéricos** - Inferencia automática de tipos de adapters
-- **Hot Reload** - Carga/descarga dinámica de módulos
-- **Adapters Incluidos** - Logger y Analytics por defecto
+- **Hexagonal Architecture** - Ports & Adapters pattern
+- **Module System** - Organize your app into independent mini-apps
+- **Dependency Injection** - DI Container with singletons and factories
+- **ActionBus** - Inter-module communication (MediatR style)
+- **Generic Types** - Automatic type inference for adapters
+- **Hot Reload** - Dynamic module loading/unloading
+- **Included Adapters** - Logger and Analytics by default
 
 ---
 
-## Arquitectura de Capas (Recomendada)
+## Layer Architecture (Recommended)
 
-Natify recomienda seguir Clean Architecture con separación de capas, pero **es flexible y puedes usarlo sin ViewModels** si prefieres un enfoque más simple.
+Natify recommends following Clean Architecture with layer separation, but **it's flexible and you can use it without ViewModels** if you prefer a simpler approach.
 
-### Arquitectura Recomendada
+### Recommended Architecture
 
 ```
 ┌─────────────────────────────────────┐
-│         UI Layer (Vistas)           │  ← Componentes React Native puros
+│         UI Layer (Views)            │  ← Pure React Native components
 └──────────────┬──────────────────────┘
                │
 ┌──────────────▼──────────────────────┐
-│      ViewModels (Estado UI)         │  ← Manejan loading, errores, estado
-│         [OPCIONAL]                   │  ← Puedes omitir esta capa
+│      ViewModels (UI State)          │  ← Handle loading, errors, state
+│         [OPTIONAL]                   │  ← You can skip this layer
 └──────────────┬──────────────────────┘
                │
 ┌──────────────▼──────────────────────┐
-│    UseCases (Lógica de Negocio)     │  ← Casos de uso puros, testeables
+│    UseCases (Business Logic)        │  ← Pure, testable use cases
 └──────────────┬──────────────────────┘
                │
 ┌──────────────▼──────────────────────┐
-│      Ports (Interfaces)             │  ← Contratos sin implementación
+│      Ports (Interfaces)             │  ← Contracts without implementation
 └──────────────┬──────────────────────┘
                │
 ┌──────────────▼──────────────────────┐
-│    Adapters (Implementaciones)      │  ← Librerías nativas concretas
+│    Adapters (Implementations)       │  ← Concrete native libraries
 └─────────────────────────────────────┘
 ```
 
-**Principios:**
-- **Dependencias apuntan hacia el dominio** - Las capas externas dependen de las internas
-- **UI limpia** - Los componentes solo renderizan, sin lógica de negocio
-- **UseCases aislados** - Lógica de negocio independiente de frameworks
-- **Interfaces agnósticas** - Los Ports no conocen implementaciones
+**Principles:**
+- **Dependencies point toward the domain** - Outer layers depend on inner layers
+- **Clean UI** - Components only render, no business logic
+- **Isolated UseCases** - Business logic independent of frameworks
+- **Agnostic interfaces** - Ports don't know about implementations
 
-### Uso con ViewModels (Recomendado)
+### Using with ViewModels (Recommended)
 
 ```typescript
-// ViewModel maneja estado y coordina con UseCase
+// ViewModel handles state and coordinates with UseCase
 export function useLoginViewModel() {
   const [state, { execute }] = useBaseViewModel();
   const loginUseCase = useUseCase<LoginUseCase>("auth:login");
@@ -73,19 +73,19 @@ export function useLoginViewModel() {
   return { state, actions: { login } };
 }
 
-// Componente limpio, solo renderiza
+// Clean component, only renders
 function LoginScreen() {
   const { state, actions } = useLoginViewModel();
   return <Button onPress={() => actions.login(email, password)} />;
 }
 ```
 
-### Uso sin ViewModels (También válido)
+### Using without ViewModels (Also valid)
 
-Puedes usar Natify directamente en componentes si prefieres un enfoque más simple:
+You can use Natify directly in components if you prefer a simpler approach:
 
 ```typescript
-// Componente que usa UseCase directamente
+// Component that uses UseCase directly
 function LoginScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const loginUseCase = useUseCase<LoginUseCase>("auth:login");
@@ -95,7 +95,7 @@ function LoginScreen() {
     try {
       await loginUseCase.execute({ email, password });
     } catch (error) {
-      // Manejar error
+      // Handle error
     } finally {
       setIsLoading(false);
     }
@@ -105,18 +105,18 @@ function LoginScreen() {
 }
 ```
 
-**Nota:** Los ViewModels son **opcionales** pero recomendados para:
-- Aplicaciones complejas con múltiples estados
-- Equipos que buscan separación clara de responsabilidades
-- Proyectos que requieren testing exhaustivo de lógica de UI
+**Note:** ViewModels are **optional** but recommended for:
+- Complex applications with multiple states
+- Teams seeking clear separation of responsibilities
+- Projects requiring exhaustive UI logic testing
 
-Para prototipos rápidos o apps simples, puedes usar UseCases directamente en componentes.
+For quick prototypes or simple apps, you can use UseCases directly in components.
 
 ---
 
-## Guía Rápida
+## Quick Guide
 
-### 1. Configurar Adapters
+### 1. Configure Adapters
 
 ```typescript
 import { NatifyApp, ConsoleLoggerAdapter } from "@natify/core";
@@ -128,12 +128,12 @@ const adapters = {
   http: new AxiosHttpAdapter("https://api.example.com"),
   storage: new MMKVStorageAdapter(),
   navigation: createReactNavigationAdapter(),
-  // Logger es opcional, se usa ConsoleLoggerAdapter por defecto si no se proporciona
+  // Logger is optional, ConsoleLoggerAdapter is used by default if not provided
   logger: new ConsoleLoggerAdapter(),
 };
 ```
 
-### 2. Crear Módulos
+### 2. Create Modules
 
 ```typescript
 import { createModule } from "@natify/core";
@@ -146,7 +146,7 @@ export const AuthModule = createModule("auth", "Authentication")
   .build();
 ```
 
-### 3. Configurar App
+### 3. Configure App
 
 ```typescript
 import { NatifyApp } from "@natify/core";
@@ -164,29 +164,29 @@ export default function App() {
 
 ---
 
-## Adapters Incluidos en el Core
+## Adapters Included in Core
 
 ### ConsoleLoggerAdapter
 
-Adapter de logging que usa `console` para escribir logs. Se usa automáticamente si no proporcionas un logger en la configuración.
+Logging adapter that uses `console` to write logs. Used automatically if you don't provide a logger in the configuration.
 
 ```typescript
 import { ConsoleLoggerAdapter } from "@natify/core";
 
 const logger = new ConsoleLoggerAdapter();
 
-// Usar directamente
-logger.info("Usuario autenticado", { userId: "123" });
-logger.error("Error al cargar datos", error);
+// Use directly
+logger.info("User authenticated", { userId: "123" });
+logger.error("Error loading data", error);
 
-// O inyectarlo en adapters
+// Or inject it in adapters
 const adapters = {
   logger: new ConsoleLoggerAdapter(),
-  // ... otros adapters
+  // ... other adapters
 };
 ```
 
-**Niveles de log disponibles:**
+**Available log levels:**
 - `logger.debug(message, metadata?)`
 - `logger.info(message, metadata?)`
 - `logger.warn(message, metadata?)`
@@ -194,46 +194,46 @@ const adapters = {
 
 ### CompositeAnalyticsAdapter
 
-Adapter de analytics que permite combinar múltiples proveedores de analytics en uno solo. Útil cuando necesitas enviar eventos a múltiples servicios simultáneamente.
+Analytics adapter that allows combining multiple analytics providers into one. Useful when you need to send events to multiple services simultaneously.
 
 ```typescript
 import { CompositeAnalyticsAdapter } from "@natify/core";
 import { FirebaseAnalyticsAdapter } from "@natify/analytics-firebase";
 import { MixpanelAnalyticsAdapter } from "@natify/analytics-mixpanel";
 
-// Crear adapters individuales
+// Create individual adapters
 const firebase = new FirebaseAnalyticsAdapter();
 const mixpanel = new MixpanelAnalyticsAdapter();
 
-// Combinarlos en un solo adapter
+// Combine them into a single adapter
 const analytics = new CompositeAnalyticsAdapter([firebase, mixpanel]);
 
-// Inicializar todos
+// Initialize all
 await analytics.init();
 
-// Los eventos se envían a todos los adapters
+// Events are sent to all adapters
 analytics.track("user_login", { method: "email" });
-// ↑ Se envía tanto a Firebase como a Mixpanel
+// ↑ Sent to both Firebase and Mixpanel
 ```
 
-**Métodos disponibles:**
-- `analytics.init()` - Inicializa todos los adapters
-- `analytics.identify(userId, traits?)` - Identifica un usuario
-- `analytics.track(event, properties?)` - Registra un evento
-- `analytics.screen(name, properties?)` - Registra una pantalla
-- `analytics.reset()` - Resetea todos los adapters
+**Available methods:**
+- `analytics.init()` - Initializes all adapters
+- `analytics.identify(userId, traits?)` - Identifies a user
+- `analytics.track(event, properties?)` - Records an event
+- `analytics.screen(name, properties?)` - Records a screen
+- `analytics.reset()` - Resets all adapters
 
 ---
 
 ## useAdapter vs useUseCase
 
-### `useAdapter<T>(name)` - Acceso directo a adapters
+### `useAdapter<T>(name)` - Direct adapter access
 
-Usa `useAdapter` cuando necesites acceso directo a un adapter del framework, típicamente para:
+Use `useAdapter` when you need direct access to a framework adapter, typically for:
 
-- **Navegación** (`navigation`)
+- **Navigation** (`navigation`)
 - **Logging** (`logger`)
-- **Operaciones simples** sin lógica de negocio
+- **Simple operations** without business logic
 
 ```typescript
 import { useAdapter, NavigationPort, LoggerPort } from "@natify/core";
@@ -243,19 +243,19 @@ function MyComponent() {
   const logger = useAdapter<LoggerPort>("logger");
 
   const handlePress = () => {
-    logger.info("Navegando a detalle de producto");
+    logger.info("Navigating to product detail");
     navigation.navigate("products/ProductDetail", { id: "123" });
   };
 }
 ```
 
-### `useUseCase<T>(key)` - Lógica de negocio encapsulada
+### `useUseCase<T>(key)` - Encapsulated business logic
 
-Usa `useUseCase` cuando la operación involucra lógica de negocio, como:
+Use `useUseCase` when the operation involves business logic, such as:
 
 - **Login/Logout**
-- **Operaciones CRUD**
-- **Validaciones complejas**
+- **CRUD operations**
+- **Complex validations**
 
 ```typescript
 import { useUseCase } from "@natify/core";
@@ -270,27 +270,27 @@ function LoginScreen() {
 }
 ```
 
-### Regla General
+### General Rule
 
-| Situación | Hook a usar |
+| Situation | Hook to use |
 |-----------|-------------|
-| Navegación simple | `useAdapter<NavigationPort>` |
+| Simple navigation | `useAdapter<NavigationPort>` |
 | Logging | `useAdapter<LoggerPort>` |
-| Lógica de negocio | `useUseCase<MiUseCase>` |
-| Operaciones triviales (guardar setting) | `useAdapter` está bien |
+| Business logic | `useUseCase<MyUseCase>` |
+| Trivial operations (save setting) | `useAdapter` is fine |
 
 ---
 
-## ActionBus - Comunicación Inter-Módulo
+## ActionBus - Inter-Module Communication
 
-El ActionBus permite que los módulos se comuniquen sin acoplarse directamente.
+The ActionBus allows modules to communicate without directly coupling.
 
-### Registrar Handler (en el módulo que provee la acción)
+### Register Handler (in the module that provides the action)
 
 ```typescript
 import { actionBus } from "@natify/core";
 
-// En AuthModule
+// In AuthModule
 export const AuthModule = createModule("auth", "Authentication")
   .onInit(async (adapters) => {
     actionBus.register("auth:logout", async () => {
@@ -300,7 +300,7 @@ export const AuthModule = createModule("auth", "Authentication")
   .build();
 ```
 
-### Despachar Acción (desde cualquier módulo)
+### Dispatch Action (from any module)
 
 ```typescript
 import { useActionDispatch } from "@natify/core";
@@ -316,7 +316,7 @@ function ProfileScreen() {
 
 ---
 
-## Hot Reload de Módulos
+## Module Hot Reload
 
 ```typescript
 import { useDynamicModules } from "@natify/core";
@@ -337,19 +337,19 @@ function SettingsScreen() {
 
 ---
 
-## Hooks de Navegación
+## Navigation Hooks
 
 ```typescript
 import { useNavigationParams, useCurrentRoute, useAdapter, NavigationPort } from "@natify/core";
 
 function ProductDetail() {
-  // Obtener parámetros tipados
+  // Get typed parameters
   const { productId } = useNavigationParams<{ productId: string }>();
 
-  // Navegación usando el adapter directamente
+  // Navigation using the adapter directly
   const navigation = useAdapter<NavigationPort>("navigation");
 
-  // Ruta actual
+  // Current route
   const currentRoute = useCurrentRoute();
 
   const handleGoBack = () => {
@@ -366,7 +366,7 @@ function ProductDetail() {
 
 ## BaseViewModel
 
-Hook base para ViewModels con manejo de loading y errores:
+Base hook for ViewModels with loading and error handling:
 
 ```typescript
 import { useBaseViewModel, useUseCase } from "@natify/core";
@@ -381,7 +381,7 @@ export function useLoginViewModel() {
     );
     
     if (result) {
-      // Éxito
+      // Success
     }
   };
 
@@ -392,80 +392,80 @@ export function useLoginViewModel() {
 }
 ```
 
-**Estado del BaseViewModel:**
-- `state.isLoading` - Indica si hay una operación en curso
-- `state.error` - Error de la última operación (si existe)
-- `execute(fn)` - Ejecuta una función async y maneja loading/error automáticamente
-- `clearError()` - Limpia el error actual
+**BaseViewModel state:**
+- `state.isLoading` - Indicates if there's an operation in progress
+- `state.error` - Error from the last operation (if any)
+- `execute(fn)` - Executes an async function and handles loading/error automatically
+- `clearError()` - Clears the current error
 
 ---
 
-## Ports Disponibles
+## Available Ports
 
-El core define las siguientes interfaces (Ports) que deben ser implementadas por adapters:
+The core defines the following interfaces (Ports) that must be implemented by adapters:
 
-- `HttpClientPort` - Cliente HTTP para peticiones REST
-- `StoragePort` - Almacenamiento local (key-value)
-- `NavigationPort` - Navegación entre pantallas
-- `BiometricPort` - Autenticación biométrica
-- `PermissionPort` - Gestión de permisos del dispositivo
-- `ImagePickerPort` - Selección de imágenes desde galería o cámara
-- `LoggerPort` - Sistema de logging
-- `AnalyticsPort` - Tracking de eventos y analytics
-- `StateManagerPort` - Gestión de estado global
-- `GraphQLPort` - Cliente GraphQL (opcional)
+- `HttpClientPort` - HTTP client for REST requests
+- `StoragePort` - Local storage (key-value)
+- `NavigationPort` - Navigation between screens
+- `BiometricPort` - Biometric authentication
+- `PermissionPort` - Device permission management
+- `ImagePickerPort` - Image selection from gallery or camera
+- `LoggerPort` - Logging system
+- `AnalyticsPort` - Event tracking and analytics
+- `StateManagerPort` - Global state management
+- `GraphQLPort` - GraphQL client (optional)
 
-Cada Port define un contrato que los adapters deben cumplir, permitiendo intercambiar implementaciones sin cambiar el código de negocio.
+Each Port defines a contract that adapters must fulfill, allowing swapping implementations without changing business code.
 
 ---
 
-## Sistema de Errores
+## Error System
 
-Natify proporciona un sistema de errores tipado y consistente:
+Natify provides a typed and consistent error system:
 
 ```typescript
 import { NatifyError, NatifyErrorCode } from "@natify/core";
 
-// Crear un error tipado
+// Create a typed error
 throw new NatifyError(
   NatifyErrorCode.NETWORK_ERROR,
-  "No se pudo conectar al servidor",
+  "Could not connect to server",
   originalError,
   { url: "/api/users", retries: 3 }
 );
 
-// Manejar errores
+// Handle errors
 try {
   await http.get("/users");
 } catch (error) {
   if (error instanceof NatifyError) {
     switch (error.code) {
       case NatifyErrorCode.UNAUTHORIZED:
-        // Redirigir a login
+        // Redirect to login
         break;
       case NatifyErrorCode.NETWORK_ERROR:
-        // Mostrar mensaje de sin conexión
+        // Show no connection message
         break;
     }
   }
 }
 ```
 
-**Códigos de error disponibles:**
-- `NETWORK_ERROR` - Error de red genérico
-- `TIMEOUT` - Timeout de petición
+**Available error codes:**
+- `NETWORK_ERROR` - Generic network error
+- `TIMEOUT` - Request timeout
 - `UNAUTHORIZED` - HTTP 401
 - `FORBIDDEN` - HTTP 403
 - `NOT_FOUND` - HTTP 404
 - `SERVER_ERROR` - HTTP 500+
-- `STORAGE_READ_ERROR` - Error leyendo storage
-- `STORAGE_WRITE_ERROR` - Error escribiendo storage
-- `VALIDATION_ERROR` - Error de validación
-- `UNKNOWN` - Error desconocido
+- `STORAGE_READ_ERROR` - Error reading storage
+- `STORAGE_WRITE_ERROR` - Error writing storage
+- `VALIDATION_ERROR` - Validation error
+- `UNKNOWN` - Unknown error
 
 ---
 
-## Exports Principales
+## Main Exports
 
 ```typescript
 // Ports (Interfaces)
@@ -507,7 +507,7 @@ export { NatifyApp, DefaultSplash }
 // Errors
 export { NatifyError, NatifyErrorCode }
 
-// Adapters (incluidos en el core)
+// Adapters (included in core)
 export { ConsoleLoggerAdapter, CompositeAnalyticsAdapter }
 ```
 
@@ -515,10 +515,10 @@ export { ConsoleLoggerAdapter, CompositeAnalyticsAdapter }
 
 ## Testing
 
-Natify facilita el testing mediante inyección de dependencias:
+Natify facilitates testing through dependency injection:
 
 ```typescript
-// Mock de un adapter
+// Mock an adapter
 const mockStorage = {
   getItem: jest.fn().mockResolvedValue("token"),
   setItem: jest.fn().mockResolvedValue(undefined),
@@ -527,7 +527,7 @@ const mockStorage = {
   capability: "storage" as const,
 };
 
-// Testear un UseCase sin dependencias nativas
+// Test a UseCase without native dependencies
 const loginUseCase = new LoginUseCase(mockStorage);
 const result = await loginUseCase.execute({ email: "test@example.com", password: "123" });
 
@@ -536,8 +536,8 @@ expect(mockStorage.setItem).toHaveBeenCalledWith("auth_token", expect.any(String
 
 ---
 
-## Más Información
+## More Information
 
-- [README Principal](../README.md) - Documentación completa del framework
-- [Ejemplos de Uso](../../apps/examples/) - App de demostración completa
-- [Guías de Desarrollo](../../.cursorrules) - Convenciones y mejores prácticas
+- [Main README](../README.md) - Complete framework documentation
+- [Usage Examples](../../apps/examples/) - Complete demo app
+- [Development Guides](../../.cursorrules) - Conventions and best practices

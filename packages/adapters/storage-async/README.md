@@ -1,35 +1,35 @@
 # @natify/storage-async
 
-Adapter de almacenamiento para Natify Framework usando `@react-native-async-storage/async-storage`.
+Storage adapter for Natify Framework using `@react-native-async-storage/async-storage`.
 
-## Instalación
+## Installation
 
 ```bash
 pnpm add @natify/storage-async @react-native-async-storage/async-storage
 ```
 
-## Cuándo Usar
+## When to Use
 
-| Adapter | Caso de Uso |
-|---------|-------------|
-| **storage-async** | Datos no sensibles, compatibilidad máxima |
-| storage-mmkv | Alto rendimiento, datos frecuentes |
-| storage-keychain | Datos sensibles (tokens, passwords) |
+| Adapter | Use Case |
+|---------|----------|
+| **storage-async** | Non-sensitive data, maximum compatibility |
+| storage-mmkv | High performance, frequent data access |
+| storage-keychain | Sensitive data (tokens, passwords) |
 
-**AsyncStorage** es ideal para:
-- Preferencias de usuario
-- Cache de datos
-- Estado de onboarding
-- Configuraciones de app
+**AsyncStorage** is ideal for:
+- User preferences
+- Data cache
+- Onboarding state
+- App configurations
 
-**NO usar para**:
-- Tokens de autenticación (usar Keychain)
-- Contraseñas
-- Datos sensibles
+**DO NOT use for**:
+- Authentication tokens (use Keychain)
+- Passwords
+- Sensitive data
 
-## Uso
+## Usage
 
-### Configuración del Provider
+### Provider Configuration
 
 ```typescript
 import { NatifyProvider } from "@natify/core";
@@ -37,7 +37,7 @@ import { AsyncStorageAdapter } from "@natify/storage-async";
 
 const config = {
   storage: new AsyncStorageAdapter(),
-  // ... otros adapters
+  // ... other adapters
 };
 
 function App() {
@@ -49,7 +49,7 @@ function App() {
 }
 ```
 
-### Uso en Componentes
+### Usage in Components
 
 ```typescript
 import { useAdapter, StoragePort } from "@natify/core";
@@ -57,23 +57,23 @@ import { useAdapter, StoragePort } from "@natify/core";
 function SettingsScreen() {
   const storage = useAdapter<StoragePort>("storage");
 
-  // Guardar preferencias
+  // Save preferences
   const saveTheme = async (theme: "light" | "dark") => {
     await storage.setItem("user_theme", theme);
   };
 
-  // Leer preferencias
+  // Read preferences
   const loadTheme = async () => {
     const theme = await storage.getItem<string>("user_theme");
     return theme || "light";
   };
 
-  // Guardar objeto complejo
+  // Save complex object
   const saveUserPreferences = async (prefs: UserPreferences) => {
     await storage.setItem("user_preferences", prefs);
   };
 
-  // Leer objeto complejo
+  // Read complex object
   const loadUserPreferences = async () => {
     const prefs = await storage.getItem<UserPreferences>("user_preferences");
     return prefs || defaultPreferences;
@@ -81,7 +81,7 @@ function SettingsScreen() {
 }
 ```
 
-### Ejemplo: Onboarding
+### Example: Onboarding
 
 ```typescript
 function OnboardingCheck() {
@@ -110,7 +110,7 @@ function OnboardingCheck() {
 }
 ```
 
-### Ejemplo: Cache de Datos
+### Example: Data Cache
 
 ```typescript
 interface CachedData<T> {
@@ -147,16 +147,16 @@ function useCachedData<T>(key: string, fetcher: () => Promise<T>, ttl = 3600000)
 
 ### StoragePort
 
-| Método | Retorno | Descripción |
-|--------|---------|-------------|
-| `getItem<T>(key)` | `Promise<T \| null>` | Obtiene un valor por clave |
-| `setItem<T>(key, value)` | `Promise<void>` | Guarda un valor |
-| `removeItem(key)` | `Promise<void>` | Elimina un valor |
-| `clear()` | `Promise<void>` | Limpia todo el storage |
+| Method | Return | Description |
+|--------|--------|-------------|
+| `getItem<T>(key)` | `Promise<T \| null>` | Gets a value by key |
+| `setItem<T>(key, value)` | `Promise<void>` | Saves a value |
+| `removeItem(key)` | `Promise<void>` | Removes a value |
+| `clear()` | `Promise<void>` | Clears all storage |
 
-### Tipos Soportados
+### Supported Types
 
-El adapter serializa/deserializa automáticamente:
+The adapter automatically serializes/deserializes:
 
 - `string`
 - `number`
@@ -164,10 +164,9 @@ El adapter serializa/deserializa automáticamente:
 - `object` (JSON serializable)
 - `array` (JSON serializable)
 
-## Limitaciones
+## Limitations
 
-- **Asíncrono**: Todas las operaciones son async (no bloquean)
-- **Rendimiento**: Más lento que MMKV para operaciones frecuentes
-- **Sin encriptación**: Los datos no están encriptados (usar Keychain para datos sensibles)
-- **Límite de tamaño**: ~6MB en Android, sin límite en iOS
-
+- **Asynchronous**: All operations are async (non-blocking)
+- **Performance**: Slower than MMKV for frequent operations
+- **No encryption**: Data is not encrypted (use Keychain for sensitive data)
+- **Size limit**: ~6MB on Android, no limit on iOS
