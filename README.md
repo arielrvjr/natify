@@ -9,6 +9,7 @@ Build faster. Refactor without fear. Swap implementations without touching your 
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue.svg)](https://www.typescriptlang.org/)
 [![React Native](https://img.shields.io/badge/React%20Native-0.82+-61DAFB.svg)](https://reactnative.dev/)
+[![codecov](https://codecov.io/gh/arielrvjr/natify/branch/master/graph/badge.svg?token=ZB8A7SE5UD)](https://codecov.io/gh/arielrvjr/natify)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ---
