@@ -1,6 +1,6 @@
 {
   "name": "@natify/navigation-react",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -32,10 +32,10 @@
     "@natify/core": ">=1.0.0",
     "@react-navigation/native": ">=6.0.0",
     "@react-navigation/native-stack": ">=6.0.0",
-    "react": "*",
-    "react-native": "*",
-    "react-native-screens": "*",
-    "react-native-safe-area-context": "*"
+    "react": ">=19.0.0",
+    "react-native": ">=0.82.0",
+    "react-native-screens": ">=4.10.0",
+    "react-native-safe-area-context": ">=5.4.0"
   }
 }
 

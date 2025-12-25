@@ -1,6 +1,6 @@
 {
   "name": "@natify/core",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -24,8 +24,8 @@
     "url": "https://github.com/arielrvjr/natify.git"
   },
   "peerDependencies": {
-    "react": "*",
-    "react-native": "*"
+    "react": ">=19.0.0",
+    "react-native": ">=0.82.0"
   },
   "devDependencies": {
     "@testing-library/react-hooks": "^8.0.1",
