@@ -17,7 +17,7 @@ on:
 
 permissions:
   id-token: write # Required for OIDC/Trusted Publisher
-  contents: read # Required to checkout code
+  contents: write # Required to push commits and tags
 
 jobs:
   publish:
@@ -27,6 +27,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: master
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
@@ -49,26 +50,141 @@ jobs:
       - name: Run tests
         run: pnpm test:coverage
 
+      - name: Validate version (for releases)
+        if: github.event_name == 'release'
+        run: |
+          # Extract version from release tag (remove 'v' prefix if present)
+          TAG_VERSION="${{ github.event.release.tag_name }}"
+          TAG_VERSION="${TAG_VERSION#v}"
+
+          # Get version from package.json
+          PKG_VERSION=$(node -p "require('./packages/core/package.json').version")
+
+          echo "Release tag version: $TAG_VERSION"
+          echo "Package.json version: $PKG_VERSION"
+
+          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+            echo "Error: Release tag version ($TAG_VERSION) doesn't match package.json version ($PKG_VERSION)"
+            echo "Please update package.json to match the release tag before creating the release."
+            exit 1
+          fi
+
+          echo "Version validation passed: $TAG_VERSION"
+
+      - name: Determine version (for workflow_dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        id: version
+        run: |
+          VERSION_TYPE="${{ github.event.inputs.version || 'patch' }}"
+          echo "version_type=$VERSION_TYPE" >> $GITHUB_OUTPUT
+          echo "Will increment version using: $VERSION_TYPE"
+
       - name: Publish @natify/core
         run: |
           cd packages/core
-          npm version ${{ github.event.inputs.version || 'patch' }} --no-git-tag-version
+          if [ "${{ github.event_name }}" == "release" ]; then
+            # For releases, version is already set in package.json, just publish
+            echo "Publishing version: $(node -p "require('./package.json').version")"
+          else
+            # For workflow_dispatch, increment version
+            npm version "${{ steps.version.outputs.version_type || 'patch' }}" --no-git-tag-version
+          fi
           npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
       - name: Publish adapters
         run: |
-          pnpm -r --filter '@natify/*' --filter '!@natify/core' exec npm version ${{ github.event.inputs.version || 'patch' }} --no-git-tag-version
+          if [ "${{ github.event_name }}" == "release" ]; then
+            # For releases, versions are already set in package.json, just publish
+            echo "Publishing adapters with current versions"
+          else
+            # For workflow_dispatch, increment versions
+            VERSION_TYPE="${{ steps.version.outputs.version_type || 'patch' }}"
+            pnpm -r --filter '@natify/*' --filter '!@natify/core' exec npm version "$VERSION_TYPE" --no-git-tag-version
+          fi
           pnpm -r --filter '@natify/*' --filter '!@natify/core' exec npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-      - name: Create git tag and push
+
+      - name: Commit and push version changes to master
+        if: github.event_name == 'release'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          PUBLISHED_VERSION=$(node -p "require('./packages/core/package.json').version")
+          git add packages/*/package.json
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit (versions already committed)"
+          else
+            git commit -m "chore: bump versions to v$PUBLISHED_VERSION"
+            git push origin master
+          fi
+
+      - name: Commit and push version changes
         if: github.event_name == 'workflow_dispatch'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add packages/*/package.json
-          git commit -m "chore: bump versions for release" || exit 0
-          VERSION=$(node -p "require('./packages/core/package.json').version")
-          git tag "v$VERSION"
-          git push origin master --tags
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            VERSION=$(node -p "require('./packages/core/package.json').version")
+            git commit -m "chore: bump versions to v$VERSION"
+            git tag "v$VERSION" || echo "Tag v$VERSION already exists"
+            git push origin master
+            git push origin master --tags
+          fi
+
+      - name: Update develop branch with next version
+        if: github.event_name == 'release'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Get the published version
+          PUBLISHED_VERSION=$(node -p "require('./packages/core/package.json').version")
+
+          # Calculate next version (increment patch)
+          NEXT_VERSION=$(node -e "
+            const version = '$PUBLISHED_VERSION';
+            const parts = version.split('.');
+            parts[2] = String(parseInt(parts[2]) + 1);
+            console.log(parts.join('.'));
+          ")
+
+          echo "Published version: $PUBLISHED_VERSION"
+          echo "Updating develop branch with next version: $NEXT_VERSION"
+
+          # Fetch all branches
+          git fetch origin
+
+          # Checkout develop branch (create if doesn't exist)
+          if git show-ref --verify --quiet refs/remotes/origin/develop; then
+            git checkout develop
+            git pull origin develop
+          else
+            echo "develop branch doesn't exist, creating it from master"
+            git checkout -b develop
+          fi
+
+          # Update all package.json files to next version
+          for pkg in packages/*/package.json packages/adapters/*/package.json; do
+            if [ -f "$pkg" ]; then
+              node -e "
+                const fs = require('fs');
+                const pkg = JSON.parse(fs.readFileSync('$pkg', 'utf8'));
+                pkg.version = '$NEXT_VERSION';
+                fs.writeFileSync('$pkg', JSON.stringify(pkg, null, 2) + '\n');
+              "
+            fi
+          done
+
+          git add packages/*/package.json
+          git commit -m "chore: bump versions to $NEXT_VERSION for next development cycle" || echo "No changes to commit"
+
+          # Push to develop
+          git push origin develop

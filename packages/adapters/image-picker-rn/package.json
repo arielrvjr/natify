@@ -1,6 +1,6 @@
 {
   "name": "@natify/image-picker-rn",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Image Picker adapter using react-native-image-picker",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -34,8 +34,8 @@
   },
   "peerDependencies": {
     "@natify/core": ">=1.0.0",
-    "react": "*",
-    "react-native": "*",
+    "react": ">=19.0.0",
+    "react-native": ">=0.82.0",
     "react-native-image-picker": "^7.1.2"
   }
 }
