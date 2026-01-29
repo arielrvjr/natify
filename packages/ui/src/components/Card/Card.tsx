@@ -4,7 +4,7 @@ import { useTheme } from '../../theme';
 
 export interface CardProps {
   children: React.ReactNode;
-  variant?: 'elevated' | 'outlined' | 'filled';
+  variant?: 'outlined' | 'filled';
   padding?: 'none' | 'sm' | 'md' | 'lg';
   onPress?: () => void;
   style?: ViewStyle;
@@ -15,7 +15,7 @@ export interface CardProps {
  */
 export const Card: React.FC<CardProps> = ({
   children,
-  variant = 'elevated',
+  variant = 'filled',
   padding = 'md',
   onPress,
   style,
@@ -31,20 +31,15 @@ export const Card: React.FC<CardProps> = ({
 
   const getVariantStyles = (): ViewStyle => {
     switch (variant) {
-      case 'elevated':
-        return {
-          backgroundColor: theme.colors.surface.secondary,
-          ...(theme.shadows.md as ViewStyle),
-        };
       case 'outlined':
         return {
-          backgroundColor: theme.colors.surface.secondary,
+          backgroundColor: theme.colors.background,
           borderWidth: 1,
-          borderColor: theme.colors.structure.border,
+          borderColor: theme.colors.textDisabled,
         };
       case 'filled':
         return {
-          backgroundColor: theme.colors.surface.secondary,
+          backgroundColor: theme.colors.surface,
         };
     }
   };

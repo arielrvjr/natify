@@ -33,7 +33,7 @@ export const Container: React.FC<ContainerProps> = ({
     <View
       style={[
         styles.container,
-        { backgroundColor: theme.colors.surface.primary },
+        { backgroundColor: theme.colors.background },
         {
           paddingHorizontal: theme.spacing[horizontalPadding],
           paddingVertical: theme.spacing[verticalPadding],

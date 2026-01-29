@@ -33,6 +33,7 @@ jest.mock('react', () => {
     })),
     useContext: jest.fn(() => contextValue),
     useMemo: jest.fn(fn => fn()),
+    useLayoutEffect: jest.fn(fn => fn()),
   };
 });
 

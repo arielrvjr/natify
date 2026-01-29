@@ -19,9 +19,11 @@ export function RegisterScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <Container padding={'md'}>
+        <Spacer size="xl" />
+
         <Column gap="md" justifyContent="center">
-          <Text variant="title">Crear Cuenta</Text>
-          <Text variant="body" color="secondary">
+          <Text variant="display">Crear Cuenta</Text>
+          <Text variant="body" color="textSecondary">
             Completa tus datos para registrarte
           </Text>
 

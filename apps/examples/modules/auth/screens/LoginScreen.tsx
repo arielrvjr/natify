@@ -1,8 +1,16 @@
 import React from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Text, Input, Button, Column, Spacer, Container, useTheme } from '@natify/ui';
-import { DefaultSplash } from '@natify/core';
+import {
+  Text,
+  Input,
+  Button,
+  Column,
+  Spacer,
+  Container,
+  useTheme,
+} from '@natify/ui';
+import { SplashScreen } from '@natify/core';
 import { useLoginViewModel } from '../viewmodels/useLoginViewModel';
 
 export function LoginScreen() {
@@ -12,27 +20,24 @@ export function LoginScreen() {
   // Mostrar splash mientras se verifica la autenticación
   if (state.isCheckingAuth) {
     return (
-      <DefaultSplash
+      <SplashScreen
         message="Verificando sesión..."
-        color={theme.colors.action.primary}
-        backgroundColor={theme.colors.surface.primary}
+        color={theme.colors.textPrimary}
+        backgroundColor={theme.colors.surface}
       />
     );
   }
 
   return (
-    <SafeAreaView
-      style={styles.container}
-      edges={['top', 'bottom']}
-    >
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <KeyboardAvoidingView
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <Container padding={'md'} centered>
           <Column gap="md" justifyContent="center">
-            <Text variant="title">Bienvenido</Text>
-            <Text variant="body" color="secondary">
+            <Text variant="display">Bienvenido</Text>
+            <Text variant="body" color="textSecondary">
               Inicia sesión para continuar
             </Text>
 

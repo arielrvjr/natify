@@ -16,7 +16,8 @@ export interface AdapterRegistryProps {
 /**
  * Componente que registra adapters en el contenedor DI
  *
- * Usa el UseCase de registro de adapters a través de useUseCase.
+ * Usa el UseCase de registro de adapters. Los use cases del sistema
+ * ya están inicializados por createDIProvider antes de que este componente se monte.
  *
  * @example
  * ```tsx
@@ -24,7 +25,7 @@ export interface AdapterRegistryProps {
  * ```
  */
 export const AdapterRegistry: React.FC<AdapterRegistryProps> = ({ adapters }) => {
-  // Obtener UseCase a través de useUseCase (ViewModel)
+  // Obtener el UseCase (ya está inicializado por createDIProvider)
   const registerAdapter = useUseCase<RegisterAdapterUseCase>('usecase:RegisterAdapterUseCase');
 
   useEffect(() => {

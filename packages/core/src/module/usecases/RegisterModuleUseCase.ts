@@ -18,7 +18,8 @@ export class RegisterModuleUseCase {
 
   async execute(module: ModuleDefinition): Promise<RegisteredModule> {
     // Validar que el módulo no esté ya registrado
-    if (this.diContainer.has(`module:${module.id}`)) {
+    const existingModule = this.diContainer.tryResolve<RegisteredModule>(`module:${module.id}`);
+    if (existingModule) {
       throw new NatifyError(
         NatifyErrorCode.VALIDATION_ERROR,
         `Module "${module.id}" is already registered`,
