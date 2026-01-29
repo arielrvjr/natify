@@ -14,6 +14,20 @@ interface DIProviderProps {
 
 /**
  * Provider para inyección de dependencias
+ *
+ * Se recomienda usar `createDIContainer()` para pre-configurar el container
+ * con los use cases del sistema antes de pasarlo a este provider.
+ *
+ * Si se pasa un container sin inicializar, se intentará inicializar automáticamente,
+ * pero es mejor usar `createDIContainer()` para evitar problemas de timing.
+ *
+ * @example
+ * ```tsx
+ * const container = createDIContainer({ adapters: {...} });
+ * <DIProvider container={container}>
+ *   {children}
+ * </DIProvider>
+ * ```
  */
 export const DIProvider: React.FC<DIProviderProps> = ({
   container = globalContainer,
@@ -42,6 +56,20 @@ export function useDIContainer(): DIContainer {
  * @example
  * ```tsx
  * const loginUseCase = useUseCase<LoginUseCase>('auth:login');
+ * ```
+ */
+/**
+ * Hook para resolver un UseCase u otra dependencia
+ *
+ * Los UseCases se registran automáticamente cuando se carga un módulo
+ * con el formato: `{moduleId}:{useCaseKey}`
+ *
+ * Los use cases del sistema usan el formato: `usecase:{UseCaseName}`
+ *
+ * @example
+ * ```tsx
+ * const loginUseCase = useUseCase<LoginUseCase>('auth:login');
+ * const registerAdapter = useUseCase<RegisterAdapterUseCase>('usecase:RegisterAdapterUseCase');
  * ```
  */
 export function useUseCase<T>(key: string): T {
@@ -75,7 +103,7 @@ export function useAdapter<T extends Port>(lookupKey: string): T {
     return getAdapterUseCase.execute(lookupKey);
   }
 
-  // Fallback: acceso directo (para backward compatibility cuando UseCaseProvider no está disponible)
+  // Fallback: acceso directo (para casos donde GetAdapterUseCase no esté disponible)
   const byName = container.tryResolve<T>(`adapter:${lookupKey}`);
   if (byName) {
     return byName;

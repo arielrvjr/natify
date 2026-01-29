@@ -50,12 +50,19 @@ export interface NatifyAppProps {
 }
 
 /**
- * Main Natify component
+ * Main Natify component - Punto de entrada del framework
  *
- * Encapsulates all necessary configuration:
- * - NatifyProvider (DI + adapter registration)
- * - ModuleProvider (module system)
- * - NavigationContainer + AppNavigator
+ * Encapsula toda la configuración necesaria en el orden correcto:
+ *
+ * 1. NatifyProvider: Inicializa DI container + use cases del sistema + logger + registra adapters
+ * 2. ModuleProvider: Registra módulos de la aplicación
+ * 3. NavigationContainer: Contenedor de navegación
+ * 4. AppNavigator: Navegador con las pantallas de los módulos
+ *
+ * Flujo de inicialización:
+ * - createDIProvider() crea container nuevo e inicializa use cases del sistema + logger
+ * - AdapterRegistry registra los adapters usando RegisterAdapterUseCase
+ * - ModuleProvider registra los módulos usando RegisterModuleUseCase
  *
  * @example
  * ```tsx

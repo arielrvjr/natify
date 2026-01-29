@@ -29,12 +29,12 @@ export function SettingsScreen() {
             <Column gap="sm" style={styles.section}>
               <Text
                 variant="caption"
-                color="secondary"
+                color="textSecondary"
                 style={styles.sectionTitle}
               >
                 Preferencias
               </Text>
-              <Card variant="elevated" padding="md">
+              <Card variant="filled" padding="md">
                 <Row alignItems="center" justifyContent="space-between" padding>
                   <Row
                     alignItems="center"
@@ -46,7 +46,7 @@ export function SettingsScreen() {
                       <Text variant="body">Notificaciones</Text>
                       <Text
                         variant="caption"
-                        color="secondary"
+                        color="textSecondary"
                         numberOfLines={2}
                       >
                         Recibir alertas de ofertas y pedidos
@@ -74,7 +74,7 @@ export function SettingsScreen() {
                       <Text variant="body">Modo Oscuro</Text>
                       <Text
                         variant="caption"
-                        color="secondary"
+                        color="textSecondary"
                         numberOfLines={2}
                       >
                         Cambiar apariencia de la app
@@ -102,7 +102,7 @@ export function SettingsScreen() {
                       <Text variant="body">Autenticación Biométrica</Text>
                       <Text
                         variant="caption"
-                        color="secondary"
+                        color="textSecondary"
                         numberOfLines={2}
                       >
                         {state.biometryAvailable
@@ -123,12 +123,12 @@ export function SettingsScreen() {
             <Column gap="sm" style={styles.sectionWithMargin}>
               <Text
                 variant="caption"
-                color="secondary"
+                color="textSecondary"
                 style={styles.sectionTitle}
               >
                 Permisos
               </Text>
-              <Card variant="elevated" padding="md">
+              <Card variant="filled" padding="md">
                 <Row
                   alignItems="center"
                   justifyContent="space-between"
@@ -144,7 +144,7 @@ export function SettingsScreen() {
                       <Text variant="body">Cámara</Text>
                       <Text
                         variant="caption"
-                        color="secondary"
+                        color="textSecondary"
                         numberOfLines={2}
                       >
                         {state.cameraPermissionStatus === 'granted'
@@ -156,7 +156,7 @@ export function SettingsScreen() {
                   <Button
                     title="Solicitar"
                     onPress={actions.requestCameraPermission}
-                    variant="secondary"
+                    variant="ghost"
                   />
                 </Row>
                 <Divider />
@@ -175,7 +175,7 @@ export function SettingsScreen() {
                       <Text variant="body">Galería de Fotos</Text>
                       <Text
                         variant="caption"
-                        color="secondary"
+                        color="textSecondary"
                         numberOfLines={2}
                       >
                         Solicitar permiso para acceder a fotos
@@ -204,7 +204,7 @@ export function SettingsScreen() {
                       <Text variant="body">Seleccionar Imagen</Text>
                       <Text
                         variant="caption"
-                        color="secondary"
+                        color="textSecondary"
                         numberOfLines={2}
                       >
                         Probar selector de imágenes
@@ -223,12 +223,12 @@ export function SettingsScreen() {
             <Column gap="sm" style={styles.sectionWithMargin}>
               <Text
                 variant="caption"
-                color="secondary"
+                color="textSecondary"
                 style={styles.sectionTitle}
               >
                 Idioma
               </Text>
-              <Card variant="elevated" padding="md">
+              <Card variant="filled" padding="md">
                 <Row
                   alignItems="center"
                   justifyContent="space-between"
@@ -238,7 +238,7 @@ export function SettingsScreen() {
                     <Icon name="Languages" size={20} color="primary" />
                     <Column gap="xs" style={styles.settingColumn}>
                       <Text variant="body">Español</Text>
-                      <Text variant="caption" color="secondary">
+                      <Text variant="caption" color="textSecondary">
                         Idioma actual
                       </Text>
                     </Column>
@@ -251,17 +251,17 @@ export function SettingsScreen() {
             <Column gap="sm" style={styles.sectionWithMargin}>
               <Text
                 variant="caption"
-                color="secondary"
+                color="textSecondary"
                 style={styles.sectionTitle}
               >
                 Información
               </Text>
-              <Card variant="elevated" padding="md">
+              <Card variant="filled" padding="md">
                 <Row alignItems="center" gap="md">
                   <Icon name="Info" size={20} color="primary" />
                   <Column gap="xs" style={styles.settingColumn}>
                     <Text variant="body">Versión</Text>
-                    <Text variant="caption" color="secondary">
+                    <Text variant="caption" color="textSecondary">
                       1.0.0
                     </Text>
                   </Column>

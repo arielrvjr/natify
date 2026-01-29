@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, ViewStyle, TouchableOpacity, Platform } from 'react-native';
+import { View, Image, ViewStyle, TouchableOpacity } from 'react-native';
 import { ColorPalette, useTheme } from '../../theme';
 import { Text } from '../Text';
 
@@ -8,7 +8,10 @@ export interface AvatarProps {
   name?: string;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;
   backgroundColor?: string;
-  textColor?: keyof ColorPalette['content'];
+  textColor?: Exclude<
+    keyof ColorPalette,
+    'background' | 'surface' | 'overlay' | 'surfaceDisabled' | 'disabled'
+  >;
   style?: ViewStyle;
   onPress?: () => void;
 }
@@ -45,7 +48,7 @@ export const Avatar: React.FC<AvatarProps> = ({
   name,
   size = 'md',
   backgroundColor,
-  textColor,
+  textColor = 'textPrimary',
   style,
   onPress,
 }) => {
@@ -76,9 +79,7 @@ export const Avatar: React.FC<AvatarProps> = ({
     return userName.substring(0, 1).toUpperCase();
   };
 
-  const bgColor =
-    backgroundColor || (name ? generateColorFromName(name) : theme.colors.action.primary);
-  const txtColor = textColor || 'onPrimary';
+  const bgColor = backgroundColor || (name ? generateColorFromName(name) : theme.colors.accent);
 
   const containerStyle: ViewStyle = {
     width: sizeValue,
@@ -88,18 +89,6 @@ export const Avatar: React.FC<AvatarProps> = ({
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
-    borderColor: 'rgba(255, 255, 255, 0.4)',
-    ...Platform.select({
-      ios: {
-        shadowColor: bgColor,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.25,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 6,
-      },
-    }),
   };
 
   const avatarContent = source?.uri ? (
@@ -107,18 +96,8 @@ export const Avatar: React.FC<AvatarProps> = ({
       <Image source={source} style={{ width: sizeValue, height: sizeValue }} resizeMode="cover" />
     </View>
   ) : (
-    <View
-      style={[
-        containerStyle,
-        style,
-        {
-          // Asegurar centrado perfecto del texto
-          paddingTop: 0,
-          paddingBottom: 0,
-        },
-      ]}
-    >
-      <Text variant="label" color={txtColor}>
+    <View style={[containerStyle, style]}>
+      <Text variant="caption" color={textColor}>
         {name ? getInitials(name) : '?'}
       </Text>
     </View>

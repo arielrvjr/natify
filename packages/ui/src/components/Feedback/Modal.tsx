@@ -61,9 +61,8 @@ export const Modal: React.FC<ModalProps> = ({
                 style={[
                   styles.content,
                   {
-                    backgroundColor: theme.colors.surface.secondary,
+                    backgroundColor: theme.colors.surface,
                     borderRadius: theme.borderRadius.lg,
-                    ...(theme.shadows.lg as ViewStyle),
                   },
                   sizeStyles[size],
                   style,
@@ -72,14 +71,14 @@ export const Modal: React.FC<ModalProps> = ({
                 {(title || showCloseButton) && (
                   <View style={styles.header}>
                     {title && (
-                      <Text variant="title" style={styles.title}>
+                      <Text variant="display" style={styles.title}>
                         {title}
                       </Text>
                     )}
                     {showCloseButton && (
                       <TouchableWithoutFeedback onPress={onClose}>
                         <View style={styles.closeButton}>
-                          <Text variant="subtitle" color="secondary">
+                          <Text variant="heading" color="textSecondary">
                             ✕
                           </Text>
                         </View>
@@ -145,7 +144,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         </Row>
       }
     >
-      <Text color="secondary">{message}</Text>
+      <Text color="textSecondary">{message}</Text>
     </Modal>
   );
 };

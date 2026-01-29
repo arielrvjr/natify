@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
-import { useTheme } from '../../theme';
+import { ColorPalette, useTheme } from '../../theme';
 import { Text } from '../Text';
 
 export interface BadgeProps {
   children?: React.ReactNode;
   count?: number;
   maxCount?: number;
-  variant?: 'primary' | 'secondary' | 'error' | 'success' | 'warning' | 'info';
+  variant?: Exclude<keyof ColorPalette, 'background' | 'surface' | 'overlay'>;
   dot?: boolean;
   style?: ViewStyle;
 }
@@ -19,25 +19,16 @@ export const Badge: React.FC<BadgeProps> = ({
   children,
   count,
   maxCount = 99,
-  variant = 'primary',
+  variant = 'textPrimary',
   dot = false,
   style,
 }) => {
   const { theme } = useTheme();
 
-  const variantColors = {
-    primary: theme.colors.content.primary,
-    secondary: theme.colors.content.secondary,
-    success: theme.colors.status.success,
-    warning: theme.colors.status.warning,
-    error: theme.colors.status.error,
-    info: theme.colors.status.info,
-  };
-
   const displayCount = count && count > maxCount ? `${maxCount}+` : (count?.toString() ?? '');
 
   if (dot) {
-    return <View style={[styles.dot, { backgroundColor: variantColors[variant] }, style]} />;
+    return <View style={[styles.dot, { backgroundColor: theme.colors[variant] }, style]} />;
   }
 
   const content = children
@@ -51,7 +42,7 @@ export const Badge: React.FC<BadgeProps> = ({
       style={[
         styles.badge,
         {
-          backgroundColor: variantColors[variant],
+          backgroundColor: theme.colors[variant],
           paddingHorizontal: theme.spacing.md,
           paddingVertical: theme.spacing.xs,
           borderRadius: theme.borderRadius.lg,
@@ -59,7 +50,7 @@ export const Badge: React.FC<BadgeProps> = ({
         style,
       ]}
     >
-      <Text color="onPrimary" variant="caption">
+      <Text color="textPrimary" variant="caption">
         {content}
       </Text>
     </View>

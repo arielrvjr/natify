@@ -54,25 +54,25 @@ export function ProductDetailScreen() {
 
         <Container padding>
           <Column gap="sm">
-            <Text variant="caption" color="secondary">
+            <Text variant="caption" color="textSecondary">
               {product.category}
             </Text>
-            <Text variant="title">{product.title}</Text>
+            <Text variant="heading">{product.title}</Text>
 
             <Row alignItems="center" gap="sm">
               <Badge variant="warning">{`⭐ ${product.rating.rate}`}</Badge>
-              <Text variant="body" color="secondary">
+              <Text variant="body" color="textSecondary">
                 ({product.rating.count} reviews)
               </Text>
             </Row>
 
-            <Text variant="title" color="primary">
+            <Text variant="display" color="textPrimary">
               ${product.price.toFixed(2)}
             </Text>
             <Spacer size="sm" />
 
-            <Text variant="subtitle">Descripción</Text>
-            <Text variant="body" color="secondary">
+            <Text variant="heading">Descripción</Text>
+            <Text variant="body" color="textSecondary">
               {product.description}
             </Text>
 
@@ -80,7 +80,7 @@ export function ProductDetailScreen() {
 
             <Button
               title="Agregar al Carrito"
-              onPress={() => {}}
+              onPress={() => { }}
               variant="primary"
               fullWidth
             />

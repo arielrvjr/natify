@@ -40,19 +40,19 @@ export function ProfileScreen() {
       icon: <Icon name="Package" size={20} color="primary" />,
       title: 'Mis Pedidos',
       subtitle: 'Historial de compras',
-      onPress: () => {},
+      onPress: () => { },
     },
     {
       icon: <Icon name="Heart" size={20} color="primary" />,
       title: 'Favoritos',
       subtitle: 'Productos guardados',
-      onPress: () => {},
+      onPress: () => { },
     },
     {
       icon: <Icon name="Info" size={20} color="primary" />,
       title: 'Ayuda',
       subtitle: 'Preguntas frecuentes',
-      onPress: () => {},
+      onPress: () => { },
     },
   ];
 
@@ -63,18 +63,18 @@ export function ProfileScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Container padding>
+        <Container>
           <Column alignItems="center" gap="md" paddingVertical="md">
             <Avatar name={state.user?.name || 'Usuario'} size="xl" />
-            <Text variant="subtitle">{state.user?.name || 'Usuario'}</Text>
-            <Text variant="body" color="secondary">
+            <Text variant="display">{state.user?.name || 'Usuario'}</Text>
+            <Text variant="body" color="textSecondary">
               {state.user?.email || ''}
             </Text>
           </Column>
         </Container>
 
         <Container padding>
-          <Card variant="elevated" padding="none">
+          <Card variant="filled" padding="none">
             {menuItems.map((item, index) => (
               <React.Fragment key={item.title}>
                 <Card
@@ -90,14 +90,14 @@ export function ProfileScreen() {
                         <Text variant="body">{item.title}</Text>
                         <Text
                           variant="caption"
-                          color="secondary"
+                          color="textSecondary"
                           numberOfLines={2}
                         >
                           {item.subtitle}
                         </Text>
                       </Column>
                     </Row>
-                    <Icon name="ChevronRight" size={20} color="secondary" />
+                    <Icon name="ChevronRight" size={20} color="textSecondary" />
                   </Row>
                 </Card>
                 {index < menuItems.length - 1 && <Divider />}

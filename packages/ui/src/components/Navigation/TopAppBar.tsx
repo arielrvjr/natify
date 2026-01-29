@@ -45,11 +45,6 @@ export interface TopAppBarProps {
   children?: React.ReactNode;
 
   /**
-   * Elevación de la barra (sombra)
-   */
-  elevated?: boolean;
-
-  /**
    * Color de fondo personalizado
    */
   backgroundColor?: string;
@@ -73,14 +68,13 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
   onBackPress,
   actions = [],
   children,
-  elevated = true,
   backgroundColor,
   style,
 }) => {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
 
-  const bgColor = backgroundColor || theme.colors.surface.secondary;
+  const bgColor = backgroundColor || theme.colors.surface;
 
   return (
     <View
@@ -89,7 +83,6 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
         {
           backgroundColor: bgColor,
           paddingTop: insets.top,
-          ...(elevated && theme.shadows.sm),
         },
         style,
       ]}
@@ -116,12 +109,12 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
             {children || (
               <View style={styles.titleContainer}>
                 {title && (
-                  <Text variant="title" color="primary" numberOfLines={1}>
+                  <Text variant="heading" color="textPrimary" numberOfLines={1}>
                     {title}
                   </Text>
                 )}
                 {subtitle && (
-                  <Text variant="caption" color="secondary" numberOfLines={1}>
+                  <Text variant="caption" color="textSecondary" numberOfLines={1}>
                     {subtitle}
                   </Text>
                 )}
@@ -141,8 +134,8 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
                   {action.icon && <View style={styles.actionIcon}>{action.icon}</View>}
                   {action.label && (
                     <Text
-                      variant="label"
-                      color={action.disabled ? 'tertiary' : 'primary'}
+                      variant="caption"
+                      color={action.disabled ? 'textDisabled' : 'textPrimary'}
                       style={styles.actionLabel}
                     >
                       {action.label}

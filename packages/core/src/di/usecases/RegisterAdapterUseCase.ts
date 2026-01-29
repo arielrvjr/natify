@@ -19,6 +19,11 @@ export class RegisterAdapterUseCase {
       throw new Error(`[RegisterAdapterUseCase] Invalid adapter: must implement Port interface`);
     }
 
+    // Si el adapter implementa ContainerAware, pasarle el contenedor DI
+    if ('setContainer' in adapter && typeof adapter.setContainer === 'function') {
+      adapter.setContainer(this.diContainer);
+    }
+
     // Registrar por nombre (ej: "http", "storage")
     this.diContainer.instance(`adapter:${name}`, adapter);
 

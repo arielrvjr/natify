@@ -36,21 +36,8 @@ const secureStorageAdapter = new KeychainStorageAdapter();
 
 // Configurar adapter de navegación con deeplinks
 const navigationAdapter = createReactNavigationAdapter({
-  prefixes: [
-    'natify://', // Custom scheme
-    'https://natify.app', // HTTPS (requiere configuración nativa)
-  ],
-  // Configuración personalizada opcional
-  // Si no se proporciona, se genera automáticamente desde los módulos
-  config: {
-    screens: {
-      'auth/Login': 'login',
-      'auth/Register': 'register',
-      'products/ProductList': 'products',
-      'products/ProductDetail': 'product/:productId',
-      'profile/Profile': 'profile',
-      'profile/Settings': 'settings',
-    },
+  deeplinkConfig: {
+    prefixes: ['natify://'],
   },
 });
 
@@ -100,20 +87,6 @@ function ThemedApp() {
         }}
         onError={error => {
           console.error('[App] Error loading modules:', error);
-        }}
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: theme.colors.surface.secondary,
-          },
-          headerTintColor: theme.colors.content.primary,
-          headerTitleStyle: {
-            fontWeight: '600',
-            color: theme.colors.content.primary,
-          },
-          headerShadowVisible: false,
-          contentStyle: {
-            backgroundColor: theme.colors.surface.primary,
-          },
         }}
       />
     </>
