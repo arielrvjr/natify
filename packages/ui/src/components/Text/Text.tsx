@@ -1,12 +1,15 @@
 import React from 'react';
 import { Text as RNText, TextProps as RNTextProps, StyleSheet } from 'react-native';
-import { ColorPalette, useTheme } from '../../theme';
+import { ColorPalette, useTheme, Typography } from '../../theme';
 
-export type TextVariant = 'title' | 'subtitle' | 'body' | 'caption' | 'label';
+export type TextVariant = keyof Typography;
 
 export interface TextProps extends RNTextProps {
   variant?: TextVariant;
-  color?: keyof ColorPalette['content'] | keyof ColorPalette['status'];
+  color?: Exclude<
+    keyof ColorPalette,
+    'background' | 'surface' | 'overlay' | 'surfaceDisabled' | 'disabled'
+  >;
   align?: 'left' | 'center' | 'right';
   children: React.ReactNode;
 }
@@ -16,7 +19,7 @@ export interface TextProps extends RNTextProps {
  */
 export const Text: React.FC<TextProps> = ({
   variant = 'body',
-  color = 'primary',
+  color = 'textPrimary',
   align = 'left',
   style,
   children,
@@ -30,10 +33,7 @@ export const Text: React.FC<TextProps> = ({
         styles.base,
         theme.typography[variant],
         {
-          color:
-            color in theme.colors.content
-              ? theme.colors.content[color as keyof typeof theme.colors.content]
-              : theme.colors.status[color as keyof typeof theme.colors.status],
+          color: theme.colors[color],
           textAlign: align,
         },
         style,

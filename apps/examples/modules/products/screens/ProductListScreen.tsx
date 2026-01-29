@@ -19,7 +19,7 @@ export function ProductListScreen() {
 
   const renderProduct = ({ item }: { item: Product }) => (
     <Card
-      variant="elevated"
+      variant="filled"
       onPress={() => actions.goToDetail(item)}
       style={styles.productCard}
     >
@@ -29,11 +29,11 @@ export function ProductListScreen() {
           <Text variant="body" numberOfLines={2}>
             {item.title}
           </Text>
-          <Text variant="caption" color="secondary" style={styles.categoryText}>
+          <Text variant="caption" color="textSecondary" style={styles.categoryText}>
             {item.category}
           </Text>
           <Row justifyContent="space-between" alignItems="center">
-            <Text variant="title" color="primary">
+            <Text variant="heading" color="textPrimary">
               ${item.price.toFixed(2)}
             </Text>
             <Badge variant="warning">{item.rating.rate.toString()}</Badge>

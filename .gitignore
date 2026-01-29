@@ -13,7 +13,7 @@ build/
 *.tsbuildinfo
 *.d.ts.map
 *.js.map
-
+*/node_modules
 # Turbo
 .turbo/
 

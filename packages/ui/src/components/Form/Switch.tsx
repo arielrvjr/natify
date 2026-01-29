@@ -28,7 +28,7 @@ export const Switch: React.FC<SwitchProps> = ({
 
   const labelElement = label && (
     <Text
-      color={disabled ? 'tertiary' : 'primary'}
+      color={disabled ? 'textDisabled' : 'textPrimary'}
       style={labelPosition === 'left' ? styles.labelLeft : styles.labelRight}
     >
       {label}
@@ -44,11 +44,11 @@ export const Switch: React.FC<SwitchProps> = ({
         onValueChange={onChange}
         disabled={disabled}
         trackColor={{
-          false: theme.colors.structure.border,
-          true: theme.colors.action.pressed,
+          false: theme.colors.surfaceDisabled,
+          true: theme.colors.accent,
         }}
-        thumbColor={value ? theme.colors.action.primary : theme.colors.surface.primary}
-        ios_backgroundColor={theme.colors.structure.border}
+        thumbColor={theme.colors.disabled}
+        ios_backgroundColor={theme.colors.disabled}
       />
 
       {labelPosition === 'right' && labelElement}

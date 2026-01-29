@@ -13,3 +13,4 @@ export * from './GraphQLPort';
 export * from './GeolocationPort';
 export * from './FeatureFlagPort';
 export * from './ErrorReportingPort';
+export * from './ContainerAware';

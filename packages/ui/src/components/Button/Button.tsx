@@ -48,30 +48,26 @@ export const Button: React.FC<ButtonProps> = ({
       case 'secondary':
         return {
           container: {
-            backgroundColor: isDisabled
-              ? theme.colors.action.disabled
-              : theme.colors.surface.secondary,
+            backgroundColor: isDisabled ? theme.colors.surfaceDisabled : theme.colors.surface,
           },
           text: {
-            color: isDisabled ? theme.colors.content.tertiary : theme.colors.action.primary,
+            color: isDisabled ? theme.colors.textDisabled : theme.colors.textPrimary,
           },
         };
       case 'ghost':
         return {
           container: { backgroundColor: 'transparent' },
           text: {
-            color: isDisabled ? theme.colors.content.tertiary : theme.colors.action.primary,
+            color: isDisabled ? theme.colors.textDisabled : theme.colors.textPrimary,
           },
         };
       default: //primary
         return {
           container: {
-            backgroundColor: isDisabled
-              ? theme.colors.action.disabled
-              : theme.colors.action.primary,
+            backgroundColor: isDisabled ? theme.colors.disabled : theme.colors.accent,
           },
           text: {
-            color: isDisabled ? theme.colors.content.tertiary : theme.colors.content.onPrimary,
+            color: isDisabled ? theme.colors.textDisabled : theme.colors.textPrimary,
           },
         };
     }
@@ -86,7 +82,7 @@ export const Button: React.FC<ButtonProps> = ({
       activeOpacity={0.7}
       style={[
         styles.container,
-        { borderRadius: theme.borderRadius.md, height: theme.spacing.touchTarget },
+        { borderRadius: theme.borderRadius.lg, height: theme.spacing.touchTarget },
         variantStyles.container,
         fullWidth && styles.fullWidth,
         style,
@@ -99,7 +95,7 @@ export const Button: React.FC<ButtonProps> = ({
           {leftIcon}
           <Text
             style={[
-              theme.typography.label,
+              theme.typography.caption,
               variantStyles.text,
               leftIcon ? { marginLeft: theme.spacing.xs } : undefined,
               rightIcon ? { marginRight: theme.spacing.xs } : undefined,

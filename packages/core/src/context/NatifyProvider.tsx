@@ -1,9 +1,7 @@
 import React, { ReactNode } from 'react';
-import { DIProvider } from '../di/DIProvider';
-import { container } from '../di/Container';
+import { createDIProvider } from '../di/createDIProvider';
 import { AdapterMap } from '../types/adapters';
-import { AdapterRegistry } from '../components/AdapterRegistry';
-import { UseCaseProvider } from '../di/UseCaseProvider';
+import { AdapterRegistry } from '../components';
 
 interface NatifyProviderProps {
   /**
@@ -25,8 +23,17 @@ interface NatifyProviderProps {
 /**
  * Main Natify provider for Level 1 (Abstraction Only)
  *
- * Encapsulates DIProvider and automatic adapter registration.
- * Ideal for existing projects that only need to abstract native libraries.
+ * Encapsula DIProvider y registro automático de adapters.
+ * Ideal para proyectos existentes que solo necesitan abstraer librerías nativas.
+ *
+ * Responsabilidades:
+ * 1. Crea DIProvider con use cases del sistema ya inicializados (createDIProvider)
+ * 2. Registra adapters automáticamente (AdapterRegistry)
+ * 3. Proporciona logger por defecto si no se proporciona uno
+ *
+ * Flujo interno:
+ * - createDIProvider() crea container nuevo e inicializa use cases + logger
+ * - AdapterRegistry registra los adapters usando RegisterAdapterUseCase
  *
  * @example
  * ```tsx
@@ -48,13 +55,14 @@ interface NatifyProviderProps {
  * }
  * ```
  */
+const ConfiguredDIProvider = createDIProvider({
+  initializeSystemUseCases: true,
+});
 export const NatifyProvider: React.FC<NatifyProviderProps> = ({ adapters, children }) => {
   return (
-    <DIProvider container={container}>
-      <UseCaseProvider>
-        <AdapterRegistry adapters={adapters} />
-        {children}
-      </UseCaseProvider>
-    </DIProvider>
+    <ConfiguredDIProvider>
+      <AdapterRegistry adapters={adapters} />
+      {children}
+    </ConfiguredDIProvider>
   );
 };

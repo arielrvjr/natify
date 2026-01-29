@@ -27,9 +27,13 @@ export const Loading: React.FC<LoadingProps> = ({
 
   const content = (
     <View style={styles.content}>
-      <ActivityIndicator size={size} color={color || theme.colors.action.primary} />
+      <ActivityIndicator size={size} color={color || theme.colors.accent} />
       {message && (
-        <Text variant="caption" color={overlay ? 'onPrimary' : 'secondary'} style={styles.message}>
+        <Text
+          variant="caption"
+          color={overlay ? 'textPrimary' : 'textSecondary'}
+          style={{ marginTop: theme.spacing.md }}
+        >
           {message}
         </Text>
       )}
@@ -41,8 +45,8 @@ export const Loading: React.FC<LoadingProps> = ({
       <View
         style={[
           styles.fullScreen,
-          overlay && styles.overlay,
-          !overlay && { backgroundColor: theme.colors.surface.primary },
+          overlay && { backgroundColor: theme.colors.overlay },
+          !overlay && { backgroundColor: theme.colors.background },
           style,
         ]}
       >
@@ -65,13 +69,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 999,
   },
-  overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
+
   content: {
     alignItems: 'center',
-  },
-  message: {
-    marginTop: 12,
   },
 });

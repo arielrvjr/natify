@@ -28,12 +28,12 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
     <Column alignItems="center" gap="md" style={[styles.container, style]}>
       {icon && <View style={styles.iconContainer}>{icon}</View>}
 
-      <Text variant="title" align="center">
+      <Text variant="heading" align="center">
         {title}
       </Text>
 
       {description && (
-        <Text variant="body" color="secondary" align="center" style={styles.description}>
+        <Text variant="body" color="textSecondary" align="center" style={styles.description}>
           {description}
         </Text>
       )}

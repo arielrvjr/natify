@@ -60,8 +60,7 @@ describe('NatifyProvider', () => {
     expect(props.adapters.http).toBe(mockAdapter);
   });
 
-  it('should render UseCaseProvider and AdapterRegistry', () => {
-    const { UseCaseProvider } = require('../../di/UseCaseProvider');
+  it('should render AdapterRegistry', () => {
     const { AdapterRegistry } = require('../../components/AdapterRegistry');
 
     const TestComponent = () => <div>Test Content</div>;
@@ -71,8 +70,8 @@ describe('NatifyProvider', () => {
     });
 
     expect(result).toBeDefined();
-    // Verificar que UseCaseProvider y AdapterRegistry están siendo usados
-    expect(UseCaseProvider).toBeDefined();
+    // Verificar que AdapterRegistry está siendo usado
+    // Los UseCases del sistema se inicializan automáticamente en DIProvider
     expect(AdapterRegistry).toBeDefined();
   });
 });

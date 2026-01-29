@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTheme } from '../../theme';
+import { ColorPalette, useTheme } from '../../theme';
 import { icons } from 'lucide-react-native';
 
 export type IconName = keyof typeof icons;
@@ -22,7 +22,9 @@ export interface IconProps {
    * - O un color hexadecimal personalizado
    * @default 'primary'
    */
-  color?: 'primary' | 'secondary' | 'tertiary' | 'error' | 'success' | 'warning' | 'info' | string;
+  color?:
+    | Exclude<keyof ColorPalette, 'background' | 'surface' | 'overlay' | 'surfaceDisabled'>
+    | string;
 }
 
 /**
@@ -32,7 +34,6 @@ export interface IconProps {
  * ```tsx
  * <Icon name="Settings" size={24} color="primary" />
  * <Icon name="Heart" size={20} color="error" />
- * <Icon name="ArrowLeft" size={16} color="#FF0000" />
  * ```
  */
 export const Icon: React.FC<IconProps> = ({ name, size = 24, color = 'primary' }) => {
@@ -45,22 +46,22 @@ export const Icon: React.FC<IconProps> = ({ name, size = 24, color = 'primary' }
     }
 
     switch (color) {
-      case 'primary':
-        return theme.colors.content.primary;
-      case 'secondary':
-        return theme.colors.content.secondary;
-      case 'tertiary':
-        return theme.colors.content.tertiary;
+      case 'textPrimary':
+        return theme.colors.textPrimary;
+      case 'textSecondary':
+        return theme.colors.textSecondary;
+      case 'textDisabled':
+        return theme.colors.textDisabled;
       case 'error':
-        return theme.colors.status.error;
+        return theme.colors.error;
       case 'success':
-        return theme.colors.status.success;
+        return theme.colors.success;
       case 'warning':
-        return theme.colors.status.warning;
+        return theme.colors.warning;
       case 'info':
-        return theme.colors.status.info;
+        return theme.colors.info;
       default:
-        return theme.colors.content.primary;
+        return theme.colors.textPrimary;
     }
   }, [color, theme]);
 
@@ -69,7 +70,9 @@ export const Icon: React.FC<IconProps> = ({ name, size = 24, color = 'primary' }
 
   if (!LucideIcon) {
     console.warn(
-      `[Icon] Icon "${name}" not found in Lucide. Available icons: ${Object.keys(icons).slice(0, 10).join(', ')}...`,
+      `[Icon] Icon "${name}" not found in Lucide. Available icons: ${Object.keys(icons)
+        .slice(0, 10)
+        .join(', ')}...`,
     );
     return null;
   }

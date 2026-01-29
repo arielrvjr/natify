@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useTheme } from '../../theme';
+import { ColorPalette, useTheme } from '../../theme';
 import { Text } from '../Text';
 import { Column } from '../Layout';
 
@@ -56,7 +56,7 @@ export interface BottomBarProps {
   /**
    * Color de fondo personalizado
    */
-  backgroundColor?: string;
+  backgroundColor?: Exclude<keyof ColorPalette, 'textPrimary' | 'textSecondary' | 'accent'>;
 
   /**
    * Estilos personalizados
@@ -74,14 +74,13 @@ export const BottomBar: React.FC<BottomBarProps> = ({
   tabs,
   activeTabId,
   onTabPress,
-  elevated = true,
   backgroundColor,
   style,
 }) => {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
 
-  const bgColor = backgroundColor || theme.colors.surface.secondary;
+  const bgColor = backgroundColor || theme.colors.surface;
 
   return (
     <View
@@ -90,9 +89,6 @@ export const BottomBar: React.FC<BottomBarProps> = ({
         {
           backgroundColor: bgColor,
           paddingBottom: Math.max(insets.bottom, 8),
-          borderTopWidth: 1,
-          borderTopColor: theme.colors.structure.divider,
-          ...(elevated && theme.shadows.sm),
         },
         style,
       ]}
@@ -129,11 +125,11 @@ export const BottomBar: React.FC<BottomBarProps> = ({
                       style={[
                         styles.badge,
                         {
-                          backgroundColor: theme.colors.status.error,
+                          backgroundColor: theme.colors.error,
                         },
                       ]}
                     >
-                      <Text variant="caption" color="onPrimary" style={styles.badgeText}>
+                      <Text variant="caption" color="textPrimary" style={styles.badgeText}>
                         {typeof tab.badge === 'number' && tab.badge > 99
                           ? '99+'
                           : String(tab.badge)}
@@ -145,7 +141,7 @@ export const BottomBar: React.FC<BottomBarProps> = ({
                 {/* Label */}
                 <Text
                   variant="caption"
-                  color={isActive ? 'primary' : isDisabled ? 'tertiary' : 'secondary'}
+                  color={isActive ? 'textPrimary' : isDisabled ? 'textDisabled' : 'textSecondary'}
                   style={[styles.label, isActive && styles.labelActive]}
                 >
                   {tab.label}
